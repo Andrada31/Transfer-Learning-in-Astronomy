@@ -1,0 +1,110 @@
+:root {
+    --primary-color: #5298e3;
+    --secondary-color: #12131e;
+    --accent-color: #6ac9ca;
+}
+
+root {
+    width: 100%;
+    height: 100%;
+    overflow-y: hidden;
+}
+
+body {
+    margin: 0;
+    overflow: hidden;
+    font-family: "Comfortaa", serif;
+    background-color: var(--secondary-color);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+nav {
+    background-color: #292a43;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 20px;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    border-radius: 0px 0px 10px 10px;
+}
+
+nav .title {
+    font-size: 1.7em;
+    color: #ffffff;
+    padding: 5px 20px;
+}
+
+nav .tabs {
+    display: flex;
+    gap: 20px;
+    padding: 5px 20px;
+}
+
+nav .tabs a {
+    color: white;
+    text-decoration: none;
+    font-size: 1em;
+    transition: background-color 0.3s;
+}
+
+nav .tabs a:hover {
+    color: var(--primary-color);
+}
+
+h1 {
+    font-size: 2em;
+    color: var(--primary-color);
+    text-align: center;
+    margin-top: 10%;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+button {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+button:hover {
+    background-color: var(--accent-color);
+}
+
+.input {
+    max-width: 190px;
+    display: none;
+}
+
+.labelFile {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 300px;
+    height: 270px;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    align-items: center;
+    text-align: center;
+    padding: 30px;
+    color: #959595;
+    cursor: pointer;
+}
+
+.labelFile.drag-over {
+    border-color: var(--primary-color);
+    background-color: rgba(82, 152, 227, 0.2);
+}
