@@ -70,6 +70,9 @@ def predict():
     except Exception as e:
         return render_template('index.html', uploaded_image=None, prediction=f"Error during prediction: {str(e)}")
 
+@app.route('/documentation')
+def documentation():
+    return render_template('documentation.html')
 
 if __name__ == '__main__':
     app.run(debug=True)

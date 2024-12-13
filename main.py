@@ -1,6 +1,5 @@
 import os
 import pickle
-
 import numpy as np
 import scipy as sp
 import pandas as pd
@@ -10,7 +9,6 @@ from keras import Model
 from keras.src.legacy.preprocessing.image import ImageDataGenerator
 from keras.src.saving import load_model
 from matplotlib import pyplot as plt
-
 from model import model
 from scripts.data_ploting import plot_data, plot_prediction, class_names
 from scripts.data_preprocessing import resize_images_in_folder
@@ -142,22 +140,13 @@ if LOAD_MODEL:
     ACTIVATION MAPS
 """
 
-# Create a  model to visualize activation maps
 gp_weights =  model.get_layer('dense').get_weights()[0]
 activation_model = Model(model.inputs, outputs=(model.get_layer('conv2d_5').output, model.get_layer('dense_1').output))
 
-# Use the model to make predictions on the test generator
 test_images, test_labels = next(test_generator)
 features, results = activation_model.predict(test_images)
 
 def show_cam(image_index, features, results):
-    """
-    Shows activation maps
-    Args:
-    image_index: index of image
-    features: the extracted features
-    results: model's predictions
-    """
     features_for_img = features[image_index, :, :, :]
     prediction = np.argmax(results[image_index])
     class_activation_weights = gp_weights[:, prediction]
@@ -167,8 +156,7 @@ def show_cam(image_index, features, results):
         results[image_index][prediction]))
     plt.imshow(test_images[image_index])
 
-    # strongly classified (95% probability) images will be in green, else red
-    if results[image_index][prediction] > 0.95:
+    if results[image_index][prediction] > 0.90:
         cmap_str = 'Greens'
     else:
         cmap_str = 'Blues'
@@ -176,27 +164,17 @@ def show_cam(image_index, features, results):
     plt.show()
 
 def show_maps(desired_class, num_maps):
-    '''
-    goes through the first 10,000 test images and generates Cam activation maps
-    Args:
-    desired_class: class to show the maps for
-    num_maps: number of maps to be generated
-    '''
     counter = 0
-    # go through the first 10000 images
     for i in range(len(results)):
-        # break if we already displayed the specified number of maps
         if counter == num_maps:
             break
-
-        # images that match the class will be shown
         if np.argmax(results[i]) == desired_class:
             counter += 1
             show_cam(i,features, results)
 
 
-show_maps(desired_class=1, num_maps=5)
-show_maps(desired_class=0, num_maps=5)
+# show_maps(desired_class=1, num_maps=5)
+# show_maps(desired_class=0, num_maps=5)
 
 
 """
@@ -213,7 +191,7 @@ acc_plot.update_layout(
     xaxis=dict(color="#fad25a",title='Epochs'),
     yaxis=dict(color="#fad25a")
  )
-acc_plot.show()
+# acc_plot.show()
 
 #LOSS
 loss_plot = px.line(results, y=[results['loss'], results['val_loss']], template="seaborn", color_discrete_sequence=['#fad25a', 'red'])
@@ -222,4 +200,27 @@ loss_plot.update_layout(
     xaxis=dict(color="#fad25a",title='Epochs'),
     yaxis=dict(color="#fad25a")
  )
-loss_plot.show()
+# loss_plot.show()
+
+
+#AVERAGE RESULTS
+def compute_average_metrics(history):
+    train_acc = np.mean(history['accuracy'])
+    val_acc = np.mean(history['val_accuracy'])
+    train_loss = np.mean(history['loss'])
+    val_loss = np.mean(history['val_loss'])
+    avg_metrics = {
+        'Average Training Accuracy': train_acc,
+        'Average Validation Accuracy': val_acc,
+        'Average Training Loss': train_loss,
+        'Average Validation Loss': val_loss
+    }
+    return avg_metrics
+
+if LOAD_MODEL:
+    model = load_model('nebulae_v_galaxies.h5')
+    with open('training_history.pkl', 'rb') as f:
+        history = pickle.load(f)
+    avg_metrics = compute_average_metrics(history)
+    for metric, value in avg_metrics.items():
+        print(f"{metric}: {value:.4f}")
