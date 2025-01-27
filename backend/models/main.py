@@ -9,10 +9,8 @@ from keras import Model
 from keras.src.legacy.preprocessing.image import ImageDataGenerator
 from keras.src.saving import load_model
 from matplotlib import pyplot as plt
-from model import model
-from scripts.data_ploting import plot_data, plot_prediction, class_names
-from scripts.data_preprocessing import resize_images_in_folder
-from scripts.data_split import split_data, find_large_images
+from backend.models.scripts.custom_model import model
+from backend.models.scripts.data_ploting import class_names
 import warnings
 warnings.filterwarnings("ignore", category=UserWarning, module="keras")
 
@@ -113,7 +111,7 @@ if TRAIN_MODEL:
             train_generator,
             epochs=100,
             validation_data=validation_generator)
-    with open('training_history.pkl', 'wb') as f:
+    with open('saved/training_history.pkl', 'wb') as f:
         pickle.dump(r.history, f)
     model.save('nebulae_v_galaxies.h5')
 
@@ -121,8 +119,8 @@ if TRAIN_MODEL:
     LOAD MODEL
 """
 if LOAD_MODEL:
-    model = load_model('nebulae_v_galaxies.h5')
-    with open('training_history.pkl', 'rb') as f:
+    model = load_model('saved/nebulae_v_galaxies.h5')
+    with open('saved/training_history.pkl', 'rb') as f:
         history = pickle.load(f)
 
 """
@@ -173,8 +171,8 @@ def show_maps(desired_class, num_maps):
             show_cam(i,features, results)
 
 
-# show_maps(desired_class=1, num_maps=5)
 # show_maps(desired_class=0, num_maps=5)
+# show_maps(desired_class=1, num_maps=5)
 
 
 """
@@ -218,8 +216,8 @@ def compute_average_metrics(history):
     return avg_metrics
 
 if LOAD_MODEL:
-    model = load_model('nebulae_v_galaxies.h5')
-    with open('training_history.pkl', 'rb') as f:
+    model = load_model('saved/nebulae_v_galaxies.h5')
+    with open('saved/training_history.pkl', 'rb') as f:
         history = pickle.load(f)
     avg_metrics = compute_average_metrics(history)
     for metric, value in avg_metrics.items():

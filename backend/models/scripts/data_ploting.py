@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from model import model
+from backend.models.scripts.custom_model import model
 
 class_names = ['Galaxy', 'Nebula']
 def plot_data(generator, n_images):
