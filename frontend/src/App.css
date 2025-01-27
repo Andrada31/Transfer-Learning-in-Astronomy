@@ -1,38 +1,111 @@
-.App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+body {
+  background: linear-gradient(135deg, #1a2a6c, #151521, #020202);
   color: white;
+  font-family: 'Comfortaa', sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
 }
 
-.App-link {
-  color: #61dafb;
+h1 {
+  font-size: 3em;
+  margin-bottom: 20px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+h2 {
+  font-size: 2em;
+  margin-top: 20px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+input[type="file"] {
+  display: none;
+}
+
+label {
+  background-color: #5298e3;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+label:hover {
+  background-color: #6ac9ca;
+}
+
+button {
+  background-color: #5298e3;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 20px;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #6ac9ca;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  margin-top: 20px;
+  border: 2px solid white;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+nav {
+  width: 100%;
+  background-color: #292a43;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  border-radius: 10px;
+}
+
+nav .tabs {
+  display: flex;
+  gap: 20px;
+  padding: 5px 20px;
+}
+
+nav .tabs a {
+  color: white;
+  text-decoration: none;
+  font-size: 1em;
+  transition: background-color 0.3s;
+}
+
+nav .tabs a:hover {
+  color: var(--primary-color);
+}
+
+nav .title {
+  font-size: 1.7em;
+  color: #ffffff;
+  padding: 5px 20px;
+  text-decoration: none;
+}
+
+.title a {
+  color: white;
+  text-decoration: none;
+}
+
+.title a:hover {
+  color: var(--primary-color);
 }
