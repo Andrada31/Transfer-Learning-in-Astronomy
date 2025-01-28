@@ -16,5 +16,8 @@ export default defineConfig({
   },
   resolve: {
     extensions: ['.js', '.jsx'],
+    alias: {
+      '@': '/src',
+    },
   },
 });

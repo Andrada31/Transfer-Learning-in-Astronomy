@@ -30,7 +30,6 @@ const Home = () => {
           <a href="#resnet">ResNet</a>
           <a href="#efficientnet">EfficientNet</a>
           <a href="#vgg">VGG</a>
-          <a href="/documentation">Documentation</a>
         </div>
       </nav>
       <h1>DSO CLASSIFICATION TOOL</h1>
