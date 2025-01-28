@@ -33,7 +33,7 @@ const Home = () => {
           <a href="/documentation">Documentation</a>
         </div>
       </nav>
-      <h1 className="text-red-300">DSO CLASSIFICATION TOOL</h1>
+      <h1>DSO CLASSIFICATION TOOL</h1>
       <label htmlFor="file-upload" className="custom-file-upload">
         Upload Image
       </label>
