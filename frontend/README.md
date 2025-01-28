@@ -1,10 +1,24 @@
-# Getting Started with Create React App
+# Deep Space Objects Classification Tool
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project aims to provide an automated way to differentiate between two classes of Deep Space Objects (DSO): galaxies and nebulae. Using a custom Convolutional Neural Network (CNN) architecture, the model is trained to classify images of these objects with high accuracy.
 
-## Available Scripts
+## Project Overview
 
-In the project directory, you can run:
+The project leverages the power of deep learning to analyze and classify images of deep space objects. By using a convolutional neural network (CNN), the model is able to learn and identify intricate patterns within the images that distinguish galaxies from nebulae. This approach not only automates the classification process but also provides a scalable solution for analyzing large datasets of astronomical images.
+
+In addition to the AI model, the project includes a web application built with Flask. This web app allows users to upload images of deep space objects and receive real-time predictions from the trained model. The user-friendly interface ensures that even those with limited technical knowledge can easily interact with the system and obtain accurate classifications.
+
+## Technologies Used
+
+- **Python**: The primary programming language used for developing the AI model and backend.
+- **Flask**: A lightweight web framework used to build the web application.
+- **TensorFlow and Keras**: Libraries used for building and training the deep learning model.
+- **HTML and CSS**: Used for creating the web application's interface.
+- **React**: Used for building the frontend of the web application.
+
+## Getting Started
+
+In the `project` directory, you can run:
 
 ### `npm start`
 
@@ -37,29 +51,7 @@ If you aren't satisfied with the build tool and configuration choices, you can `
 
 Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However, we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
 
 ### Deployment
 

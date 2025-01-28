@@ -6,11 +6,12 @@ from PIL import Image
 from io import BytesIO
 import base64
 
+
 app = Flask(__name__, static_folder='../frontend/build', static_url_path='/')
 CORS(app)  # Enable Cross-Origin Resource Sharing
 
 # Load your model
-model = tf.keras.models.load_model('nebulae_v_galaxies.h5')
+model = tf.keras.models.load_model('../models/saved/nebulae_v_galaxies.h5')
 
 @app.route('/api/upload', methods=['POST'])
 def upload_image():

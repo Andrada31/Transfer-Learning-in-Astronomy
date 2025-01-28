@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { uploadImage, predictImage } from './api.js';
-import './App.css';
+import { uploadImage, predictImage } from './services/api.js';
+import './assets/styles/App.css';
+
 
 const Home = () => {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -29,9 +30,10 @@ const Home = () => {
           <a href="#resnet">ResNet</a>
           <a href="#efficientnet">EfficientNet</a>
           <a href="#vgg">VGG</a>
+          <a href="/documentation">Documentation</a>
         </div>
       </nav>
-      <h1>DSO CLASSIFICATION TOOL</h1>
+      <h1 className="text-red-500">DSO CLASSIFICATION TOOL</h1>
       <label htmlFor="file-upload" className="custom-file-upload">
         Upload Image
       </label>
