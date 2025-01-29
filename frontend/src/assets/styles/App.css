@@ -1,11 +1,14 @@
-@import "tailwindcss";
+
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+
 h1 {
   font-size: 3em;
   margin-bottom: 20px;
+  margin-top: 20px;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
@@ -13,6 +16,15 @@ h2 {
   font-size: 2em;
   margin-top: 20px;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+a{
+    color: white;
+    padding: 10px 20px;
+    border-radius: 6px;
+    border: 1px solid white;
+    text-decoration: none;
+    cursor: pointer;
 }
 
 input[type="file"] {
@@ -83,7 +95,13 @@ nav .tabs a {
 }
 
 nav .tabs a:hover {
-  color: var(--primary-color);
+  background-color: white;
+  color: #1a2a6c ;
+}
+
+nav .tabs a.active {
+  background-color: white;
+  color: #1a2a6c;
 }
 
 nav .title {
@@ -98,71 +116,102 @@ nav .title {
   text-decoration: none;
 }
 
-.title a:hover {
-  color: var(--primary-color);
+.tab{
+  color: white;
+  text-decoration: none;
+  font-size: 1.2em;
+  margin-bottom: 15px;
+  padding: 20px 20px;
+  display: block;
+  transition: background-color 0.3s;
+  border: none;
+  border-bottom: solid 2px;
+  /*background-color: white;*/
 }
 
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-    --radius: 0.5rem;
-  }
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-  }
+.tab:hover {
+  border-bottom-color: #6ac9ca;
+  background-color: white;
+  color: #1a2a6c;
 }
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
+.tab.active{
+    border-bottom-color: #5298e3;
+    background-color: white;
+    color: #1a2a6c;
 }
+
+.tool-tab{
+    color: white;
+    text-decoration: none;
+    font-size: 1.2em;
+    margin-top: 40px;
+    display: block;
+    transition: background-color 0.3s;
+    border: none;
+    background-color: #5298e3;
+}
+
+.tool-tab:hover {
+    background-color: #6ac9ca;
+}
+
+.
+
+.relative inline-block group{
+  position:fixed;
+  bottom: 10px;
+  right: 10px;
+}
+
+
+
+/* App.css */
+.documentation {
+  font-family: 'Fira Code', sans-serif;
+  color: #ffffff;
+  line-height: 1.6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 70%;
+  padding: 20px;
+}
+
+.documentation p{
+  margin: 40px 0px;
+}
+
+.documentation header {
+  background-color: #5298e3;
+  padding: 10px 20px;
+  border-radius: 10px;
+}
+
+.documentation .navbar .title a {
+  color: white;
+  text-decoration: none;
+  font-size: 1.7em;
+}
+
+.documentation .content {
+  margin-left: 50%;
+  padding: 20px;
+}
+
+.resnet-documentation .content h1,
+.resnet-documentation .content h2 {
+  color: #5298e3;
+}
+
+.resnet-documentation .content ul,
+.resnet-documentation .content ol {
+  margin-left: 20px;
+}
+
+.resnet-documentation .content ul li,
+.resnet-documentation .content ol li {
+  margin-bottom: 10px;
+}
+

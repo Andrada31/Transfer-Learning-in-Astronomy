@@ -6,9 +6,8 @@ from PIL import Image
 from io import BytesIO
 import base64
 
-
 app = Flask(__name__, static_folder='../frontend/build', static_url_path='/')
-CORS(app)  # Enable Cross-Origin Resource Sharing
+CORS(app)  # Enable CORS for specific origin
 
 # Load your model
 model = tf.keras.models.load_model('../models/saved/nebulae_v_galaxies.h5')
@@ -29,7 +28,6 @@ def upload_image():
     # Encode the image for frontend preview
     img_base64 = base64.b64encode(uploaded_image_data).decode('utf-8')
     return jsonify({'image': f'data:image/png;base64,{img_base64}'})
-
 
 @app.route('/api/predict', methods=['POST'])
 def predict():
@@ -53,7 +51,6 @@ def predict():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-
 @app.route('/api/documentation', methods=['GET'])
 def documentation():
     # Return some documentation details
@@ -62,13 +59,11 @@ def documentation():
         'description': 'Classify deep space objects into galaxies or nebulae using AI.'
     })
 
-
 # Serve React app
 @app.route('/')
 @app.route('/<path:path>')
 def serve_frontend(path=''):
     return send_from_directory(app.static_folder, 'index.html')
-
 
 if __name__ == '__main__':
     app.run(debug=True)
