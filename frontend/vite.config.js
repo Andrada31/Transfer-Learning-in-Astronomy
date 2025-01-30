@@ -20,4 +20,9 @@ export default defineConfig({
       '@': '/src',
     },
   },
+  server: {
+    hmr: {
+      overlay: false,
+    },
+  },
 });

@@ -1,7 +1,7 @@
 import React from 'react';
-import Sidenavbar from "@/components/sidenavbar";
-import DataTable from "@/components/DataTable";
-import Tooltip from "@/components/Tooltip";
+import Sidenavbar from "@/components/imported/sidenavbar";
+import DataTable from "@/components/imported/DataTable";
+import Tooltip from "@/components/imported/Tooltip";
 
 const EfficientNet = () => {
     return (

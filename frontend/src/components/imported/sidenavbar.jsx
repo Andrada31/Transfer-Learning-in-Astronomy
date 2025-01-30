@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import CustomButton from "@/components/CustomButton";
+import CustomButton from "@/components/imported/CustomButton";
 
 const Sidenavbar = () => {
     const [activeTab, setActiveTab] = useState(window.location.pathname);
@@ -37,7 +37,7 @@ const Sidenavbar = () => {
                 </a>
                 <a
                     className="tool-tab"
-                    href="/"
+                    href="/frontend/public"
                 >
                     &gt; Start classification
                 </a>

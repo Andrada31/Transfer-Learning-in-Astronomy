@@ -5,9 +5,11 @@ import numpy as np
 from PIL import Image
 from io import BytesIO
 import base64
+from flask_compress import Compress
 
 app = Flask(__name__, static_folder='../frontend/build', static_url_path='/')
 CORS(app)  # Enable CORS for specific origin
+Compress(app)
 
 # Load your model
 model = tf.keras.models.load_model('../models/saved/nebulae_v_galaxies.h5')
