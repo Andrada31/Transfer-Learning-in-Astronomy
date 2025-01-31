@@ -3,11 +3,12 @@ import React, { useState } from 'react';
 import { uploadImage, predictImage } from '@/services/api';
 import '../assets/styles/App.css';
 import { Button } from "@/components/ui/button";
-import SolarSystem from "@/components/imported/SolarSystem";
-import Sidenavbar from "@/components/imported/sidenavbar";
-import Tooltip from "@/components/imported/Tooltip";
+import SolarSystem from "@/components/custom/SolarSystem";
+import Sidenavbar from "@/components/custom/sidenavbar";
+import Tooltip from "@/components/custom/Tooltip";
 import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert";
 import { FaTerminal as Terminal } from "react-icons/fa6";
+import ImageUpload from "@/components/custom/ImageUpload";
 
 
 const Home = () => {
@@ -68,12 +69,13 @@ const Home = () => {
             </nav>
 
             <h1>DSO CLASSIFICATION TOOL</h1>
+            {/*<RadioButton/>*/}
             <Alert>
-              <Terminal className="h-4 w-4" />
-              <AlertTitle>Heads up!</AlertTitle>
-              <AlertDescription>
-                You can upload an image and predict its class using the model selector above.
-              </AlertDescription>
+                <Terminal className="h-4 w-4"/>
+                <AlertTitle>Heads up!</AlertTitle>
+                <AlertDescription>
+                    You can upload an image and predict its class using the model selector above.
+                </AlertDescription>
             </Alert>
             <label htmlFor="file-upload" className="custom-file-upload">
                 Upload Image
@@ -86,6 +88,7 @@ const Home = () => {
                     Predicted Class: {prediction.class} with Probability: {prediction.probability}
                 </h2>
             )}
+            {/*<ImageUpload/>*/}
         </div>
         <Tooltip/>
     </div>

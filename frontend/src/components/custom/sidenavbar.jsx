@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import CustomButton from "@/components/imported/CustomButton";
+import CustomButton from "@/components/custom/CustomButton";
 
 const Sidenavbar = () => {
     const [activeTab, setActiveTab] = useState(window.location.pathname);

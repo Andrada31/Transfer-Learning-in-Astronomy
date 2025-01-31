@@ -126,7 +126,6 @@ nav .title {
   transition: background-color 0.3s;
   border: none;
   border-bottom: solid 2px;
-  /*background-color: white;*/
 }
 
 .tab:hover {
@@ -156,17 +155,9 @@ nav .title {
     background-color: #6ac9ca;
 }
 
-.
-
-.relative inline-block group{
-  position:fixed;
-  bottom: 10px;
-  right: 10px;
-}
 
 
-
-/* App.css */
+/* DOCUMENTATIION */
 .documentation {
   font-family: 'Fira Code', sans-serif;
   color: #ffffff;
@@ -176,17 +167,11 @@ nav .title {
   align-items: center;
   justify-content: center;
   width: 70%;
-  padding: 20px;
+  padding: 4%;
 }
 
-.documentation p{
+.documentation .text{
   margin: 40px 0px;
-}
-
-.documentation header {
-  background-color: #5298e3;
-  padding: 10px 20px;
-  border-radius: 10px;
 }
 
 .documentation .navbar .title a {
@@ -197,21 +182,5 @@ nav .title {
 
 .documentation .content {
   margin-left: 50%;
-  padding: 20px;
-}
-
-.resnet-documentation .content h1,
-.resnet-documentation .content h2 {
-  color: #5298e3;
-}
-
-.resnet-documentation .content ul,
-.resnet-documentation .content ol {
-  margin-left: 20px;
-}
-
-.resnet-documentation .content ul li,
-.resnet-documentation .content ol li {
-  margin-bottom: 10px;
 }
 

@@ -8,7 +8,7 @@ const plans = [
   { name: 'Enterprise', ram: '32GB', cpus: '12 CPUs', disk: '1TB SSD disk' },
 ]
 
-export default function Example() {
+export default function RadioButton() {
   const [selected, setSelected] = useState(plans[0])
 
   return (
