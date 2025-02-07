@@ -37,10 +37,11 @@ const Home = () => {
 
     return (
     <div>
-        <Sidenavbar/>
-        <div className="container">
+        <div className="sidenavbar-container">
+            <Sidenavbar/>
+        </div>
+        <div className="content-container">
             <SolarSystem/>
-
             <nav>
                 <div className="title">Model Selector</div>
                 <div className="tabs">
