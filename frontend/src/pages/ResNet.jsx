@@ -25,10 +25,8 @@ const ResNet = () => {
                     ResNet-101, and ResNet-152, where the number indicates the number of layers. These models have
                     achieved state-of-the-art performance on various image recognition benchmarks.</p>
                 <RadioButton/>
-
-                <DataTable/>
-
                 <LineChart/>
+                <DataTable/>
             </div>
             <Tooltip/>
         </div>
