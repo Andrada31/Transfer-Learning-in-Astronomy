@@ -4,6 +4,8 @@ import Tooltip from "@/components/custom/Tooltip";
 import Sidenavbar from "@/components/custom/sidenavbar";
 import DataTable from "@/components/custom/DataTable";
 import RadioButton from "@/components/headlessui/RadioGroup";
+import TwoLevelPieChart from "@/components/charts/TwoLevelPieChart";
+import LineChart from "@/components/charts/LineChart";
 
 const ResNet = () => {
     return (
@@ -14,6 +16,8 @@ const ResNet = () => {
                 <div className="tabs">
                     <a href="/documentation">Documentation</a>
                 </div>
+
+                <TwoLevelPieChart/>
                 <p className="text">ResNet (Residual Network) is a deep learning model used for image classification tasks. It addresses
                     the vanishing gradient problem by introducing residual connections, which allow gradients to flow
                     through the network more effectively. This is achieved by adding shortcut connections that skip one
@@ -21,7 +25,10 @@ const ResNet = () => {
                     ResNet-101, and ResNet-152, where the number indicates the number of layers. These models have
                     achieved state-of-the-art performance on various image recognition benchmarks.</p>
                 <RadioButton/>
+
                 <DataTable/>
+
+                <LineChart/>
             </div>
             <Tooltip/>
         </div>
