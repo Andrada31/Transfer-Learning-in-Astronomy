@@ -36,15 +36,15 @@ const Home = () => {
     };
 
     return (
-    <div>
-        <div className="sidenavbar-container">
+    <div className="flex flex-col">
+        <div className="w-full md:w-1/4 bg-gray-800 text-white">
             <Sidenavbar/>
         </div>
-        <div className="content-container">
+        <div className="p-5">
             <SolarSystem/>
-            <nav>
-                <div className="title">Model Selector</div>
-                <div className="tabs">
+            <nav className="w-full bg-[#292a43] flex justify-between items-center py-2.5 px-5 top-0 left-0 z-50 rounded-xl">
+                <div className="text-lg">Model Selector</div>
+                <div className="tabs flex flex-wrap">
                     <a
                         href="#resnet"
                         className={activeTab === 'resnet' ? 'active' : ''}
@@ -70,7 +70,6 @@ const Home = () => {
             </nav>
 
             <h1>DSO CLASSIFICATION TOOL</h1>
-            {/*<RadioButton/>*/}
             <Alert>
                 <Terminal className="h-4 w-4"/>
                 <AlertTitle>Heads up!</AlertTitle>
@@ -91,7 +90,9 @@ const Home = () => {
             )}
             {/*<ImageUpload/>*/}
         </div>
-        <Tooltip/>
+        <div className="hidden md:block">
+                    <Tooltip />
+        </div>
     </div>
     )
         ;
