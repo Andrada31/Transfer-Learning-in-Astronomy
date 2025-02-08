@@ -14,7 +14,7 @@ const ResNet = () => {
             <div className="flex flex-col w-full lg:w-[70%] pt-17 lg:px-[4%]">
                 <h1>ResNet</h1>
                 <div className="tabs">
-                    <a href="/documentation">
+                    <a href="https://viso.ai/deep-learning/resnet-residual-neural-network/">
                         Documentation
                     </a>
                 </div>
