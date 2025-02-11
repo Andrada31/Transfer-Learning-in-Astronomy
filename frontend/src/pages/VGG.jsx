@@ -38,7 +38,7 @@ const VGG = () => {
                     <a href="https://viso.ai/deep-learning/vgg-very-deep-convolutional-networks/">Documentation</a>
                 </div>
                 <p  className="my-[40px]">VGG is a convolutional neural network model proposed by K. Simonyan and A. Zisserman from the University of Oxford. It is known for its simplicity and use of very small (3x3) convolution filters. The model comes in several variants, such as VGG-16 and VGG-19, where the number indicates the number of weight layers. VGG models have been widely used for image classification tasks and have achieved excellent performance on various benchmarks</p>
-                <ChartContainer config={chartConfig} className="h-[300px] w-full">
+                <ChartContainer config={chartConfig} className="h-[3cd00px] w-full">
                   <BarChart accessibilityLayer data={chartData}>
                     <CartesianGrid vertical={false} />
                     <XAxis

@@ -9,8 +9,8 @@ const DataTable = () => {
         <div className="card__data">
           <div className="card__right">
             <div className="item">Average Training Accuracy</div>
-            <div className="item">Average Validation Accuracy</div>
             <div className="item">Average Training Loss</div>
+            <div className="item">Average Validation Accuracy</div>
             <div className="item">Average Validation Loss</div>
           </div>
           <div className="card__left">
@@ -29,48 +29,50 @@ const StyledWrapper = styled.div`
   .card {
     width: 700px;
     max-width: 900px;
-    //background: #1e1e2f;
     font-family: "Fira Code", monospace;
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin: 20px auto;
+    margin-bottom:10% ;
   }
 
   .card__title {
-    color: #5298e3;
+    color: #fff;
     //font-weight: bold;
     padding: 15px 0px;
     background: transparent;
     font-size: 2rem;
-    border-bottom: 1px solid #3a3a5e;
+    //border-bottom: 1px solid #5298e3;
   }
 
   .card__data {
     font-size: 0.9rem;
     display: flex;
     justify-content: space-between;
-    //padding: 10px 20px;
-    background: #2a2a3e;
   }
 
-  .card__right, .card__left {
-    width: 50%;
+  .card__left{
+    width: 20%;
+  }
+  .card__right{
+    width: 80%;
   }
 
   .item {
-    padding: 10px 20px;
-    color: #ffffff;
+    padding: 15px 25px;
+    //border: 1px solid #fff;
+    color: #5298e3;
+    background: #1e1e29;
+    margin-bottom: 5px;
   }
 
 
   .card__left .item {
-    //padding-right: 1em;
     text-align: right;
   }
 
   .item:nth-child(even) {
-    background: #3a3a5e;
+    color: #7975c0;
   }
 `;
 
