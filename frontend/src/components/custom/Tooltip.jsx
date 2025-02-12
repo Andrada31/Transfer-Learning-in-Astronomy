@@ -3,7 +3,7 @@ import React from 'react';
 const Tooltip = () => {
   return (
     <div className="fixed bottom-0 right-0 mb-4 mr-16 inline-block group">
-      <button className="relative px-6 py-3 text-sm font-semibold text-white bg-indigo-600/90 rounded-xl hover:bg-indigo-700/90 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-900 transition-all duration-300 overflow-hidden">
+      <button className="relative px-6 py-3 text-sm font-semibold text-white bg-blue-400 rounded-xl hover:bg-blue focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-900 transition-all duration-300 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 blur-xl group-hover:opacity-75 transition-opacity" />
         <span className="relative flex items-center gap-2">
           <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" className="w-4 h-4">
