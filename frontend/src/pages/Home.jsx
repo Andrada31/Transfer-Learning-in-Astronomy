@@ -25,13 +25,13 @@ const Home = () => {
         <Sidenavbar/>
         <div className="p-7">
             <SolarSystem/>
-            {/*<Alert>*/}
-            {/*    <Terminal className="h-4 w-4"/>*/}
-            {/*    <AlertTitle>Heads up!</AlertTitle>*/}
-            {/*    <AlertDescription>*/}
-            {/*        You can upload an image and predict its class using the model selector below.*/}
-            {/*    </AlertDescription>*/}
-            {/*</Alert>*/}
+            <Alert>
+                <Terminal className="h-4 w-4"/>
+                <AlertTitle>Heads up!</AlertTitle>
+                <AlertDescription>
+                    You can upload an image and predict its class using the model selector below.
+                </AlertDescription>
+            </Alert>
             <h1>DSO CLASSIFICATION TOOL</h1>
             <ModelSelector/>
             <ImageUploadPredict/>

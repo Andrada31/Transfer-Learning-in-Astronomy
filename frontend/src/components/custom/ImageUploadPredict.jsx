@@ -75,7 +75,7 @@ export function ImageUploadPredict() {
 
         {!selectedImage ? (
           <div
-            className="mt-4 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer h-full flex items-center justify-center"
+            className="mt-4  border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer h-full flex items-center justify-center"
             onDrop={(e) => {
               e.preventDefault()
               onDrop(Array.from(e.dataTransfer.files))
