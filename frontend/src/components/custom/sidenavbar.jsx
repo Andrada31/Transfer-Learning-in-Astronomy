@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import CustomButton from "@/components/custom/CustomButton";
 
 const Sidenavbar = () => {
     const [activeTab, setActiveTab] = useState(window.location.pathname);
@@ -61,12 +62,9 @@ const Sidenavbar = () => {
                     >
                         VGG
                     </a>
-                    <a
-                        className="text-white text-lg mt-10 block transition-colors duration-300 border-none bg-[#5298e3] hover:bg-[#6ac9ca] p-2 rounded"
-                        href="/"
-                    >
+                    <CustomButton href="/">
                         &gt; Start classification
-                    </a>
+                    </CustomButton>
                 </div>
             </div>
         </div>

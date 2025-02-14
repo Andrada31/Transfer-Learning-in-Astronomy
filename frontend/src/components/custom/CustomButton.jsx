@@ -8,8 +8,8 @@ const CustomButton = () => {
 
   return (
     <StyledWrapper>
-      <button className="button" onClick={handleClick}>
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
+      <button className="button p-2" onClick={handleClick} >
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-6 h-6">
           <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
         </svg>
         <div className="text">
@@ -24,12 +24,13 @@ const StyledWrapper = styled.div`
   .button {
     background-color: #ffffff00;
     color: #fff;
-    width: 18.7em;
+    width: 21em;
     height: 2.9em;
-    border: #5298e3 0.2em solid;
+    border: #5298e3 0.14em solid;
     border-radius: 8px;
     text-align: right;
     transition: all 0.6s ease;
+    margin-top: 1em;
   }
 
   .button:hover {
@@ -49,7 +50,7 @@ const StyledWrapper = styled.div`
   }
 
   .text {
-    margin: 0 1.7em;
+    margin: 0 3.7em;
   }`;
 
 export default CustomButton;
