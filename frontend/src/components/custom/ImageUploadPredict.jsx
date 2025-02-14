@@ -12,6 +12,7 @@ const ALLOWED_FORMATS = ["image/jpeg", "image/jpg", "image/png", "image/webp"]
 
 export function ImageUploadPredict() {
   const [selectedImage, setSelectedImage] = useState(null)
+  const [imagePreview, setImagePreview] = useState(null)
   const [prediction, setPrediction] = useState(null)
   const [error, setError] = useState(null)
 
@@ -23,6 +24,7 @@ export function ImageUploadPredict() {
         return
       }
       setError(null)
+      setImagePreview(URL.createObjectURL(file))
       const response = await uploadImage(file)
       setSelectedImage(response.data.image)
     }
@@ -37,9 +39,9 @@ export function ImageUploadPredict() {
 
   const handleRemove = () => {
     setSelectedImage(null)
+    setImagePreview(null)
     setPrediction(null)
     setError(null)
-    // Reset the file input
     const fileInput = document.getElementById("file-upload")
     if (fileInput) {
       fileInput.value = ""
@@ -73,23 +75,24 @@ export function ImageUploadPredict() {
           </Alert>
         )}
 
-        {!selectedImage ? (
+        {!imagePreview ? (
           <div
-            className="mt-4  border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer h-full flex items-center justify-center"
+            className="mt-4 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer flex items-center justify-center"
             onDrop={(e) => {
               e.preventDefault()
               onDrop(Array.from(e.dataTransfer.files))
             }}
             onDragOver={(e) => e.preventDefault()}
+            onClick={() => document.getElementById("file-upload").click()}
           >
             <div>
               <Upload className="mx-auto h-12 w-12 text-gray-400" />
-              <p className="mt-2">Drag and drop an image here</p>
+              <p className="mt-2">Click or drag and drop an image here</p>
             </div>
           </div>
         ) : (
-          <div className="mt-4 relative">
-            <img src={selectedImage || "/placeholder.svg"} alt="Selected" className="max-w-full h-full rounded-lg" />
+          <div className="mt-4 relative flex justify-center items-center">
+            <img src={imagePreview} alt="Selected" className="max-w-full max-h-[90vh] object-scale-down rounded-lg" />
             <Button
               onClick={handleRemove}
               variant="ghost"
@@ -106,7 +109,7 @@ export function ImageUploadPredict() {
             <Upload className="mr-2 h-4 w-4" /> Choose File
           </Button>
           <Button onClick={handlePredict} className="flex-1" disabled={!selectedImage}>
-            Predict >>
+            Predict &gt;&gt;
           </Button>
         </div>
 
@@ -120,4 +123,3 @@ export function ImageUploadPredict() {
     </div>
   )
 }
-
