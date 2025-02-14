@@ -1,6 +1,6 @@
 // src/pages/Home.jsx
 import React, { useState } from 'react';
-import '../assets/styles/App.css';
+import '@/styles/App.css';
 import { Button } from "@/components/ui/button";
 import SolarSystem from "@/components/custom/SolarSystem";
 import Sidenavbar from "@/components/custom/sidenavbar";

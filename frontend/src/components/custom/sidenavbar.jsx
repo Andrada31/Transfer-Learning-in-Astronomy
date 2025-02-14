@@ -62,7 +62,7 @@ const Sidenavbar = () => {
                         VGG
                     </a>
                     <a
-                        className="tool-tab"
+                        className="text-white text-lg mt-10 block transition-colors duration-300 border-none bg-[#5298e3] hover:bg-[#6ac9ca] p-2 rounded"
                         href="/"
                     >
                         &gt; Start classification

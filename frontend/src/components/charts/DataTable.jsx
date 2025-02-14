@@ -28,21 +28,19 @@ const DataTable = () => {
 const StyledWrapper = styled.div`
   .card {
     width: 700px;
-    max-width: 900px;
+    max-width: 100%;
     font-family: "Fira Code", monospace;
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin-bottom:10% ;
+    margin-bottom: 10%;
   }
 
   .card__title {
     color: #fff;
-    //font-weight: bold;
     padding: 15px 0px;
     background: transparent;
     font-size: 2rem;
-    //border-bottom: 1px solid #5298e3;
   }
 
   .card__data {
@@ -51,16 +49,16 @@ const StyledWrapper = styled.div`
     justify-content: space-between;
   }
 
-  .card__left{
+  .card__left {
     width: 20%;
   }
-  .card__right{
+
+  .card__right {
     width: 80%;
   }
 
   .item {
     padding: 15px 25px;
-    //border: 1px solid #fff;
     color: #5298e3;
     background: #1e1e29;
     margin-bottom: 5px;
@@ -72,7 +70,7 @@ const StyledWrapper = styled.div`
   }
 
   .item:nth-child(even) {
-    color: #7975c0;
+    color: #ff7f0e;
   }
 `;
 

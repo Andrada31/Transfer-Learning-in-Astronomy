@@ -1,23 +1,21 @@
 import React from 'react';
-import '../assets/styles/App.css';
+import '@/styles/App.css';
 import Tooltip from "@/components/custom/Tooltip";
 import Sidenavbar from "@/components/custom/sidenavbar";
-import DataTable from "@/components/custom/DataTable";
+import DataTable from "@/components/charts/DataTable";
 import RadioButton from "@/components/headlessui/RadioGroup";
 import TwoLevelPieChart from "@/components/charts/TwoLevelPieChart";
 import LineChart from "@/components/charts/LineChart";
 
 const ResNet = () => {
     return (
-        <div className="flex flex-col items-center justify-center w-full px-[20%]">
+        <div className="flex flex-col items-center justify-center w-full px-[20%] overflow-x-hidden">
             <Sidenavbar/>
             <div className="flex flex-col w-full lg:w-[70%] pt-17 lg:px-[4%]">
                 <h1>ResNet</h1>
-                <div className="tabs">
-                    <a href="https://viso.ai/deep-learning/resnet-residual-neural-network/">
+                    <a href="https://viso.ai/deep-learning/resnet-residual-neural-network/" className="w-42">
                         Documentation
                     </a>
-                </div>
 
                 <TwoLevelPieChart/>
                 <p className="my-[40px]">

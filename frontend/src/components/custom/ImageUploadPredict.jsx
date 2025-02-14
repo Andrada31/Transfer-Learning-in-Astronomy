@@ -77,7 +77,7 @@ export function ImageUploadPredict() {
 
         {!imagePreview ? (
           <div
-            className="mt-4 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer flex items-center justify-center"
+            className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer flex items-center justify-center"
             onDrop={(e) => {
               e.preventDefault()
               onDrop(Array.from(e.dataTransfer.files))
@@ -86,8 +86,8 @@ export function ImageUploadPredict() {
             onClick={() => document.getElementById("file-upload").click()}
           >
             <div>
-              <Upload className="mx-auto h-12 w-12 text-gray-400" />
-              <p className="mt-2">Click or drag and drop an image here</p>
+              <Upload className="mx-auto h-24 w-12 text-gray-300" />
+              <p className="text-gray-300 text-[14px]">Click or drag and drop an image here</p>
             </div>
           </div>
         ) : (

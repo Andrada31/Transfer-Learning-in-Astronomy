@@ -26,8 +26,8 @@ const TwoLevelPieChart = () => {
   return (
     <ResponsiveContainer width="100%" height={400}>
       <PieChart>
-        <Pie data={data01} dataKey="value" cx="50%" cy="50%" outerRadius={60} fill="#19255b" />
-        <Pie data={data02} dataKey="value" cx="50%" cy="50%" innerRadius={70} outerRadius={90} fill="#8884d8" label />
+        <Pie data={data01} dataKey="value" cx="50%" cy="50%" outerRadius={60} fill="#2d3042" />
+        <Pie data={data02} dataKey="value" cx="50%" cy="50%" innerRadius={70} outerRadius={90} fill="#5298e3" label />
       </PieChart>
     </ResponsiveContainer>
   );

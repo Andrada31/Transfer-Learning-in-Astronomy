@@ -25,7 +25,7 @@ const LineChartComponent = () => {
           <YAxis domain={[0, 'dataMax + 0.1']} /> {/* Zoomed-in view */}
           <Tooltip />
           <Legend />
-          <Line type="monotone" dataKey="loss" stroke="#8884d8" activeDot={{ r: 8 }} />
+          <Line type="monotone" dataKey="loss" stroke="#ff7f0e" activeDot={{ r: 8 }} />
           <Line type="monotone" dataKey="accuracy" stroke="#5298e3" />
         </LineChart>
       </ResponsiveContainer>

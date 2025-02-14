@@ -1,6 +1,6 @@
 import React from 'react';
 import Sidenavbar from "@/components/custom/sidenavbar";
-import DataTable from "@/components/custom/DataTable";
+import DataTable from "@/components/charts/DataTable";
 import Tooltip from "@/components/custom/Tooltip";
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
 import { ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"

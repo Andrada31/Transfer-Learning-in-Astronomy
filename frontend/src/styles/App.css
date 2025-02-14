@@ -30,6 +30,12 @@ a{
     cursor: pointer;
 }
 
+a:hover{
+    background-color: white;
+    color: #1a2a6c;
+    transition: background-color 0.3s;
+}
+
 input[type="file"] {
   display: none;
 }
@@ -64,31 +70,6 @@ button:hover {
     cursor: pointer;
 }
 
-
-nav .tabs {
-  display: flex;
-  gap: 20px;
-  padding: 5px 20px;
-}
-
-nav .tabs a {
-  color: white;
-  text-decoration: none;
-  font-size: 1em;
-  transition: background-color 0.3s;
-}
-
-nav .tabs a:hover {
-  background-color: white;
-  color: #1a2a6c ;
-}
-
-nav .tabs a.active {
-  background-color: white;
-  color: #1a2a6c;
-}
-
-
 .tab{
   color: white;
   text-decoration: none;
@@ -111,21 +92,6 @@ nav .tabs a.active {
     border-bottom-color: #5298e3;
     background-color: white;
     color: #1a2a6c;
-}
-
-.tool-tab{
-    color: white;
-    text-decoration: none;
-    font-size: 1.2em;
-    margin-top: 40px;
-    display: block;
-    transition: background-color 0.3s;
-    border: none;
-    background-color: #5298e3;
-}
-
-.tool-tab:hover {
-    background-color: #6ac9ca;
 }
 
 
