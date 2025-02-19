@@ -83,15 +83,15 @@ button:hover {
 }
 
 .tab:hover {
-  border-bottom-color: #6ac9ca;
-  background-color: white;
-  color: #1a2a6c;
+  border-bottom-color: #5298e3;
+  background-color: #292a43;
+  color: #fff;
 }
 
 .tab.active{
     border-bottom-color: #5298e3;
-    background-color: white;
-    color: #1a2a6c;
+    background-color: #292a43;
+    color: #fff;
 }
 
 

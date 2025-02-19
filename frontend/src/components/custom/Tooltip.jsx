@@ -3,8 +3,8 @@ import React from 'react';
 const Tooltip = () => {
   return (
     <div className="fixed bottom-0 right-0 mb-4 mr-16 inline-block group">
-      <button className="relative px-6 py-3 text-sm font-semibold text-white bg-blue-400 rounded-xl hover:bg-blue focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-900 transition-all duration-300 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 blur-xl group-hover:opacity-75 transition-opacity" />
+      <button className="relative px-6 py-3 text-sm font-semibold text-white bg-[#292a43] rounded-xl hover:bg-blue focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-900 transition-all duration-300 overflow-hidden">
+        <div className="absolute inset-0  blur-xl group-hover:opacity-75 transition-opacity" />
         <span className="relative flex items-center gap-2">
           <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" className="w-4 h-4">
             <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" strokeWidth={2} strokeLinejoin="round" strokeLinecap="round" />
@@ -13,7 +13,7 @@ const Tooltip = () => {
         </span>
       </button>
       <div className="absolute invisible opacity-0 group-hover:visible group-hover:opacity-100 bottom-full left-1/2 -translate-x-1/2 mb-3 w-72 transition-all duration-300 ease-out transform group-hover:translate-y-0 translate-y-2">
-        <div className="relative p-4 bg-gradient-to-br from-gray-900/95 to-gray-800/95 backdrop-blur-md rounded-2xl border border-white/10 shadow-[0_0_30px_rgba(79,70,229,0.15)]">
+        <div className="relative p-4 bg-gradient-to-br from-gray-900/95 to-gray-800/95 backdrop-blur-md rounded-2xl border border-white/10 shadow-[0_0_30px_rgba(79,70,229,0.02)]">
           <div className="flex items-center gap-3 mb-2">
             <div className="flex items-center justify-center w-8 h-8 rounded-full bg-indigo-500/20">
               <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 text-indigo-400">

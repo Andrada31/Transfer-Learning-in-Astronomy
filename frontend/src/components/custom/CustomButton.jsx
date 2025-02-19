@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import tl from '@/images/tl3.svg';
 
 const CustomButton = () => {
   const handleClick = () => {
@@ -8,10 +9,8 @@ const CustomButton = () => {
 
   return (
     <StyledWrapper>
-      <button className="button p-2" onClick={handleClick} >
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-6 h-6">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
-        </svg>
+      <button className="button p-2" onClick={handleClick}>
+        <img src={tl} alt="Start classification" className="h-6 w-6"/>
         <div className="text">
           Start classification
         </div>
@@ -22,31 +21,36 @@ const CustomButton = () => {
 
 const StyledWrapper = styled.div`
   .button {
-    background-color: #ffffff00;
-    color: #fff;
+    background-color: #fff;
+    font-weight: 500;
+    text-transform: uppercase;
+    color: black;
     width: 21em;
     height: 2.9em;
-    border: #5298e3 0.14em solid;
+    border: #fff 0.14em solid;
     border-radius: 8px;
     text-align: right;
-    transition: all 0.6s ease;
-    margin-top: 1em;
+    transition: all 0.4s ease;
+    margin-top: 2em;
   }
 
   .button:hover {
     background-color: #5298e3;
+    color: white;
     cursor: pointer;
+    border: #5298e3 0.14em solid;
   }
 
-  .button svg {
+  .button img {
     width: 1.4em;
     position: absolute;
     display: flex;
-    transition: all 0.6s ease;
+    transition: all 0.4s ease;
   }
 
-  .button:hover svg {
+  .button:hover img {
     transform: translateX(5px);
+    filter: brightness(0) invert(1);
   }
 
   .text {

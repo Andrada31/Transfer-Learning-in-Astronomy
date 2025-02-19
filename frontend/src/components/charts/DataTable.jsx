@@ -5,7 +5,6 @@ const DataTable = () => {
   return (
     <StyledWrapper>
       <div className="card">
-        <div className="card__title">Results</div>
         <div className="card__data">
           <div className="card__right">
             <div className="item">Average Training Accuracy</div>
@@ -70,7 +69,7 @@ const StyledWrapper = styled.div`
   }
 
   .item:nth-child(even) {
-    color: #ff7f0e;
+    color: #fff;
   }
 `;
 
