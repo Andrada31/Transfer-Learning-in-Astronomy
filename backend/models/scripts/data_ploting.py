@@ -5,7 +5,7 @@ from backend.models.scripts.custom_model import model
 class_names = ['Galaxy', 'Nebula']
 def plot_data(generator, n_images):
     """
-    Plots random data_ from dataset
+    Plots random data from dataset
     Args:
     generator: a generator instance
     n_images : number of images to plot
