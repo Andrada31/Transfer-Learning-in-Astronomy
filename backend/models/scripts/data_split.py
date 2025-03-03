@@ -17,11 +17,11 @@ def find_large_images(directory, max_pixels=178956970):
                 print(f"Error processing {file_path}: {e}")
 
 #MOVE TO MAIN TO USE
-# find_large_images('data/nebulae_vs_galaxies/DSO_images')
+# find_large_images('_data/nebulae_vs_galaxies/DSO_images')
 
 def split_data(main_dir, training_dir, validation_dir, test_dir=None, include_test_split=True, split_size=0.9):
     """
-    Splits the data into train validation and test sets (optional)
+    Splits the _data into train validation and test sets (optional)
 
     Args:
     main_dir (string):  path containing the images
@@ -36,7 +36,7 @@ def split_data(main_dir, training_dir, validation_dir, test_dir=None, include_te
         if os.path.getsize(os.path.join(main_dir, file)):  # check if the file's size isn't 0
             files.append(file)  # appends file name to a list
 
-    shuffled_files = random.sample(files, len(files))  # shuffles the data
+    shuffled_files = random.sample(files, len(files))  # shuffles the _data
     split = int(split_size * len(shuffled_files))  # the training split casted into int for numeric rounding
     train = shuffled_files[:split]  # training split
     split_valid_test = int(split + (len(shuffled_files) - split) / 2)

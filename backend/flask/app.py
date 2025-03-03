@@ -36,13 +36,13 @@ def upload_image():
     uploaded_image_data = img_buffer.read()
 
     img_base64 = base64.b64encode(uploaded_image_data).decode('utf-8')
-    return jsonify({'image': f'data:image/png;base64,{img_base64}'})
+    return jsonify({'image': f'_data:image/png;base64,{img_base64}'})
 
 @app.route('/api/predict', methods=['POST'])
 def predict():
     data = request.get_json()
     if not data or 'image' not in data:
-        return jsonify({'error': 'No image data provided'}), 400
+        return jsonify({'error': 'No image _data provided'}), 400
 
     try:
         image_data = base64.b64decode(data['image'].split(',')[1])

@@ -21,12 +21,12 @@ TF_ENABLE_ONEDNN_OPTS=0
 """
 
 #DEFINE PATHS FOR THE DATA
-nebula_dir = 'data/nebulae_vs_galaxies/DSO_images/Nebula'
-galaxy_dir = 'data/nebulae_vs_galaxies/DSO_images/Galaxy'
+nebula_dir = '_data/nebulae_vs_galaxies/DSO_images/Nebula'
+galaxy_dir = '_data/nebulae_vs_galaxies/DSO_images/Galaxy'
 
-training_dir = 'data/nebulae_vs_galaxies/training'
-validation_dir = 'data/nebulae_vs_galaxies/validation'
-test_dir = 'data/nebulae_vs_galaxies/test'
+training_dir = '_data/nebulae_vs_galaxies/training'
+validation_dir = '_data/nebulae_vs_galaxies/validation'
+test_dir = '_data/nebulae_vs_galaxies/test'
 
 training_nebulae = os.path.join(training_dir, 'nebulae/')
 validation_nebulae = os.path.join(validation_dir, 'nebulae/')
@@ -49,7 +49,7 @@ print(len(os.listdir(galaxy_dir)))
 # split_data(galaxy_dir, training_galaxies, validation_galaxies,test_galaxies,INCLUDE_TEST, 0.8)
 
 
-#CREATED IMAGE DATA GENERATORS with data augmentation for training
+#CREATED IMAGE DATA GENERATORS with _data augmentation for training
 train_gen = ImageDataGenerator(
     rescale=1./255,
     rotation_range=20,
@@ -87,10 +87,10 @@ if INCLUDE_TEST:
 
 
 #RUN THIS FUNCTION FOR FINDING LARGE IMAGES IN THE DATASET
-# find_large_images('data/nebulae_vs_galaxies/test')
+# find_large_images('_data/nebulae_vs_galaxies/test')
 
 #RESIZE the image fize if large images are found
-# resize_images_in_folder('data/nebulae_vs_galaxies', max_size=500)
+# resize_images_in_folder('_data/nebulae_vs_galaxies', max_size=500)
 
 #PLOTTED DATA on white canvas
 # plot_data(train_generator,7)
