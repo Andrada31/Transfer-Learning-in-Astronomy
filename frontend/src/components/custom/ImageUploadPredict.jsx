@@ -114,11 +114,21 @@ export function ImageUploadPredict() {
         </div>
 
         {prediction && (
-          <div className="mt-4">
-            <h3 className="text-lg font-semibold">Prediction Result:</h3>
-            <pre className="p-2 rounded mt-2 overflow-x-auto">{JSON.stringify(prediction, null, 2)}</pre>
+          <div
+            className="relative w-full rounded-lg border border-white/80 bg-transparent px-4 py-3 text-sm text-foreground shadow-lg">
+            <h3 className="text-lg font-semibold text-white mb-2">Prediction Result</h3>
+            <div className="flex items-center justify-between p-2 border-b border-white/30">
+              <span className="text-white/80">Class:</span>
+              <span className="text-white font-semibold">{prediction.class}</span>
+            </div>
+            <div className="flex items-center justify-between p-2 mt-2">
+              <span className="text-white/80">Probability:</span>
+              <span className="text-white font-semibold">{(prediction.probability * 100).toFixed(2)}%</span>
+            </div>
           </div>
         )}
+
+
       </CardContent>
     </div>
   )
