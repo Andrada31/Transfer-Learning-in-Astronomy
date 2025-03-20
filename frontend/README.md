@@ -1,10 +1,10 @@
-# Deep Space Objects Classification Tool
+# 🌌Deep Space Objects Classification Tool
 
-This project aims to provide an automated way to differentiate between two classes of Deep Space Objects (DSO): galaxies and nebulae. Using a custom Convolutional Neural Network (CNN) architecture, the model is trained to classify images of these objects with high accuracy.
+This project aims to provide an automated way to differentiate between two classes of Deep Space Objects (DSO): galaxies, nebulae and star clusters. Using a custom Convolutional Neural Network (CNN) architecture build on pretrained models (VGG, ResNet and EfficientNet), the model is trained to classify images of these objects with high accuracy.
 
 ## Project Overview
 
-The project leverages the power of deep learning to analyze and classify images of deep space objects. By using a convolutional neural network (CNN), the model is able to learn and identify intricate patterns within the images that distinguish galaxies from nebulae. This approach not only automates the classification process but also provides a scalable solution for analyzing large datasets of astronomical images.
+The project explores deep learning to analyze and classify images of deep space objects. Through Transfer Learning on VGG16, ResNet50 and EfficientNet, the model is able to learn and identify intricate patterns within the images dataset. The user can make classifications of galaxies, nebulae and star clusters, while seeing the performance of the models and being able to give a feedback regarding its accuracy. This approach not only automates the classification process but also provides a scalable solution for analyzing large datasets of astronomical images.
 
 In addition to the AI model, the project includes a web application built with Flask. This web app allows users to upload images of deep space objects and receive real-time predictions from the trained model. The user-friendly interface ensures that even those with limited technical knowledge can easily interact with the system and obtain accurate classifications.
 
@@ -17,8 +17,8 @@ In addition to the AI model, the project includes a web application built with F
 - **React**: Used for building the frontend of the web application.
 
 ## Features
-Deep Learning Models: Users can toggle between VGG, ResNet, and EfficientNet for classification.
-Web-Based Interface: React interactive UI for easy exploration.
-REST API: Flask backend for model inference and data handling.
+- **Deep Learning Models**: Users can toggle between VGG, ResNet, and EfficientNet for classification.
+- **Web-Based Interface**: React interactive UI for easy exploration.
+- **REST API**: Flask backend for model inference and data handling.
 
 
