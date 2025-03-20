@@ -11,8 +11,9 @@ In addition to the AI model, the project includes a web application built with F
 ## Technologies Used
 ______________________
 ### Programming Language
-- **Python**
-- **Libraries**: NumPy, Matplotlib
+- **Python**: Used for training deep learning models in Google Colab and implementing the Flask backend.
+- **JavaScript** (TypeScript, optionally): Used for building the frontend with Vite + React.
+- **HTML & CSS with Tailwind**: Used for styling and structuring the web interface.
 
 ### Deep Learning Frameworks
 - **Google Colab** workspace for available hardware resources 
@@ -22,13 +23,13 @@ ______________________
   - Simplified model development
   - Easy model configuration
 
-### Pretrained Models in Google Colab
-- ResNet
-- EfficientNet
-- VGG
+### Pretrained Models
+- **[VGGNet](https://arxiv.org/abs/1409.1556)** – Very Deep Convolutional Networks for Large-Scale Image Recognition
+- **[ResNet](https://arxiv.org/abs/1512.03385)** – Deep Residual Learning for Image Recognition
+- **[EfficientNet](https://arxiv.org/abs/1905.11946)** – Rethinking Model Scaling for Convolutional Neural Networks
 
 ### Image Processing
-- Image normalization and applied bw filter for comparison
+- Image normalization and applied bw filter for color space performance comparison
 - Data augmentation techniques
   - Letterboxing and cropping
  
