@@ -61,16 +61,17 @@ In addition to the AI model, the project includes a **Flask-based web applicatio
 ## Project Setup  
 
 ### **Prerequisites**  
-Ensure you have the following installed:  
-
-- **Python 3.8+**  
-- **TensorFlow**  
-- **Keras**  
-- **Flask**  
-- **NumPy**  
-- **Matplotlib**  
-- **React.js**  
-- **Vite**  
+Ensure you have the following installed:
+```plaintext
+- Python 3.8+
+- TensorFlow  
+- Keras  
+- Flask  
+- NumPy
+- Matplotlib  
+- React.js  
+- Vite
+```
 
 ## Future Improvements  
 
