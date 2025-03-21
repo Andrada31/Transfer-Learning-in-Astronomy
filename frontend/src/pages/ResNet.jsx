@@ -16,41 +16,6 @@ const sections = [
   { id: "results", title: "Results" },
 ]
 
-const modelData = {
-    modelName: "ResNet-50",
-    overviewData: {
-      description:
-        "ResNet50 is a convolutional neural network that is 50 layers deep. It was introduced in the paper 'Deep Residual Learning for Image Recognition' and is known for introducing skip connections to solve the vanishing gradient problem in deep networks.",
-      yearPublished: "2015",
-      authors: ["Kaiming He", "Xiangyu Zhang", "Shaoqing Ren", "Jian Sun"],
-      paperLink: "https://arxiv.org/abs/1512.03385",
-    },
-    architectureData: {
-      layers: 50,
-      parameters: "25.6 million",
-      inputSize: "224 x 224 pixels",
-      keyFeatures: [
-        "Residual connections (skip connections)",
-        "Batch normalization after each convolution",
-        "Global average pooling",
-        "Bottleneck design for computational efficiency",
-      ],
-    },
-    trainingData: {
-      dataset: "ImageNet (1.28 million training images)",
-      accuracy: "75.3%",
-      trainingTime: "~2 weeks on 8 GPUs",
-      hardware: "NVIDIA Tesla P100 GPUs",
-      evaluationMetrics: {
-        "Top-1 Accuracy": "75.3%",
-        "Top-5 Accuracy": "92.2%",
-        Parameters: "25.6M",
-        FLOPs: "3.8G",
-        "Inference Time": "4.6ms/image",
-      },
-    },
-  }
-
 const ResNet = () => {
   return (
     <div className="flex flex-col items-center justify-center w-full  overflow-x-hidden relative">
@@ -76,15 +41,11 @@ const ResNet = () => {
         {/*  number of layers.*/}
         {/*</p>*/}
 
-        <ModelDetails
-        modelName={modelData.modelName}
-        overviewData={modelData.overviewData}
-        architectureData={modelData.architectureData}
-        trainingData={modelData.trainingData}
-      />
+        <ModelDetails defaultModel="resnet50" />
 
-        <h2 id="performance" className="my-[40px]">Models overview</h2>
-        <RadioButton />
+
+        {/*<h2 id="performance" className="my-[40px]">Models overview</h2>*/}
+        {/*<RadioButton />*/}
         <LineChart />
 
         <div id="results"  className="mt-[80px]">

@@ -24,8 +24,7 @@ const Home = () => {
     return (
     <div className="flex flex-col">
         <Sidenavbar/>
-        <div className="p-7">
-            <SolarSystem/>
+        <div className="pt-30">
             <Alert>
                 <Terminal className="h-4 w-4"/>
                 <AlertTitle>Heads up!</AlertTitle>

@@ -3,13 +3,16 @@ import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 const SolarSystem = () => {
   return (
-    <DotLottieReact
-        // src="https://lottie.host/e16db49e-4000-4651-9a02-0475992b49e6/r4aZXGHJUW.lottie"
-      src="src/components/custom/SolarSystem.lottie"
-      loop
-      autoplay
-      style={{ width: '100%' }}
-    />
+    <div className="w-full flex justify-center items-center">
+      <div className="aspect-square w-100">
+        <DotLottieReact
+          src="src/components/custom/SolarSystem.lottie"
+          loop
+          autoplay
+          style={{ width: '100%', height: '100%' }}
+        />
+      </div>
+    </div>
   );
 };
 
