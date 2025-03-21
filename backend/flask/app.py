@@ -6,21 +6,41 @@ from PIL import Image
 from io import BytesIO
 import base64
 from flask_compress import Compress
+import os
 
 app = Flask(__name__, static_folder='../frontend/build', static_url_path='/')
 CORS(app)
 Compress(app)
 
-model = tf.keras.models.load_model('../models/saved/nebulae_v_galaxies.h5')
+# Path map for saved models
+MODEL_PATHS = {
+    'vgg': '../models/saved/vgg16.keras',
+    'resnet': '../models/saved/resnet.keras',  # Not yet available
+    'efficientnet': '../models/saved/efficientnet.keras'  # Not yet available
+}
+
+# Loaded models cache
+loaded_models = {}
+
+# Class names used by all models
+class_names = ['clusters', 'galaxies', 'nebulae']
 
 def preprocess_image(image):
     img = image.convert("RGB")
-    img = img.resize((150, 150))
-    img_array = np.array(img, dtype=np.float32) / 255.0
+    img = img.resize((224, 224))
+    img_array = np.array(img, dtype=np.float32)
+    img_array = tf.keras.applications.vgg16.preprocess_input(img_array)
     img_array = np.expand_dims(img_array, axis=0)
-
-    # print("Preprocessed image shape:", img_array.shape)
     return img_array
+
+def get_model(model_name):
+    if model_name not in MODEL_PATHS:
+        raise ValueError(f"Model '{model_name}' is not supported.")
+    if not os.path.exists(MODEL_PATHS[model_name]):
+        raise FileNotFoundError(f"Model '{model_name}' is not available yet.")
+    if model_name not in loaded_models:
+        loaded_models[model_name] = tf.keras.models.load_model(MODEL_PATHS[model_name])
+    return loaded_models[model_name]
 
 @app.route('/api/upload', methods=['POST'])
 def upload_image():
@@ -38,31 +58,43 @@ def upload_image():
     img_base64 = base64.b64encode(uploaded_image_data).decode('utf-8')
     return jsonify({'image': f'data:image/png;base64,{img_base64}'})
 
+
 @app.route('/api/predict', methods=['POST'])
 def predict():
     data = request.get_json()
-    if not data or 'image' not in data:
-        return jsonify({'error': 'No image data provided'}), 400
+    print("Received request:", data)  # Debugging line
+
+    if not data or 'image' not in data or 'model' not in data:
+        return jsonify({'error': 'Missing image or model'}), 400
 
     try:
+        model_name = data['model']
+        print(f"Model selected: {model_name}")  # Debugging line
+
         image_data = base64.b64decode(data['image'].split(',')[1])
         img = Image.open(BytesIO(image_data))
         img_array = preprocess_image(img)
 
-        prediction = model.predict(img_array)
-        predicted_class = 'Galaxy' if np.argmax(prediction) == 0 else 'Nebula'
-        probability = float(np.max(prediction))
+        model = get_model(model_name)
+        prediction = model.predict(img_array)[0]
 
-        return jsonify({'class': predicted_class, 'probability': f'{probability:.2f}'})
+        top_indices = prediction.argsort()[::-1][:3]
+        top_predictions = [
+            {
+                'class': class_names[i],
+                'probability': float(prediction[i])
+            } for i in top_indices
+        ]
+
+        return jsonify({
+            'class': class_names[np.argmax(prediction)],
+            'probability': float(np.max(prediction)),
+            'top_predictions': top_predictions
+        })
     except Exception as e:
+        print("Prediction Error:", str(e))  # Debugging line
         return jsonify({'error': str(e)}), 500
 
-# @app.route('/api/documentation', methods=['GET'])
-# def documentation():
-#     return jsonify({
-#         'title': 'Deep Space Objects Classification Tool',
-#         'description': 'Classify deep space objects into galaxies or nebulae using AI.'
-#     })
 
 @app.route('/')
 @app.route('/<path:path>')

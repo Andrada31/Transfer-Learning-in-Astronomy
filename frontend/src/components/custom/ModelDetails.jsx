@@ -1,0 +1,133 @@
+"use client"
+
+import { useState } from "react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Separator } from "@/components/ui/separator"
+
+export default function ModelDetails({ modelName, overviewData, architectureData, trainingData }) {
+  const [activeTab, setActiveTab] = useState("overview")
+
+  return (
+    <Card className="w-full max-w-4xl mx-auto bg-[#1e2545] border-[#2a3158] text-white">
+      <CardHeader>
+        <CardTitle className="text-3xl ">{modelName}</CardTitle>
+        <Separator className="mt-2 bg-[#2a3158]" />
+      </CardHeader>
+      <CardContent>
+        <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-3 bg-[#2a3158]">
+        <TabsTrigger
+          value="overview"
+          className="data-[state=active]:bg-white data-[state=active]:text-black">Overview
+        </TabsTrigger>
+        <TabsTrigger
+          value="architecture"
+          className="data-[state=active]:bg-white data-[state=active]:text-black">Architecture
+        </TabsTrigger>
+        <TabsTrigger
+          value="training"
+          className="data-[state=active]:bg-white data-[state=active]:text-black">Training & Evaluation
+        </TabsTrigger>
+      </TabsList>
+
+
+          <TabsContent value="overview" className="mt-6 space-y-4">
+            <div className="space-y-4">
+              <p className="text-gray-300">{overviewData.description}</p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <h3 className="text-sm font-medium text-gray-300">Published</h3>
+                  <p>{overviewData.yearPublished}</p>
+                </div>
+
+                <div>
+                  <h3 className="text-sm font-medium text-gray-300">Authors</h3>
+                  <p>{overviewData.authors.join(", ")}</p>
+                </div>
+              </div>
+
+              {overviewData.paperLink && (
+                <div className="pt-2">
+                  <a
+                    href={overviewData.paperLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-300 hover:underline"
+                  >
+                    View Original Paper
+                  </a>
+                </div>
+              )}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="architecture" className="mt-6 space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <h3 className="text-sm font-medium text-gray-300">Layers</h3>
+                <p className="text-2xl font-bold">{architectureData.layers}</p>
+              </div>
+
+              <div>
+                <h3 className="text-sm font-medium text-gray-300">Parameters</h3>
+                <p className="text-2xl font-bold">{architectureData.parameters}</p>
+              </div>
+
+              <div>
+                <h3 className="text-sm font-medium text-gray-300">Input Size</h3>
+                <p>{architectureData.inputSize}</p>
+              </div>
+            </div>
+
+            <div className="pt-4">
+              <h3 className="text-sm font-medium text-gray-300 mb-2">Key Features</h3>
+              <ul className="list-disc pl-5 space-y-1">
+                {architectureData.keyFeatures.map((feature, index) => (
+                  <li key={index}>{feature}</li>
+                ))}
+              </ul>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="training" className="mt-6 space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <h3 className="text-sm font-medium text-gray-300">Dataset</h3>
+                <p>{trainingData.dataset}</p>
+              </div>
+
+              <div>
+                <h3 className="text-sm font-medium text-gray-300">Top Accuracy</h3>
+                <p className="text-2xl font-bold">{trainingData.accuracy}</p>
+              </div>
+
+              <div>
+                <h3 className="text-sm font-medium text-gray-300">Training Time</h3>
+                <p>{trainingData.trainingTime}</p>
+              </div>
+
+              <div>
+                <h3 className="text-sm font-medium text-gray-300">Hardware</h3>
+                <p>{trainingData.hardware}</p>
+              </div>
+            </div>
+
+            <div className="pt-4">
+              <h3 className="text-sm font-medium text-gray-300 mb-2">Evaluation Metrics</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {Object.entries(trainingData.evaluationMetrics).map(([key, value]) => (
+                  <div key={key} className="flex justify-between border-b pb-1">
+                    <span>{key}:</span>
+                    <span className="font-medium">{value}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </TabsContent>
+        </Tabs>
+      </CardContent>
+    </Card>
+  )
+}

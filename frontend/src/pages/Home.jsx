@@ -15,8 +15,9 @@ const Home = () => {
     const [selectedImage, setSelectedImage] = useState(null);
     const [prediction, setPrediction] = useState(null);
     const [activeTab, setActiveTab] = useState('resnet');
+    const [predictionError, setPredictionError] = useState(null);
 
-    const handleTabClick = (tab) => {
+    const handleModelChange = (tab) => {
         setActiveTab(tab);
     };
 
@@ -33,8 +34,13 @@ const Home = () => {
                 </AlertDescription>
             </Alert>
             <h1>DSO CLASSIFICATION TOOL</h1>
-            <ModelSelector/>
-            <ImageUploadPredict/>
+           <ModelSelector onModelChange={handleModelChange} />
+            <ImageUploadPredict
+              selectedModel={activeTab}
+              onPrediction={(result) => setPrediction(result)}
+              onError={(err) => setPredictionError(err)}
+            />
+
         </div>
         <div className="hidden md:block">
             <Tooltip/>

@@ -10,7 +10,7 @@ import { uploadImage, predictImage } from "@/services/api"
 
 const ALLOWED_FORMATS = ["image/jpeg", "image/jpg", "image/png", "image/webp"]
 
-export function ImageUploadPredict() {
+export function ImageUploadPredict({ selectedModel, onPrediction, onError }) {
   const [selectedImage, setSelectedImage] = useState(null)
   const [imagePreview, setImagePreview] = useState(null)
   const [prediction, setPrediction] = useState(null)
@@ -32,8 +32,20 @@ export function ImageUploadPredict() {
 
   const handlePredict = async () => {
     if (selectedImage) {
-      const response = await predictImage(selectedImage)
-      setPrediction(response.data)
+      console.log("Sending to backend:", { image: selectedImage, model: selectedModel });
+
+      try {
+        const response = await predictImage(selectedImage, selectedModel);
+        console.log("Response:", response.data);
+        setPrediction(response.data);
+        setError(null);
+        onPrediction && onPrediction(response.data);
+      } catch (err) {
+        const message = err?.response?.data?.error || "Prediction failed";
+        console.error("Prediction Error:", message);
+        setError(message);
+        onError && onError(message);
+      }
     }
   }
 
@@ -52,13 +64,15 @@ export function ImageUploadPredict() {
     (acceptedFiles) => {
       handleUpload({ target: { files: acceptedFiles } })
     },
-    [handleUpload],
+    [handleUpload]
   )
 
   return (
     <div className="w-full max-w-md mx-auto">
       <CardContent className="p-6">
-        <p className="my-3 text-sm text-gray-600 flex items-center justify-center">Allowed formats: JPG, JPEG, PNG, WebP</p>
+        <p className="my-3 text-sm text-gray-600 flex items-center justify-center">
+          Allowed formats: JPG, JPEG, PNG, WebP
+        </p>
 
         <Input
           key={selectedImage ? "uploaded" : "not-uploaded"}
@@ -113,22 +127,17 @@ export function ImageUploadPredict() {
           </Button>
         </div>
 
-        {prediction && (
-          <div
-            className="relative w-full rounded-lg border border-white/80 bg-transparent px-4 py-3 text-sm text-foreground shadow-lg">
-            <h3 className="text-lg font-semibold text-white mb-2">Prediction Result</h3>
-            <div className="flex items-center justify-between p-2 border-b border-white/30">
-              <span className="text-white/80">Class:</span>
-              <span className="text-white font-semibold">{prediction.class}</span>
-            </div>
-            <div className="flex items-center justify-between p-2 mt-2">
-              <span className="text-white/80">Probability:</span>
-              <span className="text-white font-semibold">{(prediction.probability * 100).toFixed(2)}%</span>
-            </div>
+        {prediction && prediction.top_predictions && (
+          <div className="relative w-full rounded-lg border border-white/80 bg-transparent px-4 py-3 text-sm text-foreground shadow-lg">
+            <h3 className="text-lg font-semibold text-white mb-2">Top 3 Predictions</h3>
+            {prediction.top_predictions.map((item, idx) => (
+              <div key={idx} className="flex items-center justify-between p-2 border-b border-white/30">
+                <span className="text-white/80">{item.class}</span>
+                <span className="text-white font-semibold">{(item.probability * 100).toFixed(2)}%</span>
+              </div>
+            ))}
           </div>
         )}
-
-
       </CardContent>
     </div>
   )
