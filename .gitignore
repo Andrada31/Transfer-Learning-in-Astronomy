@@ -1,2 +1,3 @@
 backend/models/data/*
 **/data/
+backend/models/saved/*
