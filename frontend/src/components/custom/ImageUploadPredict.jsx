@@ -9,12 +9,20 @@ import { Upload, X } from "lucide-react"
 import { uploadImage, predictImage } from "@/services/api"
 
 const ALLOWED_FORMATS = ["image/jpeg", "image/jpg", "image/png", "image/webp"]
+const MODEL_NAMES = ["resnet", "efficientnet", "vgg"]
 
-export function ImageUploadPredict({ selectedModel, onPrediction, onError }) {
+export function ImageUploadPredict({
+  selectedModel,
+  onAllPredictions,
+  onError,
+  onImageChange,
+}) {
   const [selectedImage, setSelectedImage] = useState(null)
   const [imagePreview, setImagePreview] = useState(null)
-  const [prediction, setPrediction] = useState(null)
+  const [predictionsByModel, setPredictionsByModel] = useState({})
+
   const [error, setError] = useState(null)
+  const [loading, setLoading] = useState(false)
 
   const handleUpload = useCallback(async (e) => {
     const file = e.target.files?.[0]
@@ -24,36 +32,72 @@ export function ImageUploadPredict({ selectedModel, onPrediction, onError }) {
         return
       }
       setError(null)
-      setImagePreview(URL.createObjectURL(file))
-      const response = await uploadImage(file)
-      setSelectedImage(response.data.image)
-    }
-  }, [])
-
-  const handlePredict = async () => {
-    if (selectedImage) {
-      console.log("Sending to backend:", { image: selectedImage, model: selectedModel });
+      const previewUrl = URL.createObjectURL(file)
+      setImagePreview(previewUrl)
+      onImageChange?.(previewUrl)
 
       try {
-        const response = await predictImage(selectedImage, selectedModel);
-        console.log("Response:", response.data);
-        setPrediction(response.data);
-        setError(null);
-        onPrediction && onPrediction(response.data);
+        const response = await uploadImage(file)
+        setSelectedImage(response.data.image)
       } catch (err) {
-        const message = err?.response?.data?.error || "Prediction failed";
-        console.error("Prediction Error:", message);
-        setError(message);
-        onError && onError(message);
+        console.error("Upload Error:", err)
+        setError("Image upload failed. Please try again.")
+        onError?.("Image upload failed.")
       }
     }
+  }, [onError, onImageChange])
+
+  const runPredictionForModel = async (modelName, base64Image) => {
+    try {
+      const response = await predictImage(base64Image, modelName)
+      return response.data
+    } catch (e) {
+      console.error(`Prediction error for ${modelName}:`, e)
+      throw e
+    }
+  }
+
+  const handlePredict = async () => {
+    if (!selectedImage) return
+    setLoading(true)
+    setError(null)
+
+    let mainResult
+    try {
+      mainResult = await runPredictionForModel(selectedModel, selectedImage)
+      setPredictionsByModel((prev) => ({ ...prev, [selectedModel]: mainResult }))
+      onAllPredictions?.((prev) => ({ ...prev, [selectedModel]: mainResult }))
+    } catch (err) {
+      const message = err?.response?.data?.error || "Prediction failed"
+      setError(message)
+      setLoading(false)
+      onError?.(message)
+      return
+    }
+
+    //Fire off the other models in background
+    const otherModels = MODEL_NAMES.filter((m) => m !== selectedModel)
+    otherModels.forEach(async (model) => {
+      try {
+        const result = await runPredictionForModel(model, selectedImage)
+        setPredictionsByModel((prev) => {
+          const updated = { ...prev, [model]: result }
+          onAllPredictions?.(updated)
+          return updated
+        })
+      } catch (bgErr) {
+        console.error(`Error in background for ${model}:`, bgErr)
+      }
+    })
+    setLoading(false)
   }
 
   const handleRemove = () => {
     setSelectedImage(null)
     setImagePreview(null)
-    setPrediction(null)
+    setPredictionsByModel({})
     setError(null)
+    onImageChange?.(null)
     const fileInput = document.getElementById("file-upload")
     if (fileInput) {
       fileInput.value = ""
@@ -61,9 +105,7 @@ export function ImageUploadPredict({ selectedModel, onPrediction, onError }) {
   }
 
   const onDrop = useCallback(
-    (acceptedFiles) => {
-      handleUpload({ target: { files: acceptedFiles } })
-    },
+    (acceptedFiles) => handleUpload({ target: { files: acceptedFiles } }),
     [handleUpload]
   )
 
@@ -91,7 +133,7 @@ export function ImageUploadPredict({ selectedModel, onPrediction, onError }) {
 
         {!imagePreview ? (
           <div
-            className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer flex items-center justify-center"
+            className="border-2 border-dashed border-gray-300 rounded-lg p-20 text-center cursor-pointer flex items-center justify-center"
             onDrop={(e) => {
               e.preventDefault()
               onDrop(Array.from(e.dataTransfer.files))
@@ -106,7 +148,11 @@ export function ImageUploadPredict({ selectedModel, onPrediction, onError }) {
           </div>
         ) : (
           <div className="mt-4 relative flex justify-center items-center">
-            <img src={imagePreview} alt="Selected" className="max-w-full max-h-[90vh] object-scale-down rounded-lg" />
+            <img
+              src={imagePreview}
+              alt="Selected"
+              className="max-w-full max-h-[90vh] object-scale-down rounded-lg"
+            />
             <Button
               onClick={handleRemove}
               variant="ghost"
@@ -119,25 +165,17 @@ export function ImageUploadPredict({ selectedModel, onPrediction, onError }) {
         )}
 
         <div className="my-4 mb-10 flex gap-2">
-          <Button onClick={() => document.getElementById("file-upload").click()} variant="outline" className="flex-1">
+          <Button
+            onClick={() => document.getElementById("file-upload").click()}
+            variant="outline"
+            className="flex-1"
+          >
             <Upload className="mr-2 h-4 w-4" /> Choose File
           </Button>
-          <Button onClick={handlePredict} className="flex-1" disabled={!selectedImage}>
-            Predict &gt;&gt;
+          <Button onClick={handlePredict} className="flex-1" disabled={!selectedImage || loading}>
+            {loading ? "Predicting..." : "Predict >>"}
           </Button>
         </div>
-
-        {prediction && prediction.top_predictions && (
-          <div className="relative w-full rounded-lg border border-white/80 bg-transparent px-4 py-3 text-sm text-foreground shadow-lg">
-            <h3 className="text-lg font-semibold text-white mb-2">Top 3 Predictions</h3>
-            {prediction.top_predictions.map((item, idx) => (
-              <div key={idx} className="flex items-center justify-between p-2 border-b border-white/30">
-                <span className="text-white/80">{item.class}</span>
-                <span className="text-white font-semibold">{(item.probability * 100).toFixed(2)}%</span>
-              </div>
-            ))}
-          </div>
-        )}
       </CardContent>
     </div>
   )
