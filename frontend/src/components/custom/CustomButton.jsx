@@ -35,10 +35,10 @@ const StyledWrapper = styled.div`
   }
 
   .button:hover {
-    background-color: #5298e3;
+    background-color: #6c88da;
     color: white;
     cursor: pointer;
-    border: #5298e3 0.14em solid;
+    border: #6c88da 0.14em solid;
   }
 
   .button img {

@@ -25,7 +25,7 @@ const LineChartComponent = () => {
           <Tooltip />
           <Legend />
           <Line type="monotone" dataKey="loss" stroke="#ff7f0f" strokeWidth={2} activeDot={{ r: 6 }} />
-          <Line type="monotone" dataKey="accuracy" stroke="#5298e3" strokeWidth={2} />
+          <Line type="monotone" dataKey="accuracy" stroke="#7b84ff" strokeWidth={2} />
         </LineChart>
       </ResponsiveContainer>
     </div>

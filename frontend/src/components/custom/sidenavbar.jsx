@@ -40,7 +40,7 @@ const Sidenavbar = () => {
             )}
             <div className={`z-9 fixed left-0 top-0 h-full w-sm bg-slate-950 flex flex-col px-5 transform ${isOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform md:translate-x-0`}>
                <SolarSystem/>
-                <h2 className="text-2xl p-4 ">EXPERIMENTAL RESULTS & ANALYTICS</h2>
+                <h2 className="text-3xl p-2 mb-4 ">EXPERIMENTAL RESULTS & ANALYTICS</h2>
                 <div>
                     <a
                         className={`tab ${activeTab === '/resnet' ? 'active' : ''}`}

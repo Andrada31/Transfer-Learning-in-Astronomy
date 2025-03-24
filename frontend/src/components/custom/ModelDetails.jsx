@@ -31,7 +31,7 @@ export default function ModelDetails({ defaultModel }) {
   const modelData = models[selectedModel]
 
   return (
-    <Card className="w-full max-w-4xl mx-auto bg-[#1e2545] border-[#2a3158] text-white">
+    <Card className="w-full max-w-4xl mx-auto bg-[#1e2545]/20 border-[#2a3158] text-white">
       <CardHeader>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <CardTitle className="text-3xl text-white">{modelData.modelName}</CardTitle>
@@ -53,13 +53,13 @@ export default function ModelDetails({ defaultModel }) {
       <CardContent>
         <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-3 bg-[#2a3158]">
-            <TabsTrigger value="overview" className="data-[state=active]:bg-[#161b36] data-[state=active]:text-white">
+            <TabsTrigger value="overview" className="data-[state=active]:bg-[#161b36] hover:bg-white hover:text-black data-[state=active]:text-white cursor-pointer">
               Overview
             </TabsTrigger>
-            <TabsTrigger value="architecture" className="data-[state=active]:bg-[#161b36] data-[state=active]:text-white">
+            <TabsTrigger value="architecture" className="data-[state=active]:bg-[#161b36] hover:bg-white hover:text-black data-[state=active]:text-white cursor-pointer">
               Architecture
             </TabsTrigger>
-            <TabsTrigger value="training" className="data-[state=active]:bg-[#161b36] data-[state=active]:text-white">
+            <TabsTrigger value="training" className="data-[state=active]:bg-[#161b36] hover:bg-white hover:text-black data-[state=active]:text-white cursor-pointer">
               Training & Evaluation
             </TabsTrigger>
           </TabsList>

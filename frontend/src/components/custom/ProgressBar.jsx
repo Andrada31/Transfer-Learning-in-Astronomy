@@ -43,8 +43,8 @@ export function ProgressBar({ sections }) {
             <button
               key={section.id}
               onClick={() => scrollToSection(index)}
-              className={`text-sm text-right transition-colors duration-300 hover:text-[#5298e3]
-                ${index <= activeSection ? "text-[#5298e3] font-medium" : "text-muted-foreground"}`}
+              className={`text-sm text-right transition-colors duration-300 hover:text-[#7b84ff]
+                ${index <= activeSection ? "text-[#6c88da] font-medium" : "text-muted-foreground"}`}
             >
               {section.title}
             </button>
@@ -56,7 +56,7 @@ export function ProgressBar({ sections }) {
 
         {/* Active line overlay */}
         <div
-          className="absolute left-1/2 transform -translate-x-1/2 w-0.5 bg-[#5298e3] transition-all duration-300"
+          className="absolute left-1/2 transform -translate-x-1/2 w-0.5 bg-[#6c88da] transition-all duration-300"
           style={{
             height: `${Math.min(lineHeight, 100)}%`,
             top: 0,
@@ -70,7 +70,7 @@ export function ProgressBar({ sections }) {
               <button
                 onClick={() => scrollToSection(index)}
                 className={`w-3 h-3 rounded-full border-2 transition-all duration-300
-                  ${index <= activeSection ? "border-[#5298e3] bg-[#5298e3]" : "border-[#5298e3] bg-white"}`}
+                  ${index <= activeSection ? "border-[#6c88da] bg-[#6c88da]" : "border-[#6c88da] bg-white"}`}
               />
             </div>
           ))}

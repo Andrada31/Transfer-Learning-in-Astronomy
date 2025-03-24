@@ -15,11 +15,6 @@ h1 {
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
-h2 {
-  font-size: 2em;
-  margin-top: 20px;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-}
 
 a{
     color: white;
@@ -36,46 +31,12 @@ a:hover{
     transition: background-color 0.3s;
 }
 
-input[type="file"] {
-  display: none;
-}
-
-label {
-  background-color: #5298e3;
-  color: white;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-label:hover {
-  background-color: #6ac9ca;
-}
-
-/*button {*/
-/*  background-color: #5298e3;*/
-/*  color: white;*/
-/*  padding: 10px 20px;*/
-/*  border: none;*/
-/*  border-radius: 5px;*/
-/*  cursor: pointer;*/
-/*  margin: 20px;*/
-/*  transition: background-color 0.3s;*/
-/*}*/
-
-button:hover {
-     background-color: #fff;
-    color: black;
-    cursor: pointer;
-}
-
 .tab{
   color: white;
   text-decoration: none;
-  font-size: 1.2em;
+  font-size: 1em;
   margin-bottom: 15px;
-  padding: 20px 20px;
+  padding: 12px 20px;
   display: block;
   transition: background-color 0.3s;
   border: none;
@@ -83,14 +44,14 @@ button:hover {
 }
 
 .tab:hover {
-  border-bottom-color: #5298e3;
-  background-color: #292a43;
+  border-bottom-color: #7c9fff;
+  background-color: #151847;
   color: #fff;
 }
 
 .tab.active{
-    border-bottom-color: #5298e3;
-    background-color: #292a43;
+    border-bottom-color: #7c9fff;
+    background-color: #151847;
     color: #fff;
 }
 

@@ -4,7 +4,8 @@ import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { Separator } from "@/components/ui/separator"
-import { Clock, Cpu, Database, ImageIcon, BarChart3, Info } from "lucide-react"
+import { Clock, Cpu, Database, ImageIcon, BarChart3, Info, Layers, Variable, Binary } from "lucide-react"
+// Layers icon for showing the number of layers
 import { cn } from "@/lib/utils"
 import { useIsMobile } from "@/services/use-mobile"
 
@@ -20,6 +21,7 @@ export function PredictionAnalyticsCard({
   datasetOrigin,
   modelParameters,
   flops,
+  numLayers,             // <-- Add numLayers prop
   onRemove,
   className,
 }) {
@@ -50,7 +52,7 @@ export function PredictionAnalyticsCard({
     >
       <CardHeader className="pb-2 border-b border-[#2A2C3F]">
         <CardTitle className="text-lg flex items-center gap-2 text-white">
-          <BarChart3 className="h-5 w-5 text-indigo-400" />
+          <BarChart3 className="h-5 w-5 text-[#6c88da]" />
           Prediction Analysis
         </CardTitle>
       </CardHeader>
@@ -58,7 +60,7 @@ export function PredictionAnalyticsCard({
       <CardContent className="space-y-6 pt-4">
         <div className="space-y-3">
           <h3 className="text-sm font-medium flex items-center gap-2 text-gray-300">
-            <ImageIcon className="h-4 w-4 text-indigo-400" />
+            <ImageIcon className="h-4 w-4 text-[#6c88da]" />
             Input Image
           </h3>
 
@@ -88,6 +90,7 @@ export function PredictionAnalyticsCard({
 
         <Separator className="bg-[#2A2C3F]" />
 
+        {/* Prediction info */}
         <div className="space-y-4">
           <div>
             <h3 className="text-sm font-medium mb-2 text-gray-300">Predicted Class</h3>
@@ -96,7 +99,7 @@ export function PredictionAnalyticsCard({
             <div className="mt-2 space-y-1">
               <div className="flex justify-between text-sm">
                 <span className="text-gray-400">Confidence</span>
-                <span className="font-medium text-indigo-300">
+                <span className="font-medium text-[#7c9fff]">
                   {formatConfidence(confidenceScore)}
                 </span>
               </div>
@@ -106,18 +109,19 @@ export function PredictionAnalyticsCard({
               />
             </div>
           </div>
+
           <div>
             <h3 className="text-sm font-medium mb-2 text-gray-300">Top Predictions</h3>
             <div className="space-y-2">
               {topPredictions.map((prediction, index) => {
                 const probability = prediction.probability
-                const label = prediction.class || prediction.className || "Unknown"
+                const label = prediction.class || "Unknown"
 
                 return (
                   <div key={index} className="space-y-1">
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-400">{label}</span>
-                      <span className="font-medium text-indigo-300">
+                      <span className="font-medium text-[#7c9fff]">
                         {formatConfidence(probability)}
                       </span>
                     </div>
@@ -134,9 +138,10 @@ export function PredictionAnalyticsCard({
 
         <Separator className="bg-[#2A2C3F]" />
 
+        {/* Model info */}
         <div className="space-y-3">
           <h3 className="text-sm font-medium flex items-center gap-2 text-gray-300">
-            <Info className="h-4 w-4 text-indigo-400" />
+            <Info className="h-4 w-4 text-[#85a6ff]" />
             Model Information
           </h3>
 
@@ -167,18 +172,33 @@ export function PredictionAnalyticsCard({
             </div>
             <div className="font-medium text-gray-300">{datasetOrigin || "N/A"}</div>
 
+            {/* Display the number of layers */}
+            {numLayers && (
+              <>
+                <div className="flex items-center gap-2">
+                  <Layers className="h-4 w-4 text-gray-500" />
+                  <span className="text-gray-500">Layers:</span>
+                </div>
+                <div className="font-medium text-gray-300">{numLayers}</div>
+              </>
+            )}
+
+            {/* Model parameters */}
             {modelParameters && (
               <>
                 <div className="flex items-center gap-2">
+                  <Variable className="h-4 w-4 text-gray-500" />
                   <span className="text-gray-500">Parameters:</span>
                 </div>
                 <div className="font-medium text-gray-300">{modelParameters}</div>
               </>
             )}
 
+            {/* FLOPs */}
             {flops && (
               <>
                 <div className="flex items-center gap-2">
+                  <Binary className="h-4 w-4 text-gray-500" />
                   <span className="text-gray-500">FLOPs:</span>
                 </div>
                 <div className="font-medium text-gray-300">{flops}</div>

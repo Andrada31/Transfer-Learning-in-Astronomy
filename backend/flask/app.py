@@ -17,7 +17,7 @@ Compress(app)
 MODEL_PATHS = {
     'vgg': '../models/saved/vgg16-v2.keras',
     'resnet': '../models/saved/resnet50.keras',
-    'efficientnet': '../models/saved/efficientnetB0.keras'
+    'efficientnet': '../models/saved/efficientnet-v2.keras'
 }
 
 loaded_models = {}

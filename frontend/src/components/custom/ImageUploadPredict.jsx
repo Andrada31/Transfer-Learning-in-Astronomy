@@ -5,8 +5,9 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { CardContent } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Upload, X } from "lucide-react"
+import {Info, Upload, X} from "lucide-react"
 import { uploadImage, predictImage } from "@/services/api"
+import { Telescope, Sparkles } from "lucide-react"
 
 const ALLOWED_FORMATS = ["image/jpeg", "image/jpg", "image/png", "image/webp"]
 const MODEL_NAMES = ["resnet", "efficientnet", "vgg"]
@@ -157,7 +158,7 @@ export function ImageUploadPredict({
               onClick={handleRemove}
               variant="ghost"
               size="icon"
-              className="absolute top-2 right-2 bg-gray-800 bg-opacity-70 hover:bg-opacity-100"
+              className="absolute top-2 right-2 bg-[#24275b]/50 hover:bg-opacity-100"
             >
               <X className="h-4 w-4" />
             </Button>
@@ -168,12 +169,13 @@ export function ImageUploadPredict({
           <Button
             onClick={() => document.getElementById("file-upload").click()}
             variant="outline"
-            className="flex-1"
+            className="flex-1 "
           >
             <Upload className="mr-2 h-4 w-4" /> Choose File
           </Button>
-          <Button onClick={handlePredict} className="flex-1" disabled={!selectedImage || loading}>
-            {loading ? "Predicting..." : "Predict >>"}
+          <Button onClick={handlePredict} className="flex-1 text-gray-300 hover:bg-[#6c88da]" variant="default" disabled={!selectedImage || loading}>
+            <Sparkles className="h-4 w-4 text-gray-300 hover:text-gray-900" />
+            {loading ? "Predicting..." : "Predict"}
           </Button>
         </div>
       </CardContent>

@@ -77,6 +77,7 @@ const Home = () => {
           inputSize={currentPrediction.input_size}
           datasetOrigin={currentPrediction.dataset_origin}
           modelParameters={currentPrediction.modelParameters}
+          numLayers={currentPrediction.numLayers}
           flops={currentPrediction.flops}
           onRemove={handleRemove}
         />

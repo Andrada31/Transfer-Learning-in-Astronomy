@@ -58,7 +58,7 @@ const StyledWrapper = styled.div`
 
   .item {
     padding: 15px 25px;
-    color: #5298e3;
+    color: #7b84ff;
     background: #1e1e29;
     margin-bottom: 5px;
   }
