@@ -127,68 +127,43 @@ def upload_image():
 
 @app.route('/api/predict', methods=['POST'])
 def predict():
-
     data = request.get_json()
-    print("Received request:", data)
-
     if not data or 'image' not in data or 'model' not in data:
         return jsonify({'error': 'Missing image or model'}), 400
 
     try:
         model_name = data['model']
-        print(f"Model selected: {model_name}")
-
-        start_time = time.time()
-
         image_data = base64.b64decode(data['image'].split(',')[1])
         img = Image.open(BytesIO(image_data))
+        orig_width, orig_height = img.size
         img_array = preprocess_image(img)
-
         model = get_model(model_name)
-        print("Top-level model layers:", [layer.name for layer in model.layers])
-
-        if isinstance(model.layers[0], tf.keras.Model):
-            print("Nested model detected:", model.layers[0].name)
-            print("Nested model layers:", [layer.name for layer in model.layers[0].layers])
-        else:
-            print("No nested model detected.")
-
+        start_time = time.time()
         prediction = model.predict(img_array)[0]
         inference_time = (time.time() - start_time) * 1000
-
-        top_indices = prediction.argsort()[::-1][:3]
-        top_predictions = [
-            {
-                'class': class_names[i],
-                'probability': float(prediction[i])
-            }
-            for i in top_indices
-        ]
-
         predicted_class_index = np.argmax(prediction)
-        activation_map_url = ""
-        if model_name == "vgg":
-            activation_map_url = compute_activation_map(model, img_array, predicted_class_index)
         perf = MODEL_PERFORMANCE[model_name]
 
         response_data = {
             'class': class_names[predicted_class_index],
             'probability': float(np.max(prediction)),
-            'top_predictions': top_predictions,
-            'activationMapUrl': activation_map_url,
             'inference_time': inference_time,
             'model_name': model_name,
-            'input_size': "224x224",
-            'dataset_origin': "Custom Dataset",
+            'input_size': f"{orig_width}x{orig_height}",
             'modelParameters': perf['modelParameters'],
             'flops': perf['flops'],
-            'numLayers': perf['numLayers']
+            'numLayers': perf['numLayers'],
         }
+
+        if model_name == "vgg":
+            activation_map_url = compute_activation_map(model, img_array, predicted_class_index)
+            response_data['activationMapUrl'] = activation_map_url
+
         return jsonify(response_data)
 
     except Exception as e:
-        print("Prediction Error:", str(e))
         return jsonify({'error': str(e)}), 500
+
 
 
 @app.route('/')

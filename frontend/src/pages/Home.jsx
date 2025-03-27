@@ -7,6 +7,8 @@ import { FaTerminal as Terminal } from "react-icons/fa6"
 import ModelSelector from "@/components/custom/ModelSelector"
 import { ImageUploadPredict } from "@/components/custom/ImageUploadPredict"
 import { PredictionAnalyticsCard } from "@/components/custom/prediction-analytics-card"
+import { HomeMetrics } from "@/components/custom/HomeMetrics"
+// import { heatmapData, imageSizes } from "@/data"
 
 const Home = () => {
   const [activeTab, setActiveTab] = useState("resnet")
@@ -16,6 +18,7 @@ const Home = () => {
   const handleModelChange = (model) => {
     setActiveTab(model)
   }
+
   const handleImageChange = (url) => {
     setImagePreview(url)
     setPredictionsByModel({})
@@ -44,8 +47,7 @@ const Home = () => {
   return (
     <div className="flex flex-col">
       <Sidenavbar />
-
-      <div className="pt-28 px-4 md:px-8">
+      <div className="pt-20 px-4 md:px-8">
         <Alert>
           <Terminal className="h-4 w-4" />
           <AlertTitle>Heads up!</AlertTitle>
@@ -56,7 +58,6 @@ const Home = () => {
 
         <h1 className="text-3xl my-4">DSO CLASSIFICATION TOOL</h1>
         <ModelSelector onModelChange={handleModelChange} />
-
         <ImageUploadPredict
           selectedModel={activeTab}
           onImageChange={handleImageChange}
@@ -82,6 +83,10 @@ const Home = () => {
           onRemove={handleRemove}
         />
       )}
+
+      <HomeMetrics
+        predictions={predictionsByModel}
+      />
       <div className="hidden md:block">
         <Tooltip />
       </div>

@@ -37,7 +37,6 @@ export function ProgressBar({ sections }) {
   return (
     <div className="fixed right-16 top-1/2 transform -translate-y-1/2 flex items-center">
       <div className="relative h-[700px] flex items-center">
-        {/* Section names */}
         <div className="absolute right-full mr-4 h-full flex flex-col justify-between">
           {sections.map((section, index) => (
             <button
@@ -51,10 +50,8 @@ export function ProgressBar({ sections }) {
           ))}
         </div>
 
-        {/* Vertical line */}
         <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-0.5 bg-white" />
 
-        {/* Active line overlay */}
         <div
           className="absolute left-1/2 transform -translate-x-1/2 w-0.5 bg-[#6c88da] transition-all duration-300"
           style={{
@@ -62,8 +59,6 @@ export function ProgressBar({ sections }) {
             top: 0,
           }}
         />
-
-        {/* Points */}
         <div className="relative h-full flex flex-col justify-between">
           {sections.map((section, index) => (
             <div key={section.id} className="flex items-center">

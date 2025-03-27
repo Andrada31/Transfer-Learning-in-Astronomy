@@ -5,9 +5,8 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { CardContent } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import {Info, Upload, X} from "lucide-react"
+import { Upload, X, Sparkles } from "lucide-react"
 import { uploadImage, predictImage } from "@/services/api"
-import { Telescope, Sparkles } from "lucide-react"
 
 const ALLOWED_FORMATS = ["image/jpeg", "image/jpg", "image/png", "image/webp"]
 const MODEL_NAMES = ["resnet", "efficientnet", "vgg"]
@@ -25,6 +24,7 @@ export function ImageUploadPredict({
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
 
+  // Handle file upload
   const handleUpload = useCallback(async (e) => {
     const file = e.target.files?.[0]
     if (file) {
@@ -48,6 +48,7 @@ export function ImageUploadPredict({
     }
   }, [onError, onImageChange])
 
+  // API call to run inference with a given model
   const runPredictionForModel = async (modelName, base64Image) => {
     try {
       const response = await predictImage(base64Image, modelName)
@@ -58,41 +59,49 @@ export function ImageUploadPredict({
     }
   }
 
+  // Predict with the selected model and all others in parallel
   const handlePredict = async () => {
     if (!selectedImage) return
     setLoading(true)
     setError(null)
 
-    let mainResult
     try {
-      mainResult = await runPredictionForModel(selectedModel, selectedImage)
-      setPredictionsByModel((prev) => ({ ...prev, [selectedModel]: mainResult }))
-      onAllPredictions?.((prev) => ({ ...prev, [selectedModel]: mainResult }))
+      // 1) Predict with the currently selected model
+      const mainResult = await runPredictionForModel(selectedModel, selectedImage)
+
+      // 2) Predict with the other models in parallel
+      const otherModels = MODEL_NAMES.filter((m) => m !== selectedModel)
+      const results = await Promise.all(
+        otherModels.map(async (modelName) => {
+          const result = await runPredictionForModel(modelName, selectedImage)
+          return [modelName, result]
+        })
+      )
+
+      // 3) Merge everything into a single object
+      const newPredictions = { [selectedModel]: mainResult }
+      for (const [modelName, result] of results) {
+        newPredictions[modelName] = result
+      }
+
+      // 4) Update local state once
+      setPredictionsByModel(newPredictions)
+
+      // 5) Update parent state once
+      onAllPredictions?.((prev) => ({
+        ...prev,
+        ...newPredictions,
+      }))
     } catch (err) {
       const message = err?.response?.data?.error || "Prediction failed"
       setError(message)
-      setLoading(false)
       onError?.(message)
-      return
+    } finally {
+      setLoading(false)
     }
-
-    //Fire off the other models in background
-    const otherModels = MODEL_NAMES.filter((m) => m !== selectedModel)
-    otherModels.forEach(async (model) => {
-      try {
-        const result = await runPredictionForModel(model, selectedImage)
-        setPredictionsByModel((prev) => {
-          const updated = { ...prev, [model]: result }
-          onAllPredictions?.(updated)
-          return updated
-        })
-      } catch (bgErr) {
-        console.error(`Error in background for ${model}:`, bgErr)
-      }
-    })
-    setLoading(false)
   }
 
+  // Remove the selected image and reset
   const handleRemove = () => {
     setSelectedImage(null)
     setImagePreview(null)
@@ -105,6 +114,7 @@ export function ImageUploadPredict({
     }
   }
 
+  // Handle drag-and-drop
   const onDrop = useCallback(
     (acceptedFiles) => handleUpload({ target: { files: acceptedFiles } }),
     [handleUpload]
@@ -133,6 +143,7 @@ export function ImageUploadPredict({
         )}
 
         {!imagePreview ? (
+          // Dropzone / placeholder
           <div
             className="border-2 border-dashed border-gray-300 rounded-lg p-20 text-center cursor-pointer flex items-center justify-center"
             onDrop={(e) => {
@@ -144,10 +155,13 @@ export function ImageUploadPredict({
           >
             <div>
               <Upload className="mx-auto h-24 w-12 text-gray-300" />
-              <p className="text-gray-300 text-[14px]">Click or drag and drop an image here</p>
+              <p className="text-gray-300 text-[14px]">
+                Click or drag and drop an image here
+              </p>
             </div>
           </div>
         ) : (
+          // Preview + remove button
           <div className="mt-4 relative flex justify-center items-center">
             <img
               src={imagePreview}
@@ -165,15 +179,20 @@ export function ImageUploadPredict({
           </div>
         )}
 
-        <div className="my-4 mb-10 flex gap-2">
+        <div className="my-4 mb-4 flex gap-2">
           <Button
             onClick={() => document.getElementById("file-upload").click()}
             variant="outline"
-            className="flex-1 "
+            className="flex-1"
           >
             <Upload className="mr-2 h-4 w-4" /> Choose File
           </Button>
-          <Button onClick={handlePredict} className="flex-1 text-gray-300 hover:bg-[#6c88da]" variant="default" disabled={!selectedImage || loading}>
+          <Button
+            onClick={handlePredict}
+            className="flex-1 text-gray-300 hover:bg-[#6c88da]"
+            variant="default"
+            disabled={!selectedImage || loading}
+          >
             <Sparkles className="h-4 w-4 text-gray-300 hover:text-gray-900" />
             {loading ? "Predicting..." : "Predict"}
           </Button>

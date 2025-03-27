@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { Separator } from "@/components/ui/separator"
 import { Clock, Cpu, Database, ImageIcon, BarChart3, Info, Layers, Variable, Binary } from "lucide-react"
-// Layers icon for showing the number of layers
 import { cn } from "@/lib/utils"
 import { useIsMobile } from "@/services/use-mobile"
 
@@ -21,7 +20,7 @@ export function PredictionAnalyticsCard({
   datasetOrigin,
   modelParameters,
   flops,
-  numLayers,             // <-- Add numLayers prop
+  numLayers,
   onRemove,
   className,
 }) {
@@ -90,7 +89,6 @@ export function PredictionAnalyticsCard({
 
         <Separator className="bg-[#2A2C3F]" />
 
-        {/* Prediction info */}
         <div className="space-y-4">
           <div>
             <h3 className="text-sm font-medium mb-2 text-gray-300">Predicted Class</h3>
@@ -137,8 +135,6 @@ export function PredictionAnalyticsCard({
         </div>
 
         <Separator className="bg-[#2A2C3F]" />
-
-        {/* Model info */}
         <div className="space-y-3">
           <h3 className="text-sm font-medium flex items-center gap-2 text-gray-300">
             <Info className="h-4 w-4 text-[#85a6ff]" />
@@ -172,7 +168,6 @@ export function PredictionAnalyticsCard({
             </div>
             <div className="font-medium text-gray-300">{datasetOrigin || "N/A"}</div>
 
-            {/* Display the number of layers */}
             {numLayers && (
               <>
                 <div className="flex items-center gap-2">
@@ -183,7 +178,6 @@ export function PredictionAnalyticsCard({
               </>
             )}
 
-            {/* Model parameters */}
             {modelParameters && (
               <>
                 <div className="flex items-center gap-2">
@@ -194,7 +188,6 @@ export function PredictionAnalyticsCard({
               </>
             )}
 
-            {/* FLOPs */}
             {flops && (
               <>
                 <div className="flex items-center gap-2">

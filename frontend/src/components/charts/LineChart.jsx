@@ -21,7 +21,7 @@ const LineChartComponent = () => {
         >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
-          <YAxis domain={[0, 1]} /> {/* Focuses on 0 to 1 range for better contrast */}
+          <YAxis domain={[0, 1]} />
           <Tooltip />
           <Legend />
           <Line type="monotone" dataKey="loss" stroke="#ff7f0f" strokeWidth={2} activeDot={{ r: 6 }} />
