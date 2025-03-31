@@ -79,7 +79,7 @@ export function PredictionAnalyticsCard({
             {activationMapUrl && (
               <button
                 onClick={() => setShowActivationMap(!showActivationMap)}
-                className="absolute bottom-2 right-2 bg-[#1E1F2E]/90 text-xs px-2 py-1 rounded-md backdrop-blur-sm text-white hover:bg-[#2A2C3F]/90 transition-colors"
+                className="absolute bottom-2 right-2 bg-[#1E1F2E]/90 text-xs px-2 py-1 rounded-md backdrop-blur-sm text-white hover:bg-[#6c88da]/90 transition-colors cursor-pointer"
               >
                 {showActivationMap ? "Show Original" : "Show Activation Map"}
               </button>

@@ -23,6 +23,14 @@ MODEL_PATHS = {
 loaded_models = {}
 class_names = ['clusters', 'galaxies', 'nebulae']
 
+# A helper dict that points each model to the name of the last conv layer
+LAST_CONV_LAYER = {
+    'vgg': 'block5_conv3',           # as before
+    'resnet': 'conv5_block3_out',    # typical final conv block in ResNet50
+    'efficientnet': 'top_conv',      # typical final conv in EfficientNetV2
+}
+
+
 MODEL_PERFORMANCE = {
     'vgg': {
         'modelParameters': "138M",
@@ -65,17 +73,24 @@ def get_model(model_name):
     return loaded_models[model_name]
 
 
-def compute_activation_map(model, img_array, predicted_class_index):
+def compute_activation_map(model_name, model, img_array, predicted_class_index):
     try:
-        preds = model.predict(img_array)
-        nested_vgg = model.layers[0]
-        if not isinstance(nested_vgg, tf.keras.Model):
-            print("First layer is not a nested functional model. Can't compute Grad-CAM.")
+        # If the model is EfficientNet, we grab the nested submodel and last conv
+        if model_name == "efficientnet":
+            submodel = model.get_layer("efficientnetb0")  # <== your nested submodel name
+            conv_layer = submodel.get_layer("top_conv")   # <== adjust if not actually "top_conv"
+        elif model_name == "vgg":
+            conv_layer = model.get_layer("block5_conv3")
+        elif model_name == "resnet":
+            conv_layer = model.get_layer("conv5_block3_out")
+        else:
             return ""
 
-        conv_layer = nested_vgg.get_layer('block5_conv3')
-        grad_model = tf.keras.Model(inputs=nested_vgg.inputs,
-                                    outputs=[conv_layer.output, model.output])
+        # Build a grad_model that returns (conv_activations, predictions)
+        grad_model = tf.keras.models.Model(
+            inputs=model.inputs,
+            outputs=[conv_layer.output, model.output]
+        )
 
         with tf.GradientTape() as tape:
             conv_outputs, predictions = grad_model(img_array)
@@ -84,14 +99,16 @@ def compute_activation_map(model, img_array, predicted_class_index):
         grads = tape.gradient(loss, conv_outputs)
         pooled_grads = tf.reduce_mean(grads, axis=(0, 1, 2))
 
-        conv_outputs = conv_outputs[0]
-        conv_outputs = conv_outputs * pooled_grads
+        # Multiply each channel by its "importance" to the predicted class
+        conv_outputs = conv_outputs[0] * pooled_grads
         heatmap = tf.reduce_sum(conv_outputs, axis=-1)
         heatmap = tf.nn.relu(heatmap)
 
+        # Normalize heatmap to [0, 1]
         heatmap /= tf.reduce_max(heatmap)
         heatmap = heatmap.numpy()
 
+        # Resize, colorize with OpenCV, and convert to base64
         heatmap = cv2.resize(heatmap, (224, 224))
         heatmap = np.uint8(255 * heatmap)
         heatmap = cv2.applyColorMap(heatmap, cv2.COLORMAP_JET)
@@ -100,12 +117,12 @@ def compute_activation_map(model, img_array, predicted_class_index):
         buffer = BytesIO()
         pil_img.save(buffer, format="PNG")
         activation_map_data = base64.b64encode(buffer.getvalue()).decode("utf-8")
-
         return f"data:image/png;base64,{activation_map_data}"
 
     except Exception as e:
-        print("Grad-CAM error:", e)
+        print(f"Grad-CAM error for {model_name}: {e}")
         return ""
+
 
 
 @app.route('/api/upload', methods=['POST'])
@@ -155,9 +172,10 @@ def predict():
             'numLayers': perf['numLayers'],
         }
 
-        if model_name == "vgg":
-            activation_map_url = compute_activation_map(model, img_array, predicted_class_index)
-            response_data['activationMapUrl'] = activation_map_url
+        # Always compute Grad-CAM (or activation map) for the chosen model
+        activation_map_url = compute_activation_map(model_name, model, img_array, predicted_class_index)
+        response_data['activationMapUrl'] = activation_map_url
+
 
         return jsonify(response_data)
 

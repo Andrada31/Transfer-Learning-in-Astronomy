@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/drawer"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Info, ChevronDown } from "lucide-react"
+import { Info, ChevronDown, X, Clock, Binary, Variable } from "lucide-react"
 import {
   Radar,
   RadarChart,
@@ -23,6 +23,7 @@ import {
   Tooltip,
   Legend,
 } from "recharts"
+import {Separator} from "@/components/ui/separator";
 
 function HeatmapGrid({ data, models, sizes }) {
   if (!data || !data.length) {
@@ -144,15 +145,15 @@ function GaugeChart({ value = 0, model = "", color = "#60a5fa" }) {
   )
 }
 
+function parseValue(str) {
+  if (!str) return 0
+  const numeric = parseFloat(str)
+  return isNaN(numeric) ? 0 : numeric
+}
+
 export function HomeMetrics({
   predictions = {},
   models = ["ResNet50", "EfficientNetB0", "VGG16"],
-  radarData = [
-    { metric: "Accuracy (%)", ResNet50: 76.2, EfficientNetB0: 70.5, VGG16: 71.3, fullMark: 100 },
-    { metric: "Parameters (M)", ResNet50: 25.6, EfficientNetB0: 5.3, VGG16: 138, fullMark: 150 },
-    { metric: "FLOPs (B)", ResNet50: 4.1, EfficientNetB0: 0.4, VGG16: 15.5, fullMark: 20 },
-    { metric: "Inference Time (ms)", ResNet50: 45, EfficientNetB0: 25, VGG16: 60, fullMark: 100 },
-  ],
   heatmapData = [],
   imageSizes = [],
   modelColors = {
@@ -170,23 +171,65 @@ export function HomeMetrics({
   const flops = data.flops || ""
   const params = data.modelParameters || ""
 
+  const rRes = predictions.resnet || {}
+  const rEff = predictions.efficientnet || {}
+  const rVgg = predictions.vgg || {}
+
+  const dynamicRadarData = React.useMemo(() => {
+    return [
+      {
+        metric: "Accuracy (%)",
+        ResNet50: Math.round((rRes.probability || 0) * 100),
+        EfficientNetB0: Math.round((rEff.probability || 0) * 100),
+        VGG16: Math.round((rVgg.probability || 0) * 100),
+        fullMark: 100
+      },
+      {
+        metric: "Parameters (M)",
+        ResNet50: parseValue(rRes.modelParameters),
+        EfficientNetB0: parseValue(rEff.modelParameters),
+        VGG16: parseValue(rVgg.modelParameters),
+        fullMark: 150
+      },
+      {
+        metric: "FLOPs (B)",
+        ResNet50: parseValue(rRes.flops),
+        EfficientNetB0: parseValue(rEff.flops),
+        VGG16: parseValue(rVgg.flops),
+        fullMark: 20
+      },
+      {
+        metric: "Inference Time (ms)",
+        ResNet50: Math.round(rRes.inference_time || 0),
+        EfficientNetB0: Math.round(rEff.inference_time || 0),
+        VGG16: Math.round(rVgg.inference_time || 0),
+        fullMark: 100
+      }
+    ]
+  }, [rRes, rEff, rVgg])
+
   return (
     <Drawer modal>
       <DrawerTrigger asChild>
         <Button
           variant="outline"
-          className="mx-auto w-fit flex items-center gap-2 px-4 py-2 text-sm bg-[#151727] text-white border border-[#2a2d3d] hover:bg-[#1c1f36]"
+          className="mx-auto w-fit flex items-center gap-2 px-4 py-2 text-sm bg-[#151727] text-white border border-[#2A2C3F] hover:bg-[#fff]"
         >
           <Info className="h-4 w-4" />
           <span>Model Performance</span>
           <ChevronDown className="h-4 w-4" />
         </Button>
       </DrawerTrigger>
-      <DrawerContent className="bg-[#151727] text-white max-h-[90vh] mx-auto w-full sm:max-w-[90%] md:max-w-[70%] lg:max-w-[50%] xl:max-w-[40%] rounded-t-lg">
+      <DrawerContent className="bg-[linear-gradient(135deg,_rgba(37,42,98,0.85),_rgba(0,0,0,0.65),_rgba(2,2,2,0.75))] backdrop-blur-md text-white max-h-[90vh] mx-auto w-full sm:max-w-[90%] md:max-w-[70%] lg:max-w-[50%] xl:max-w-[40%] rounded-t-lg">
         <div className="mx-auto w-full">
-          <DrawerHeader className="sticky top-0 z-10 bg-[#151727]">
-            <DrawerTitle className="text-2xl">Deep Learning Model Performance</DrawerTitle>
-            <DrawerDescription>Compare metrics across different deep learning models</DrawerDescription>
+          <DrawerHeader className="sticky top-0 z-10">
+            <DrawerTitle className="text-2xl flex justify-center">Model Comparison Charts</DrawerTitle>
+            <DrawerClose asChild>
+              <Button variant="ghost" className="absolute top-4 right-4 p-5 hover:bg-opacity-100 cursor-pointer" aria-label="Close">
+                <X className="h-2 w-2 back bg-[#24275b]/50 " />
+              </Button>
+            </DrawerClose>
+            {/*<DrawerDescription className=" flex justify-center">Compare metrics across the CNNs</DrawerDescription>*/}
           </DrawerHeader>
           <div className="p-4 space-y-6 overflow-y-auto max-h-[calc(90vh-10rem)] pb-32">
             <div className="flex justify-center space-x-4 mb-4">
@@ -204,24 +247,76 @@ export function HomeMetrics({
                 </Button>
               ))}
             </div>
-            <Card className="bg-[#1c1f36] border-[#2a2d3d]">
-              <CardHeader>
-                <CardTitle>Confidence Score</CardTitle>
-                <CardDescription>Prediction confidence for the selected model</CardDescription>
-              </CardHeader>
-              <CardContent className="flex justify-center">
-                <GaugeChart value={confidence} model={selectedModel} color={modelColors[selectedModel]} />
+           <Card className="border-[#2A2C3F]">
+              <CardContent>
+                {/* Two columns: left for gauge, right for details */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Left column: Confidence Score Gauge */}
+                  <div>
+                    <CardHeader>
+                      <CardTitle className="font-semibold text-xl flex justify-center">
+                        Confidence Score
+                      </CardTitle>
+                      <Separator className="bg-[#2A2C3F]" />
+                    </CardHeader>
+                    <div className="flex justify-center">
+                      <GaugeChart
+                        value={confidence}
+                        model={selectedModel}
+                        color={modelColors[selectedModel]}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Right column: Model Details (3 rows) */}
+                  <div>
+                    <CardHeader>
+                      <CardTitle className="font-semibold text-xl flex justify-center">
+                        Model Details
+                      </CardTitle>
+                      <Separator className="bg-[#2A2C3F]" />
+                    </CardHeader>
+                    <div className="grid grid-rows-3 gap-4 text-center">
+                      {/* Inference */}
+                      <div>
+                        <div className="flex items-center justify-center gap-2">
+                          <Clock className="h-4 w-4 text-gray-400"/>
+                          <span className="text-gray-400">Inference</span>
+                        </div>
+                        <p className="text-lg">{inference} ms</p>
+                      </div>
+
+                      {/* FLOPs */}
+                      <div>
+                        <div className="flex items-center justify-center gap-2">
+                          <Binary className="h-4 w-4 text-gray-400"/>
+                          <span className="text-gray-400">FLOPs</span>
+                        </div>
+                        <p className="text-lg">{flops}</p>
+                      </div>
+
+                      {/* Parameters */}
+                      <div>
+                        <div className="flex items-center justify-center gap-2">
+                          <Variable className="h-4 w-4 text-gray-400"/>
+                          <span className="text-gray-400">Parameters</span>
+                        </div>
+                        <p className="text-lg">{params}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </CardContent>
             </Card>
-            <Card className="bg-[#1c1f36] border-[#2a2d3d]">
+
+            <Card className="border-[#2A2C3F]">
               <CardHeader>
-                <CardTitle>Model Comparison</CardTitle>
-                <CardDescription>Performance metrics across different models</CardDescription>
+                <CardTitle className="font-semibold text-xl flex justify-center">Polar Grid Comparison</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="h-[350px] w-full">
                   <ResponsiveContainer width="100%" height="100%">
-                    <RadarChart outerRadius={90} data={radarData}>
+                    <RadarChart outerRadius={90} data={dynamicRadarData}>
                       <PolarGrid />
                       <PolarAngleAxis dataKey="metric" />
                       <PolarRadiusAxis angle={30} domain={[0, "auto"]} />
@@ -242,27 +337,7 @@ export function HomeMetrics({
                 </div>
               </CardContent>
             </Card>
-            <Card className="bg-[#1c1f36] border-[#2a2d3d]">
-              <CardHeader>
-                <CardTitle>Model Details</CardTitle>
-                <CardDescription>Inference time, FLOPs, and parameters</CardDescription>
-              </CardHeader>
-              <CardContent className="grid grid-cols-3 gap-4 text-center">
-                <div>
-                  <p className="font-semibold text-lg">Inference</p>
-                  <p className="text-sm">{inference} ms</p>
-                </div>
-                <div>
-                  <p className="font-semibold text-lg">FLOPs</p>
-                  <p className="text-sm">{flops}</p>
-                </div>
-                <div>
-                  <p className="font-semibold text-lg">Parameters</p>
-                  <p className="text-sm">{params}</p>
-                </div>
-              </CardContent>
-            </Card>
-            <Card className="bg-[#1c1f36] border-[#2a2d3d]">
+            <Card className="border-[#2A2C3F]">
               <CardHeader>
                 <CardTitle>Latency by Input Size</CardTitle>
                 <CardDescription>Prediction latency (ms) for different input image sizes</CardDescription>
@@ -272,10 +347,10 @@ export function HomeMetrics({
               </CardContent>
             </Card>
           </div>
-          <DrawerFooter className="bg-[#151727] sticky bottom-0 z-10">
-            <DrawerClose asChild>
-              <Button variant="default">Close</Button>
-            </DrawerClose>
+          <DrawerFooter className="bg-[#020617]/20 sticky bottom-0 z-10">
+            {/*<DrawerClose asChild>*/}
+            {/*  <Button variant="default">Close</Button>*/}
+            {/*</DrawerClose>*/}
           </DrawerFooter>
         </div>
       </DrawerContent>

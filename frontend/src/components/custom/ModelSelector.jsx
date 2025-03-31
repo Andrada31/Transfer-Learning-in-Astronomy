@@ -3,7 +3,6 @@ import React, { useState } from "react";
 const ModelSelector = ({ onModelChange }) => {
   const [activeTab, setActiveTab] = useState("resnet");
 
-  // Map from internal identifiers to display labels
   const modelLabels = {
     resnet: "ResNet-50",
     efficientnet: "EfficientNetB0",
