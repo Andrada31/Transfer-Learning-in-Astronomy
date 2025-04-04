@@ -6,6 +6,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { FaTerminal as Terminal } from "react-icons/fa6"
 import ModelSelector from "@/components/custom/ModelSelector"
 import { ImageUploadPredict } from "@/components/custom/ImageUploadPredict"
+import {ImageUploaderActivationMap} from "@/components/custom/ImageUploader_ActivationMap"
 import { PredictionAnalyticsCard } from "@/components/custom/prediction-analytics-card"
 import { HomeMetrics } from "@/components/custom/HomeMetrics"
 // import { heatmapData, imageSizes } from "@/data"
@@ -58,12 +59,19 @@ const Home = () => {
 
         <h1 className="text-3xl my-4">DSO CLASSIFICATION TOOL</h1>
         <ModelSelector onModelChange={handleModelChange} />
-        <ImageUploadPredict
+        {/*<ImageUploadPredict*/}
+        {/*  selectedModel={activeTab}*/}
+        {/*  onImageChange={handleImageChange}*/}
+        {/*  onAllPredictions={handleAllPredictions}*/}
+        {/*  onError={handleError}*/}
+        {/*/>*/}
+        <ImageUploaderActivationMap
           selectedModel={activeTab}
           onImageChange={handleImageChange}
           onAllPredictions={handleAllPredictions}
           onError={handleError}
         />
+
       </div>
 
       {imagePreview && currentPrediction && (

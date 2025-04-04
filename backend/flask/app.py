@@ -24,12 +24,11 @@ loaded_models = {}
 class_names = ['clusters', 'galaxies', 'nebulae']
 
 # A helper dict that points each model to the name of the last conv layer
-LAST_CONV_LAYER = {
-    'vgg': 'block5_conv3',           # as before
-    'resnet': 'conv5_block3_out',    # typical final conv block in ResNet50
-    'efficientnet': 'top_conv',      # typical final conv in EfficientNetV2
-}
-
+# LAST_CONV_LAYER = {
+#     'vgg': 'block5_conv3',
+#     'resnet': 'conv5_block3_out',
+#     'efficientnet': 'top_conv',
+# }
 
 MODEL_PERFORMANCE = {
     'vgg': {
@@ -49,7 +48,6 @@ MODEL_PERFORMANCE = {
     }
 }
 
-
 def preprocess_image(image):
     img = image.convert("RGB")
     img = img.resize((224, 224))
@@ -58,96 +56,86 @@ def preprocess_image(image):
     img_array = np.expand_dims(img_array, axis=0)
     return img_array
 
-
 def get_model(model_name):
     if model_name not in MODEL_PATHS:
         raise ValueError(f"Model '{model_name}' is not supported.")
-
     if not os.path.exists(MODEL_PATHS[model_name]):
-        raise FileNotFoundError(f"Model '{model_name}' is not available yet: {MODEL_PATHS[model_name]}")
-
+        raise FileNotFoundError(f"Model '{model_name}' is not available: {MODEL_PATHS[model_name]}")
     if model_name not in loaded_models:
         print(f"Loading model '{model_name}' from disk...")
         loaded_models[model_name] = tf.keras.models.load_model(MODEL_PATHS[model_name])
-
     return loaded_models[model_name]
 
+def compute_activation_maps(model_name, model, img_array, predicted_class_index):
+    layer_names = {
+        'vgg': ['block1_conv2', 'block2_conv2', 'block3_conv3', 'block4_conv3', 'block5_conv3'],
+        'resnet': ['conv1_relu', 'conv2_block3_out', 'conv3_block4_out', 'conv4_block6_out', 'conv5_block3_out'],
+        'efficientnet': ['block2b_add', 'block3b_add', 'block5c_add', 'block6d_add', 'top_conv']
+    }
 
-def compute_activation_map(model_name, model, img_array, predicted_class_index):
-    try:
-        # If the model is EfficientNet, we grab the nested submodel and last conv
-        if model_name == "efficientnet":
-            submodel = model.get_layer("efficientnetb0")  # <== your nested submodel name
-            conv_layer = submodel.get_layer("top_conv")   # <== adjust if not actually "top_conv"
-        elif model_name == "vgg":
-            conv_layer = model.get_layer("block5_conv3")
-        elif model_name == "resnet":
-            conv_layer = model.get_layer("conv5_block3_out")
-        else:
-            return ""
+    selected_layers = layer_names.get(model_name, [])
+    activation_maps = []
 
-        # Build a grad_model that returns (conv_activations, predictions)
-        grad_model = tf.keras.models.Model(
-            inputs=model.inputs,
-            outputs=[conv_layer.output, model.output]
-        )
+    for layer_name in selected_layers:
+        try:
+            if model_name == "efficientnet":
+                submodel = model.get_layer("efficientnetb3")
+                conv_layer = submodel.get_layer(layer_name)
+            else:
+                conv_layer = model.get_layer(layer_name)
 
-        with tf.GradientTape() as tape:
-            conv_outputs, predictions = grad_model(img_array)
-            loss = predictions[:, predicted_class_index]
+            grad_model = tf.keras.models.Model(
+                inputs=model.inputs,
+                outputs=[conv_layer.output, model.output]
+            )
 
-        grads = tape.gradient(loss, conv_outputs)
-        pooled_grads = tf.reduce_mean(grads, axis=(0, 1, 2))
+            with tf.GradientTape() as tape:
+                conv_outputs, predictions = grad_model(img_array)
+                loss = predictions[:, predicted_class_index]
 
-        # Multiply each channel by its "importance" to the predicted class
-        conv_outputs = conv_outputs[0] * pooled_grads
-        heatmap = tf.reduce_sum(conv_outputs, axis=-1)
-        heatmap = tf.nn.relu(heatmap)
+            grads = tape.gradient(loss, conv_outputs)
+            pooled_grads = tf.reduce_mean(grads, axis=(0, 1, 2))
 
-        # Normalize heatmap to [0, 1]
-        heatmap /= tf.reduce_max(heatmap)
-        heatmap = heatmap.numpy()
+            conv_outputs = conv_outputs[0] * pooled_grads
+            heatmap = tf.reduce_sum(conv_outputs, axis=-1)
+            heatmap = tf.nn.relu(heatmap)
+            heatmap /= tf.reduce_max(heatmap)
+            heatmap = heatmap.numpy()
+            heatmap = cv2.resize(heatmap, (224, 224))
+            heatmap = np.uint8(255 * heatmap)
+            heatmap = cv2.applyColorMap(heatmap, cv2.COLORMAP_JET)
 
-        # Resize, colorize with OpenCV, and convert to base64
-        heatmap = cv2.resize(heatmap, (224, 224))
-        heatmap = np.uint8(255 * heatmap)
-        heatmap = cv2.applyColorMap(heatmap, cv2.COLORMAP_JET)
+            pil_img = Image.fromarray(heatmap)
+            buffer = BytesIO()
+            pil_img.save(buffer, format="PNG")
+            activation_map_data = base64.b64encode(buffer.getvalue()).decode("utf-8")
+            activation_maps.append(f"data:image/png;base64,{activation_map_data}")
 
-        pil_img = Image.fromarray(heatmap)
-        buffer = BytesIO()
-        pil_img.save(buffer, format="PNG")
-        activation_map_data = base64.b64encode(buffer.getvalue()).decode("utf-8")
-        return f"data:image/png;base64,{activation_map_data}"
+        except Exception as e:
+            print(f"Error generating activation map for {layer_name} ({model_name}): {e}")
+            activation_maps.append("")
 
-    except Exception as e:
-        print(f"Grad-CAM error for {model_name}: {e}")
-        return ""
-
+    return activation_maps
 
 
 @app.route('/api/upload', methods=['POST'])
 def upload_image():
     if 'file' not in request.files or request.files['file'].filename == '':
         return jsonify({'error': 'No file selected'}), 400
-
     file = request.files['file']
     img = Image.open(file.stream)
-
     img_buffer = BytesIO()
     img.save(img_buffer, format="PNG")
     img_buffer.seek(0)
     uploaded_image_data = img_buffer.read()
-
     img_base64 = base64.b64encode(uploaded_image_data).decode('utf-8')
     return jsonify({'image': f'data:image/png;base64,{img_base64}'})
-
 
 @app.route('/api/predict', methods=['POST'])
 def predict():
     data = request.get_json()
     if not data or 'image' not in data or 'model' not in data:
         return jsonify({'error': 'Missing image or model'}), 400
-
     try:
         model_name = data['model']
         image_data = base64.b64decode(data['image'].split(',')[1])
@@ -159,8 +147,14 @@ def predict():
         prediction = model.predict(img_array)[0]
         inference_time = (time.time() - start_time) * 1000
         predicted_class_index = np.argmax(prediction)
+        sorted_indices = np.argsort(prediction)[::-1]
+        top_predictions = []
+        for idx in sorted_indices:
+            top_predictions.append({
+                "class": class_names[idx],
+                "probability": float(prediction[idx])
+            })
         perf = MODEL_PERFORMANCE[model_name]
-
         response_data = {
             'class': class_names[predicted_class_index],
             'probability': float(np.max(prediction)),
@@ -170,25 +164,19 @@ def predict():
             'modelParameters': perf['modelParameters'],
             'flops': perf['flops'],
             'numLayers': perf['numLayers'],
+            'top_predictions': top_predictions  # Updated key to match frontend
         }
-
-        # Always compute Grad-CAM (or activation map) for the chosen model
-        activation_map_url = compute_activation_map(model_name, model, img_array, predicted_class_index)
-        response_data['activationMapUrl'] = activation_map_url
-
+        activation_map_urls = compute_activation_maps(model_name, model, img_array, predicted_class_index)
+        response_data['activationMapUrls'] = activation_map_urls  # return list instead of single URL
 
         return jsonify(response_data)
-
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
-
 
 @app.route('/')
 @app.route('/<path:path>')
 def serve_frontend(path=''):
     return send_from_directory(app.static_folder, 'index.html')
-
 
 if __name__ == '__main__':
     app.run(debug=True)

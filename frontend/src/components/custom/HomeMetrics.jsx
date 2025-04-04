@@ -220,10 +220,11 @@ export function HomeMetrics({
           <ChevronDown className="h-4 w-4" />
         </Button>
       </DrawerTrigger>
-      <DrawerContent className="bg-[linear-gradient(135deg,_rgba(37,42,98,0.85),_rgba(0,0,0,0.65),_rgba(2,2,2,0.75))] backdrop-blur-md text-white max-h-[90vh] mx-auto w-full sm:max-w-[90%] md:max-w-[70%] lg:max-w-[50%] xl:max-w-[40%] rounded-t-lg">
+      <DrawerContent className="bg-[linear-gradient(135deg,_rgba(37,42,98,0.85),_rgba(0,0,0,0.65),_rgba(2,2,2,0.75))] backdrop-blur-md text-white max-h-[90vh] mx-auto w-full sm:max-w-[100%] md:max-w-[70%] lg:max-w-[90%] xl:max-w-[50%] rounded-t-lg">
         <div className="mx-auto w-full">
-          <DrawerHeader className="sticky top-0 z-10">
-            <DrawerTitle className="text-2xl flex justify-center">Model Comparison Charts</DrawerTitle>
+          <DrawerHeader className="sticky top-0 z-10 border-b-0 border-white
+            shadow-[0_4px_6px_rgba(255,255,255,0.1)]">
+            <DrawerTitle className="text-2xl mb-4 flex justify-center">Model Comparison Charts</DrawerTitle>
             <DrawerClose asChild>
               <Button variant="ghost" className="absolute top-4 right-4 p-5 hover:bg-opacity-100 cursor-pointer" aria-label="Close">
                 <X className="h-2 w-2 back bg-[#24275b]/50 " />

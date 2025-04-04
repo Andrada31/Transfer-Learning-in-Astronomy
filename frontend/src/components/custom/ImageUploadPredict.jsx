@@ -20,6 +20,8 @@ export function ImageUploadPredict({
   const [selectedImage, setSelectedImage] = useState(null)
   const [imagePreview, setImagePreview] = useState(null)
   const [predictionsByModel, setPredictionsByModel] = useState({})
+  const [showActivationMap, setShowActivationMap] = useState(false)
+
 
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -162,28 +164,43 @@ export function ImageUploadPredict({
           </div>
         ) : (
           // Preview + remove button
-          <div className="mt-4 relative flex justify-center items-center">
-            <img
-              src={imagePreview}
-              alt="Selected"
-              className="max-w-full max-h-[90vh] object-scale-down rounded-lg"
-            />
-            <Button
-              onClick={handleRemove}
-              variant="ghost"
-              size="icon"
-              className="absolute top-2 right-2 bg-[#24275b]/50 hover:bg-opacity-100"
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
+            <div className="mt-4 relative flex justify-center items-center">
+              <img
+                  src={
+                    showActivationMap && predictionsByModel[selectedModel]?.activationMapUrl
+                        ? predictionsByModel[selectedModel].activationMapUrl
+                        : imagePreview
+                  }
+                  alt="Selected"
+                  className="max-w-full max-h-[90vh] object-scale-down rounded-lg"
+              />
+
+              <Button
+                  onClick={handleRemove}
+                  variant="ghost"
+                  size="icon"
+                  className="absolute top-2 right-2 bg-[#24275b]/50 hover:bg-opacity-100"
+              >
+                <X className="h-4 w-4"/>
+              </Button>
+              {/*{predictionsByModel[selectedModel]?.activationMapUrl && (*/}
+              {/*  <button*/}
+              {/*    onClick={() => setShowActivationMap(!showActivationMap)}*/}
+              {/*    className="absolute bottom-2 right-2 bg-[#1E1F2E]/90 text-xs px-2 py-1*/}
+              {/*               rounded-md backdrop-blur-sm text-white hover:bg-[#6c88da]/90*/}
+              {/*               transition-colors cursor-pointer"*/}
+              {/*  >*/}
+              {/*    {showActivationMap ? "Show Original" : "Show Activation Map"}*/}
+              {/*  </button>*/}
+              {/*)}*/}
+            </div>
         )}
 
         <div className="my-4 mb-4 flex gap-2">
           <Button
-            onClick={() => document.getElementById("file-upload").click()}
-            variant="outline"
-            className="flex-1"
+              onClick={() => document.getElementById("file-upload").click()}
+              variant="outline"
+              className="flex-1"
           >
             <Upload className="mr-2 h-4 w-4" /> Choose File
           </Button>
