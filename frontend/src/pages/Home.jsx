@@ -9,6 +9,7 @@ import { ImageUploadPredict } from "@/components/custom/ImageUploadPredict"
 import {ImageUploaderActivationMap} from "@/components/custom/ImageUploader_ActivationMap"
 import { PredictionAnalyticsCard } from "@/components/custom/prediction-analytics-card"
 import { HomeMetrics } from "@/components/custom/HomeMetrics"
+import { X } from "lucide-react"
 // import { heatmapData, imageSizes } from "@/data"
 
 const Home = () => {
@@ -44,18 +45,27 @@ const Home = () => {
   }
 
   const currentPrediction = predictionsByModel[activeTab] || null
+  const [showAlert, setShowAlert] = useState(true);
 
   return (
     <div className="flex flex-col">
       <Sidenavbar />
-      <div className="pt-20 px-4 md:px-8">
-        <Alert>
-          <Terminal className="h-4 w-4" />
-          <AlertTitle>Heads up!</AlertTitle>
-          <AlertDescription>
-            Upload an image and analyze it with a deep learning model.
-          </AlertDescription>
-        </Alert>
+      <div className="pt-15 px-4 md:px-8">
+        {showAlert && (
+          <Alert className="relative pr-10">
+            <Terminal className="h-4 w-4" />
+            <AlertTitle>Heads up!</AlertTitle>
+            <AlertDescription>
+              Upload an image and analyze it with a deep learning model.
+            </AlertDescription>
+            <button
+              onClick={() => setShowAlert(false)}
+              className="absolute top-2 right-2 text-muted-foreground hover:text-foreground"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </Alert>
+        )}
 
         <h1 className="text-3xl my-4">DSO CLASSIFICATION TOOL</h1>
         <ModelSelector onModelChange={handleModelChange} />

@@ -115,7 +115,7 @@ export function ImageUploaderActivationMap({
 
             {!imagePreview ? (
               <div
-                className=" border-gray-300 rounded-lg p-20 text-center cursor-pointer"
+                className="border-gray-300 rounded-lg p-20 text-center cursor-pointer"
                 onClick={() => document.getElementById("file-upload").click()}
                 onDrop={(e) => {
                   e.preventDefault();
