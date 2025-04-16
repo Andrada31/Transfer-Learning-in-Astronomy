@@ -1,5 +1,5 @@
 import React from 'react';
-import Sidenavbar from "@/components/custom/sidenavbar";
+import Sidenavbar from "@/components/custom/Sidenavbar";
 import DataTable from "@/components/charts/DataTable";
 import Tooltip from "@/components/custom/Tooltip";
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"

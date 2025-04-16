@@ -8,7 +8,7 @@ import { Clock, Cpu, Database, ImageIcon, BarChart3, Info, Layers, Variable, Bin
 import { cn } from "@/lib/utils"
 import { useIsMobile } from "@/services/use-mobile"
 
-export function PredictionAnalyticsCard({
+export function PredictionCard({
   inputImageUrl,
   activationMapUrl,
   predictedClass,

@@ -1,13 +1,9 @@
 @import "../../node_modules/tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-.fira-code {
-  font-family: "Fira Code", monospace;
-}
 
 :root {
   --primary-color: #5298e3;
@@ -19,12 +15,12 @@
 body {
   background: linear-gradient(135deg, #1a2a6c, #151521, #020202);
   color: white;
-  font-family: 'Fira Code', sans-serif;
+  font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, monospace;
   display: flex;
   justify-content: center;
   align-items: center;
-
 }
+
 
 /*Scrollbar*/
 

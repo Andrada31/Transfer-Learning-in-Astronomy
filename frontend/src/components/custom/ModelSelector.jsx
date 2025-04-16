@@ -1,19 +1,31 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-const ModelSelector = ({ onModelChange }) => {
-  const [activeTab, setActiveTab] = useState("resnet");
-
-  const modelLabels = {
+const ModelSelector = ({ mode = "classification", onModelChange }) => {
+  const classificationModels = {
     resnet: "ResNet-50",
     efficientnet: "EfficientNetB0",
     vgg: "VGG16",
   };
 
+  const detectionModels = {
+    yolo: "YOLOv5",
+    svm: "SVM Classifier",
+  };
+
+  const modelLabels = mode === "detection" ? detectionModels : classificationModels;
+  const defaultModelKey = Object.keys(modelLabels)[0];
+
+  const [activeTab, setActiveTab] = useState(defaultModelKey);
+
+  useEffect(() => {
+    // Reset the tab when mode changes
+    setActiveTab(defaultModelKey);
+    onModelChange?.(defaultModelKey);
+  }, [mode]); // ← triggers only when mode changes
+
   const handleTabClick = (model) => {
     setActiveTab(model);
-    if (onModelChange) {
-      onModelChange(model);
-    }
+    onModelChange?.(model);
   };
 
   return (

@@ -12,9 +12,8 @@ const SolarSystem = () => {
   return (
     <div className="w-full flex justify-center items-center">
       <div
-        className="aspect-square w-100"
         onClick={handleClick}
-        style={{ cursor: 'pointer' }}
+        className="w-[100%] max-w-[300px] aspect-square cursor-pointer"
       >
         <DotLottieReact
           src="src/components/custom/SolarSystem.lottie"

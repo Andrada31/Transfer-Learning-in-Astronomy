@@ -1,7 +1,7 @@
 import React from 'react';
 import '@/styles/App.css';
 import Tooltip from "@/components/custom/Tooltip";
-import Sidenavbar from "@/components/custom/sidenavbar";
+import Sidenavbar from "@/components/custom/Sidenavbar";
 import DataTable from "@/components/charts/DataTable";
 import RadioButton from "@/components/headlessui/RadioGroup";
 import TwoLevelPieChart from "@/components/charts/TwoLevelPieChart";

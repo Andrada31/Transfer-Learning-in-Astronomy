@@ -17,13 +17,12 @@ Compress(app)
 MODEL_PATHS = {
     'vgg': '../models/saved/vgg16-v2.keras',
     'resnet': '../models/saved/resnet50.keras',
-    'efficientnet': '../models/saved/efficientnet-v2.keras'
+    'efficientnet': '../models/saved/efficientnet-v3.keras'
 }
 
 loaded_models = {}
 class_names = ['clusters', 'galaxies', 'nebulae']
 
-# A helper dict that points each model to the name of the last conv layer
 # LAST_CONV_LAYER = {
 #     'vgg': 'block5_conv3',
 #     'resnet': 'conv5_block3_out',
@@ -79,7 +78,7 @@ def compute_activation_maps(model_name, model, img_array, predicted_class_index)
     for layer_name in selected_layers:
         try:
             if model_name == "efficientnet":
-                submodel = model.get_layer("efficientnetb3")
+                submodel = model.get_layer("efficientnetb0")
                 conv_layer = submodel.get_layer(layer_name)
             else:
                 conv_layer = model.get_layer(layer_name)
@@ -164,10 +163,10 @@ def predict():
             'modelParameters': perf['modelParameters'],
             'flops': perf['flops'],
             'numLayers': perf['numLayers'],
-            'top_predictions': top_predictions  # Updated key to match frontend
+            'top_predictions': top_predictions
         }
         activation_map_urls = compute_activation_maps(model_name, model, img_array, predicted_class_index)
-        response_data['activationMapUrls'] = activation_map_urls  # return list instead of single URL
+        response_data['activationMapUrls'] = activation_map_urls
 
         return jsonify(response_data)
     except Exception as e:

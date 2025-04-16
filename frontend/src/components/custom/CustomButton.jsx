@@ -1,60 +1,73 @@
 import React from 'react';
 import styled from 'styled-components';
-import tl from '@/images/tl3.svg';
 
-const CustomButton = () => {
+const CustomButton = ({ text = "Start classification", icon, onClick }) => {
   const handleClick = () => {
-    window.location.href = "/";
+    if (onClick) {
+      onClick();
+    } else {
+      window.location.href = "/";
+    }
   };
 
   return (
     <StyledWrapper>
-      <button className="button p-2" onClick={handleClick}>
-        <img src={tl} alt="Start classification" className="h-6 w-6"/>
-        <div className="text">
-          Start classification
+      <button className="button" onClick={handleClick}>
+        <div className="content">
+          {icon && <img src={icon} alt="Button icon" className="icon" />}
+          <span className="text">{text}</span>
         </div>
       </button>
     </StyledWrapper>
   );
-}
+};
 
 const StyledWrapper = styled.div`
   .button {
     background-color: #fff;
+    color: black;
     font-weight: 500;
     text-transform: uppercase;
-    color: black;
-    width: 21em;
-    height: 2.9em;
     border: #fff 0.14em solid;
     border-radius: 8px;
-    text-align: right;
-    transition: all 0.4s ease;
-    margin-top: 2em;
+    width: 100%;
+    height: 3em;
+    display: flex;
+    align-items: center;
+    padding: 0 1em;
+    transition: all 0.3s ease;
+    margin: 1em 0;
   }
 
   .button:hover {
     background-color: #6c88da;
     color: white;
-    cursor: pointer;
     border: #6c88da 0.14em solid;
+    cursor: pointer;
   }
 
-  .button img {
-    width: 1.4em;
-    position: absolute;
+  .content {
     display: flex;
-    transition: all 0.4s ease;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 1.2em;
   }
 
-  .button:hover img {
-    transform: translateX(5px);
+  .icon {
+    width: 1.2em;
+    height: 1.2em;
+    transition: transform 0.3s ease, filter 0.3s ease;
+  }
+
+  .button:hover .icon {
+    transform: translateX(3px);
     filter: brightness(0) invert(1);
   }
 
   .text {
-    margin: 0 3.7em;
-  }`;
+    font-size: 1rem;
+    line-height: 1;
+  }
+`;
 
 export default CustomButton;

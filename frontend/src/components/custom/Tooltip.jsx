@@ -2,7 +2,7 @@ import React from 'react';
 
 const Tooltip = () => {
   return (
-    <div className="z-10 fixed bottom-0 left-20 mb-4 mr-16 inline-block group">
+    <div className="z-10 fixed bottom-0 right-0 mb-4 mr-16 inline-block group">
       <button className="relative px-6 py-3 text-sm font-semibold text-white bg-indigo-500/20 rounded-xl hover:bg-blue focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-900 transition-all duration-300 overflow-hidden">
         <div className="absolute inset-0  blur-xl group-hover:opacity-75 transition-opacity" />
         <span className="relative flex items-center gap-2">

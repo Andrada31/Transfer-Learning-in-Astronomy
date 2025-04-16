@@ -18,12 +18,14 @@ export function ImageUploaderActivationMap({
   onAllPredictions,
   onError,
   onImageChange,
+  setLoadingModels,
 }) {
   const [selectedImage, setSelectedImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [predictionsByModel, setPredictionsByModel] = useState({});
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+
 
   const handleUpload = useCallback(async (e) => {
     const file = e.target.files?.[0];
@@ -47,35 +49,58 @@ export function ImageUploaderActivationMap({
     }
   }, [onError, onImageChange]);
 
-  const handlePredict = async () => {
-    if (!selectedImage) return;
-    setLoading(true);
-    setError(null);
+const handlePredict = async () => {
+  if (!selectedImage) return;
 
-    try {
-      const mainResult = await predictImage(selectedImage, selectedModel);
-      const otherModels = MODEL_NAMES.filter((m) => m !== selectedModel);
-      const results = await Promise.all(
-        otherModels.map(async (modelName) => {
+  const otherModels = MODEL_NAMES.filter((m) => m !== selectedModel);
+
+  const initialLoading = {};
+  MODEL_NAMES.forEach((model) => {
+    initialLoading[model] = true;
+  });
+  setLoadingModels(initialLoading);
+  setError(null);
+
+  try {
+    const mainResult = await predictImage(selectedImage, selectedModel);
+
+    setPredictionsByModel((prev) => ({
+      ...prev,
+      [selectedModel]: mainResult.data,
+    }));
+    onAllPredictions?.((prev) => ({
+      ...prev,
+      [selectedModel]: mainResult.data,
+    }));
+    setLoadingModels((prev) => ({ ...prev, [selectedModel]: false }));
+
+    Promise.allSettled(
+      otherModels.map(async (modelName) => {
+        try {
           const result = await predictImage(selectedImage, modelName);
-          return [modelName, result.data];
-        })
-      );
+          setPredictionsByModel((prev) => ({
+            ...prev,
+            [modelName]: result.data,
+          }));
+          onAllPredictions?.((prev) => ({
+            ...prev,
+            [modelName]: result.data,
+          }));
+        } catch (err) {
+          console.error(`Error predicting with ${modelName}:`, err);
+        } finally {
+          setLoadingModels((prev) => ({ ...prev, [modelName]: false }));
+        }
+      })
+    );
+  } catch (err) {
+    setError("Prediction failed.");
+    onError?.("Prediction failed.");
+    setLoadingModels({});
+  }
+};
 
-      const newPredictions = { [selectedModel]: mainResult.data };
-      for (const [modelName, result] of results) {
-        newPredictions[modelName] = result;
-      }
 
-      setPredictionsByModel(newPredictions);
-      onAllPredictions?.((prev) => ({ ...prev, ...newPredictions }));
-    } catch (err) {
-      setError("Prediction failed.");
-      onError?.("Prediction failed.");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleRemove = () => {
     setSelectedImage(null);
@@ -137,7 +162,7 @@ export function ImageUploaderActivationMap({
                   onClick={handleRemove}
                   variant="ghost"
                   size="icon"
-                  className="absolute top-2 right-2"
+                  className="absolute top-2 right-2 cursor-pointer bg-[#24275b]/50 hover:bg-opacity-100"
                 >
                   <X className="h-4 w-4" />
                 </Button>

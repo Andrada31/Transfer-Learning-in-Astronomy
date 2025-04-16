@@ -12,6 +12,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/detection" element={<Home mode="detection" />} />
         <Route path="/resnet" element={<ResNet />} />
         <Route path="/efficientnet" element={<EfficientNet />} />
         <Route path="/vgg" element={<VGG />} />
