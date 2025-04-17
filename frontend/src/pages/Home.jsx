@@ -109,7 +109,7 @@ const Home = ({ mode: initialMode = "classification" }) => {
               className="w-11 h-11 filter invert brightness-[100%] saturate-0"
 
           />
-          {mode === "classification" ? "DSO CLASSIFICATION TOOL" : "DSO DETECTION TOOL"}
+          {mode === "classification" ? "DSO CLASSIFICATION" : "DSO DETECTION"}
 
         </h1>
 
