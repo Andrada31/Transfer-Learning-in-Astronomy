@@ -8,7 +8,7 @@ const ModelSelector = ({ mode = "classification", onModelChange }) => {
   };
 
   const detectionModels = {
-    yolo: "YOLOv5",
+    yolo: "YOLOv11n",
     svm: "SVM Classifier",
   };
 
@@ -29,7 +29,7 @@ const ModelSelector = ({ mode = "classification", onModelChange }) => {
   };
 
   return (
-    <nav className="w-full bg-indigo-500/20 flex justify-between items-center py-2.5 px-5 top-0 left-0 z-50 rounded-xl">
+    <nav className="w-[40vw] bg-indigo-500/20 flex justify-between items-center py-2.5 px-5 top-0 left-0 z-50 rounded-xl">
       <div className="text-lg text-white">Model Selector</div>
       <div className="tabs flex flex-wrap gap-4">
         {Object.keys(modelLabels).map((model) => (

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import CustomButton from "@/components/custom/CustomButton";
 import SolarSystem from "@/components/custom/SolarSystem";
-import detectIcon from "@/images/tl.svg";
+import detectIcon from "@/images/eye2.svg";
 import classifyIcon from "@/images/tl3.svg";
+import {ScanEye} from "lucide-react";
 
 const Sidenavbar = ({ setMode }) => {
   const [activeTab, setActiveTab] = useState(window.location.pathname);

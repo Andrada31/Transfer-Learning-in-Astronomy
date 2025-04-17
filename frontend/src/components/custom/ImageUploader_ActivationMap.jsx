@@ -28,26 +28,30 @@ export function ImageUploaderActivationMap({
 
 
   const handleUpload = useCallback(async (e) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (!ALLOWED_FORMATS.includes(file.type)) {
-        setError("Invalid file format. Please upload JPG, JPEG, PNG, or WebP.");
-        return;
-      }
-      setError(null);
-      const previewUrl = URL.createObjectURL(file);
-      setImagePreview(previewUrl);
-      onImageChange?.(previewUrl);
-
-      try {
-        const response = await uploadImage(file);
-        setSelectedImage(response.data.image);
-      } catch (err) {
-        setError("Image upload failed. Please try again.");
-        onError?.("Image upload failed.");
-      }
+  const file = e.target.files?.[0];
+  if (file) {
+    if (!ALLOWED_FORMATS.includes(file.type)) {
+      setError("Invalid file format. Please upload JPG, JPEG, PNG, or WebP.");
+      return;
     }
-  }, [onError, onImageChange]);
+    setError(null);
+    const previewUrl = URL.createObjectURL(file);
+    setImagePreview(previewUrl);
+    onImageChange?.(previewUrl);
+
+    try {
+      setLoading(true); // Start loading
+      const response = await uploadImage(file);
+      setSelectedImage(response.data.image);
+    } catch (err) {
+      setError("Image upload failed. Please try again.");
+      onError?.("Image upload failed.");
+    } finally {
+      setLoading(false); // Stop loading
+    }
+  }
+}, [onError, onImageChange]);
+
 
 const handlePredict = async () => {
   if (!selectedImage) return;
@@ -148,7 +152,12 @@ const handlePredict = async () => {
                 }}
                 onDragOver={(e) => e.preventDefault()}
               >
-                <Upload className="mx-auto h-12 w-12" />
+                {loading ? (
+                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-white mx-auto mb-6" />
+                ) : (
+                  <Upload className="mx-auto mb-6 h-12 w-12" />
+                )}
+
                 <p>Click or drag and drop an image here</p>
               </div>
             ) : (
