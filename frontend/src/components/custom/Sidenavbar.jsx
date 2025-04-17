@@ -45,12 +45,12 @@ const Sidenavbar = ({ setMode }) => {
 
         <div className="flex flex-col h-full overflow-y-auto px-4 pt-6 space-y-6">
           <SolarSystem/>
-          <h2 className="text-gray-300 text-[clamp(1.1rem,1.7vw,1.4rem)] leading-tight p-2 flex items-center gap-3">
-            <img
-                src={analyticsIcon}
-                alt="Analytics Icon"
-                className="w-19 h-19 filter invert saturate-0"
-            />
+          <h2 className="text-white text-[clamp(1.1rem,1.7vw,1.6rem)] leading-tight p-2 flex items-center">
+            {/*<img*/}
+            {/*    src={analyticsIcon}*/}
+            {/*    alt="Analytics Icon"*/}
+            {/*    className="w-19 h-19"*/}
+            {/*/>*/}
             EXPERIMENTAL RESULTS & ANALYTICS
           </h2>
 

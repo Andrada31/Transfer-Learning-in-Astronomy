@@ -11,18 +11,17 @@ import { ImageUploaderActivationMap } from "@/components/custom/ImageUploader_Ac
 import { PredictionCard } from "@/components/custom/PredictionCard";
 import { HomeMetrics } from "@/components/custom/HomeMetrics";
 import { X } from "lucide-react";
+import {
+  saveImageData,
+  getImageData,
+  removeImageData
+} from "@/lib/indexedDb";
 
 const Home = ({ mode: initialMode = "classification" }) => {
   const [mode, setMode] = useState(initialMode);
   const [activeTab, setActiveTab] = useState("resnet");
-  const [imagePreviewByMode, setImagePreviewByMode] = useState(() => {
-    const saved = localStorage.getItem("imagePreviewByMode");
-    return saved ? JSON.parse(saved) : { classification: null, detection: null };
-  });
-  const [predictionsByMode, setPredictionsByMode] = useState(() => {
-    const saved = localStorage.getItem("predictionsByMode");
-    return saved ? JSON.parse(saved) : { classification: {}, detection: {} };
-  });
+  const [imagePreviewByMode, setImagePreviewByMode] = useState({ classification: null, detection: null });
+  const [predictionsByMode, setPredictionsByMode] = useState({ classification: {}, detection: {} });
   const [loadingModels, setLoadingModels] = useState({});
   const [showAlert, setShowAlert] = useState(() => {
     return localStorage.getItem("hideDSOAlert") !== "true";
@@ -31,24 +30,24 @@ const Home = ({ mode: initialMode = "classification" }) => {
 
   const currentPrediction = predictionsByMode[mode][activeTab] || null;
 
+  // Load from IndexedDB on mode change
   useEffect(() => {
-    localStorage.setItem("imagePreviewByMode", JSON.stringify(imagePreviewByMode));
-  }, [imagePreviewByMode]);
+    getImageData(mode).then((data) => {
+      if (data) {
+        setImagePreviewByMode((prev) => ({ ...prev, [mode]: data.image }));
+        setPredictionsByMode((prev) => ({ ...prev, [mode]: data.predictions }));
+      }
+    });
+  }, [mode]);
 
+  // Save to IndexedDB whenever image or prediction changes
   useEffect(() => {
-    localStorage.setItem("predictionsByMode", JSON.stringify(predictionsByMode));
-  }, [predictionsByMode]);
-
-  useEffect(() => {
-  const cleaned = { ...imagePreviewByMode };
-  for (const key in cleaned) {
-    if (cleaned[key]?.startsWith("blob:")) {
-      cleaned[key] = null;
+    const image = imagePreviewByMode[mode];
+    const predictions = predictionsByMode[mode];
+    if (image && predictions) {
+      saveImageData(mode, image, predictions);
     }
-  }
-  setImagePreviewByMode(cleaned);
-}, []);
-
+  }, [imagePreviewByMode, predictionsByMode, mode]);
 
   const handleModelChange = (model) => {
     setActiveTab(model);
@@ -83,15 +82,20 @@ const Home = ({ mode: initialMode = "classification" }) => {
   };
 
   const handleRemove = () => {
-    setImagePreviewByMode((prev) => ({
-      ...prev,
-      [mode]: null,
-    }));
-    setPredictionsByMode((prev) => ({
-      ...prev,
-      [mode]: {},
-    }));
-  };
+  const confirmDelete = window.confirm("Are you sure you want to remove this image and its predictions?");
+  if (!confirmDelete) return;
+
+  setImagePreviewByMode((prev) => ({
+    ...prev,
+    [mode]: null,
+  }));
+  setPredictionsByMode((prev) => ({
+    ...prev,
+    [mode]: {},
+  }));
+  removeImageData(mode);
+};
+
 
   return (
     <div className="flex min-h-screen">
@@ -126,12 +130,12 @@ const Home = ({ mode: initialMode = "classification" }) => {
         )}
 
         <h1 className="text-3xl my-4 tracking-tight text-white flex items-center gap-5">
-          {/*<img*/}
-          {/*  src={mode === "classification" ? classifyIcon : detectIcon}*/}
-          {/*  alt={mode === "classification" ? "Classification Icon" : "Detection Icon"}*/}
-          {/*  className="w-11 h-11 filter invert brightness-[100%] saturate-0"*/}
-          {/*/>*/}
-          {mode === "classification" ? "DSO CLASSIFICATION TOOL" : "DSO DETECTION TOOL"}
+          <img
+            src={mode === "classification" ? classifyIcon : detectIcon}
+            alt={mode === "classification" ? "Classification Icon" : "Detection Icon"}
+            className="w-11 h-11 filter invert brightness-[100%] saturate-0"
+          />
+          {mode === "classification" ? "DSO CLASSIFICATION" : "DSO DETECTION"}
         </h1>
 
         <ModelSelector mode={mode} onModelChange={handleModelChange} />
@@ -143,7 +147,10 @@ const Home = ({ mode: initialMode = "classification" }) => {
           onError={handleError}
           setLoadingModels={setLoadingModels}
           defaultImageUrl={imagePreviewByMode[mode]}
+          defaultPredictions={predictionsByMode[mode]}
+          onRemove={handleRemove} // ✅ this line enables the actual deletion
         />
+
 
         {imagePreviewByMode[mode] && (
           <>
