@@ -14,7 +14,7 @@ const CustomButton = ({ text = "Start classification", icon, onClick }) => {
     <StyledWrapper>
       <button className="button" onClick={handleClick}>
         <div className="content">
-          {icon && <img src={icon} alt="Button icon" className="icon" />}
+          {icon && <img src={icon} alt="Button icon" className="icon filter invert brightness-[100%] saturate-0" />}
           <span className="text">{text}</span>
         </div>
       </button>
@@ -24,11 +24,11 @@ const CustomButton = ({ text = "Start classification", icon, onClick }) => {
 
 const StyledWrapper = styled.div`
   .button {
-    background-color: #fff;
-    color: black;
+    background-color: #24295f;
+    color: white;
     font-weight: 500;
     text-transform: uppercase;
-    border: #fff 0.14em solid;
+    border: #24295f 0.14em solid;
     border-radius: 8px;
     width: 100%;
     height: 3em;
@@ -40,9 +40,10 @@ const StyledWrapper = styled.div`
   }
 
   .button:hover {
-    background-color: #6c88da;
-    color: white;
-    border: #6c88da 0.14em solid;
+    //background-color: #6c88da;
+    background-color: white;
+    color: black;
+    border: white 0.14em solid;
     cursor: pointer;
   }
 
@@ -61,7 +62,7 @@ const StyledWrapper = styled.div`
 
   .button:hover .icon {
     transform: translateX(3px);
-    filter: brightness(0) invert(1);
+    filter: brightness(20) invert(1);
   }
 
   .text {

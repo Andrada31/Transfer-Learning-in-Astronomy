@@ -3,6 +3,7 @@ import CustomButton from "@/components/custom/CustomButton";
 import SolarSystem from "@/components/custom/SolarSystem";
 import detectIcon from "@/images/eye2.svg";
 import classifyIcon from "@/images/tl3.svg";
+import analyticsIcon from "@/images/exp3.svg";
 import {ScanEye} from "lucide-react";
 
 const Sidenavbar = ({ setMode }) => {
@@ -42,54 +43,71 @@ const Sidenavbar = ({ setMode }) => {
 
       <div className={`z-40 fixed left-0 top-0 h-full w-[min(90vw,350px)] bg-slate-950 flex flex-col transform ${isOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform md:translate-x-0`}>
 
-        <div className="flex flex-col h-full overflow-y-auto px-4 py-6 space-y-6">
-          <SolarSystem />
-          <h2 className="text-white text-[clamp(1.1rem,1.7vw,1.6rem)] leading-tight p-2">
+        <div className="flex flex-col h-full overflow-y-auto px-4 pt-6 space-y-6">
+          <SolarSystem/>
+          <h2 className="text-gray-300 text-[clamp(1.1rem,1.7vw,1.4rem)] leading-tight p-2 flex items-center gap-3">
+            <img
+                src={analyticsIcon}
+                alt="Analytics Icon"
+                className="w-19 h-19 filter invert saturate-0"
+            />
             EXPERIMENTAL RESULTS & ANALYTICS
           </h2>
 
           <div className="space-y-3">
             <a
-              className={`tab block text-white py-2 px-3 rounded border border-white/30 hover:bg-white/10 transition ${activeTab === '/resnet' ? 'bg-white/10' : ''}`}
-              href="/resnet"
-              onClick={() => handleTabClick('/resnet')}
+                className={`tab block text-white py-2 px-3 rounded border border-white/30 hover:bg-white/10 transition ${activeTab === '/resnet' ? 'bg-white/10' : ''}`}
+                href="/resnet"
+                onClick={() => handleTabClick('/resnet')}
             >
               ResNet
             </a>
             <a
-              className={`tab block text-white py-2 px-3 rounded border border-white/30 hover:bg-white/10 transition ${activeTab === '/efficientnet' ? 'bg-white/10' : ''}`}
-              href="/efficientnet"
-              onClick={() => handleTabClick('/efficientnet')}
+                className={`tab block text-white py-2 px-3 rounded border border-white/30 hover:bg-white/10 transition ${activeTab === '/efficientnet' ? 'bg-white/10' : ''}`}
+                href="/efficientnet"
+                onClick={() => handleTabClick('/efficientnet')}
             >
               EfficientNet
             </a>
             <a
-              className={`tab block text-white py-2 px-3 rounded border border-white/30 hover:bg-white/10 transition ${activeTab === '/vgg' ? 'bg-white/10' : ''}`}
-              href="/vgg"
-              onClick={() => handleTabClick('/vgg')}
+                className={`tab block text-white py-2 px-3 rounded border border-white/30 hover:bg-white/10 transition ${activeTab === '/vgg' ? 'bg-white/10' : ''}`}
+                href="/vgg"
+                onClick={() => handleTabClick('/vgg')}
             >
               VGG
             </a>
+            <a
+                className={`tab block text-white py-2 px-3 rounded border border-white/30 hover:bg-white/10 transition ${activeTab === '/vgg' ? 'bg-white/10' : ''}`}
+                href="/vgg"
+                onClick={() => handleTabClick('/vgg')}
+            >
+              YOLO
+            </a>
           </div>
 
-          <div className="mt-auto space-y-4 w-full">
-            <CustomButton
-              text="Classification demo"
-              icon={classifyIcon}
-              onClick={() => {
-                setMode("classification");
-                window.location.href = "/";
-              }}
-            />
-            <CustomButton
-              text="Object Detection demo"
-              icon={detectIcon}
-              onClick={() => {
-                setMode("detection");
-                window.location.href = "/detection";
-              }}
-            />
+          <div className="flex flex-col h-full">
+            {/* Your existing content above */}
+
+            <div className="mt-auto w-full pb-0">
+              <CustomButton
+                  text="Classification demo >>"
+                  icon={classifyIcon}
+                  onClick={() => {
+                    setMode("classification");
+                    window.location.href = "/";
+                  }}
+              />
+              <CustomButton
+                  text="Object Detection demo >>"
+                  icon={detectIcon}
+                  onClick={() => {
+                    setMode("detection");
+                    window.location.href = "/detection";
+                  }}
+              />
+            </div>
           </div>
+
         </div>
       </div>
     </div>

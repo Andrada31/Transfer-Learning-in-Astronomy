@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -19,15 +19,17 @@ export function ImageUploaderActivationMap({
   onError,
   onImageChange,
   setLoadingModels,
+  defaultImageUrl = null,
 }) {
   const [selectedImage, setSelectedImage] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
+  const [imagePreview, setImagePreview] = useState(defaultImageUrl);
   const [predictionsByModel, setPredictionsByModel] = useState({});
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
 
-  const handleUpload = useCallback(async (e) => {
+
+ const handleUpload = useCallback(async (e) => {
   const file = e.target.files?.[0];
   if (file) {
     if (!ALLOWED_FORMATS.includes(file.type)) {
@@ -35,19 +37,20 @@ export function ImageUploaderActivationMap({
       return;
     }
     setError(null);
-    const previewUrl = URL.createObjectURL(file);
-    setImagePreview(previewUrl);
-    onImageChange?.(previewUrl);
 
     try {
-      setLoading(true); // Start loading
+      setLoading(true);
       const response = await uploadImage(file);
-      setSelectedImage(response.data.image);
+
+      const base64Image = response.data.image; // ✅ get base64 image from backend
+      setSelectedImage(base64Image);
+      setImagePreview(base64Image); // ✅ show preview as base64
+      onImageChange?.(base64Image); // ✅ send to Home.jsx for storage
     } catch (err) {
       setError("Image upload failed. Please try again.");
       onError?.("Image upload failed.");
     } finally {
-      setLoading(false); // Stop loading
+      setLoading(false);
     }
   }
 }, [onError, onImageChange]);

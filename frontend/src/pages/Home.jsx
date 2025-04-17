@@ -15,28 +15,50 @@ import { X } from "lucide-react";
 const Home = ({ mode: initialMode = "classification" }) => {
   const [mode, setMode] = useState(initialMode);
   const [activeTab, setActiveTab] = useState("resnet");
-  const [imagePreview, setImagePreview] = useState(null);
+  const [imagePreviewByMode, setImagePreviewByMode] = useState(() => {
+    const saved = localStorage.getItem("imagePreviewByMode");
+    return saved ? JSON.parse(saved) : { classification: null, detection: null };
+  });
+  const [predictionsByMode, setPredictionsByMode] = useState(() => {
+    const saved = localStorage.getItem("predictionsByMode");
+    return saved ? JSON.parse(saved) : { classification: {}, detection: {} };
+  });
   const [loadingModels, setLoadingModels] = useState({});
   const [showAlert, setShowAlert] = useState(() => {
     return localStorage.getItem("hideDSOAlert") !== "true";
   });
-
-
-  const [predictionsByMode, setPredictionsByMode] = useState({
-    classification: {},
-    detection: {},
-  });
+  const [isPending, startTransition] = useTransition();
 
   const currentPrediction = predictionsByMode[mode][activeTab] || null;
 
-  const [isPending, startTransition] = useTransition();
+  useEffect(() => {
+    localStorage.setItem("imagePreviewByMode", JSON.stringify(imagePreviewByMode));
+  }, [imagePreviewByMode]);
+
+  useEffect(() => {
+    localStorage.setItem("predictionsByMode", JSON.stringify(predictionsByMode));
+  }, [predictionsByMode]);
+
+  useEffect(() => {
+  const cleaned = { ...imagePreviewByMode };
+  for (const key in cleaned) {
+    if (cleaned[key]?.startsWith("blob:")) {
+      cleaned[key] = null;
+    }
+  }
+  setImagePreviewByMode(cleaned);
+}, []);
+
 
   const handleModelChange = (model) => {
     setActiveTab(model);
   };
 
   const handleImageChange = (url) => {
-    setImagePreview(url);
+    setImagePreviewByMode((prev) => ({
+      ...prev,
+      [mode]: url,
+    }));
     setPredictionsByMode((prev) => ({
       ...prev,
       [mode]: {}, // reset predictions for current mode
@@ -61,16 +83,18 @@ const Home = ({ mode: initialMode = "classification" }) => {
   };
 
   const handleRemove = () => {
-    setImagePreview(null);
-    setPredictionsByMode({
-      classification: {},
-      detection: {},
-    });
+    setImagePreviewByMode((prev) => ({
+      ...prev,
+      [mode]: null,
+    }));
+    setPredictionsByMode((prev) => ({
+      ...prev,
+      [mode]: {},
+    }));
   };
 
   return (
     <div className="flex min-h-screen">
-      {/* Fixed Sidebar */}
       <Sidenavbar
         setMode={(newMode) => {
           startTransition(() => {
@@ -80,77 +104,74 @@ const Home = ({ mode: initialMode = "classification" }) => {
         }}
       />
 
-      {/* Main Container */}
-      <div className="flex-grow grow-0 pt-20 px-4 md:px-8 transition-opacity duration-300 ease-in-out"
-           style={{opacity: isPending ? 0 : 1}}>
+      <div
+        className="flex-grow grow-0 pt-20 px-4 md:px-8 transition-opacity duration-300 ease-in-out"
+        style={{ opacity: isPending ? 0 : 1 }}
+      >
         {showAlert && (
-            <Alert className="relative pr-10 mb-4">
-              <Terminal className="h-4 w-4"/>
-              <AlertTitle>Heads up!</AlertTitle>
-              <AlertDescription>
-                Upload an image and analyze it with a deep learning model.
-              </AlertDescription>
-              <button
-                  onClick={() => {
-                    setShowAlert(false);
-                    localStorage.setItem("hideDSOAlert", "true");
-                  }}
-                  className="absolute top-2 right-2 text-muted-foreground hover:text-foreground"
-              >
-                <X className="w-4 h-4"/>
-              </button>
-            </Alert>
+          <Alert className="relative pr-10 mb-4">
+            <Terminal className="h-4 w-4" />
+            <AlertTitle>Heads up!</AlertTitle>
+            <AlertDescription>Upload an image and analyze it with a deep learning model.</AlertDescription>
+            <button
+              onClick={() => {
+                setShowAlert(false);
+                localStorage.setItem("hideDSOAlert", "true");
+              }}
+              className="absolute top-2 right-2 text-muted-foreground hover:text-foreground"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </Alert>
         )}
 
         <h1 className="text-3xl my-4 tracking-tight text-white flex items-center gap-5">
-          <img
-              src={mode === "classification" ? classifyIcon : detectIcon}
-              alt={mode === "classification" ? "Classification Icon" : "Detection Icon"}
-              className="w-11 h-11 filter invert brightness-[100%] saturate-0"
-
-          />
-          {mode === "classification" ? "DSO CLASSIFICATION" : "DSO DETECTION"}
-
+          {/*<img*/}
+          {/*  src={mode === "classification" ? classifyIcon : detectIcon}*/}
+          {/*  alt={mode === "classification" ? "Classification Icon" : "Detection Icon"}*/}
+          {/*  className="w-11 h-11 filter invert brightness-[100%] saturate-0"*/}
+          {/*/>*/}
+          {mode === "classification" ? "DSO CLASSIFICATION TOOL" : "DSO DETECTION TOOL"}
         </h1>
 
-
-        <ModelSelector mode={mode} onModelChange={handleModelChange}/>
+        <ModelSelector mode={mode} onModelChange={handleModelChange} />
 
         <ImageUploaderActivationMap
-            selectedModel={activeTab}
-            onImageChange={handleImageChange}
-            onAllPredictions={handleAllPredictions}
-            onError={handleError}
-            setLoadingModels={setLoadingModels}
+          selectedModel={activeTab}
+          onImageChange={handleImageChange}
+          onAllPredictions={handleAllPredictions}
+          onError={handleError}
+          setLoadingModels={setLoadingModels}
+          defaultImageUrl={imagePreviewByMode[mode]}
         />
 
-        {imagePreview && (
-            <>
-              {loadingModels[activeTab] ? (
-                  <div className="fixed right-4 top-4 bg-[#1c1c2e] text-white px-6 py-4 rounded-lg shadow-lg">
-                    <div className="animate-pulse text-sm">Loading {activeTab} prediction...</div>
-                  </div>
-              ) : currentPrediction && (
-                  <PredictionCard
-                      inputImageUrl={imagePreview}
-                      activationMapUrl={currentPrediction.activationMapUrl}
-                      predictedClass={currentPrediction.class}
-                      confidenceScore={currentPrediction.probability}
-                      topPredictions={currentPrediction.top_predictions || []}
-                      inferenceTime={currentPrediction.inference_time || 0}
-                      modelName={currentPrediction.model_name}
-                      inputSize={currentPrediction.input_size}
-                      datasetOrigin={currentPrediction.dataset_origin}
-                      modelParameters={currentPrediction.modelParameters}
-                      numLayers={currentPrediction.numLayers}
-                      flops={currentPrediction.flops}
-                      onRemove={handleRemove}
-                  />
-              )}
-            </>
+        {imagePreviewByMode[mode] && (
+          <>
+            {loadingModels[activeTab] ? (
+              <div className="fixed right-4 top-4 bg-[#1c1c2e] text-white px-6 py-4 rounded-lg shadow-lg">
+                <div className="animate-pulse text-sm">Loading {activeTab} prediction...</div>
+              </div>
+            ) : currentPrediction && (
+              <PredictionCard
+                inputImageUrl={imagePreviewByMode[mode]}
+                activationMapUrl={currentPrediction.activationMapUrl}
+                predictedClass={currentPrediction.class}
+                confidenceScore={currentPrediction.probability}
+                topPredictions={currentPrediction.top_predictions || []}
+                inferenceTime={currentPrediction.inference_time || 0}
+                modelName={currentPrediction.model_name}
+                inputSize={currentPrediction.input_size}
+                datasetOrigin={currentPrediction.dataset_origin}
+                modelParameters={currentPrediction.modelParameters}
+                numLayers={currentPrediction.numLayers}
+                flops={currentPrediction.flops}
+                onRemove={handleRemove}
+              />
+            )}
+          </>
         )}
 
-        <HomeMetrics predictions={predictionsByMode[mode]}/>
+        <HomeMetrics predictions={predictionsByMode[mode]} />
       </div>
     </div>
   );
