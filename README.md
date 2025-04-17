@@ -1,62 +1,70 @@
-# 🌌 Deep Space Objects Classification Tool  
+# 🌌 Deep Space Objects Classification and Detection Tool  
 
-This project aims to provide an automated way to differentiate between **three** classes of Deep Space Objects (DSO): **galaxies, nebulae, and star clusters**. Using a **custom Convolutional Neural Network (CNN) architecture** built on **pretrained models**, the model is trained to classify images of these objects with high accuracy.  
+This project provides an automated approach to identify and analyze **Deep Space Objects (DSOs)** through two main functionalities: **classification** and **detection**. It uses state of the art Convolutional Neural Networks (CNN) and YOLO detection models to classify and detect three categories of DSOs: **galaxies, nebulae, and star clusters**.  
 
 ## Project Overview  
 
-The project explores **deep learning** to analyze and classify images of deep space objects. Through **Transfer Learning** on **VGG16, ResNet50, and EfficientNet**, the model learns to identify intricate patterns within the dataset.  
+The project explores **deep learning** techniques using **Transfer Learning** on pretrained CNN models (**VGG16, ResNet50, EfficientNet**) for classification, and modern object detection algorithms (**YOLOv9 and YOLOv11n**) to locate and identify DSOs within images.
 
-- Users can classify **galaxies, nebulae, and star clusters** while comparing the performance of different models.  
-- The web application provides an interface to interact with the models and allows users to provide **feedback** on classification accuracy.  
-- This approach **automates** the classification process and provides a **scalable solution** for analyzing large astronomical image datasets.  
+- **Classification**: Classify DSOs into galaxies, nebulae, or star clusters while comparing model performance.
+- **Detection**: Identification and localization of multiple DSOs within an image.
+- Web application for vizualization and model performance demo.
 
 ### Web Application  
-In addition to the AI model, the project includes a **Flask-based web application** that allows users to:  
-- **Upload** images of deep space objects.
-- Receive **real-time** predictions from the trained model.
-- Explore **model performance and classification results** through an intuitive UI.  
+
+The project includes a **Flask-based web application** that allows users to:
+- **Upload images** for classification and detection.
+- Receive **classification predictions and detection results**.
+- Vizualize the **actiavtion map** for multiple convolutional layers of the selected model
+- Explore **model performance and visual detection outcomes** through the interface.
 
 ## Technologies Used  
 
-### **Programming Language**  
-- **Python**: Used for training deep learning models in Google Colab and implementing the Flask backend.
-- **JavaScript**: Used for building the frontend with Vite + React.
-- **HTML & CSS with Tailwind**: Used for styling and structuring the web interface.
+### **Programming Languages**  
+- **Python**: For deep learning model training (via Google Colab), detection algorithms, and Flask backend.
+- **JavaScript**: Frontend development with React and Vite.
+- **HTML & CSS with Tailwind**: UI/UX design for the web interface.
 
 ### **Libraries**  
 - NumPy  
 - Matplotlib  
+- OpenCV (for image processing and detection visualization)
 
 ### **Deep Learning Frameworks**  
-- **Google Colab** (for available hardware resources)  
 - **TensorFlow**  
-- **Keras**  
+- **Keras**
   - High-level neural networks API  
-  - Simplified model development  
-  - Easy model configuration  
+  - Streamlined model development  
+- **Google Colab** (leveraging GPU and TPU resources)
 
-### **Pretrained Models in Google Colab**  
-- **[VGG](https://arxiv.org/abs/1409.1556)**  
-- **[ResNet](https://arxiv.org/abs/1512.03385)**  
-- **[EfficientNet](https://arxiv.org/abs/1905.11946)**  
+### **Pretrained CNN Models**  
+- **[VGG16](https://arxiv.org/abs/1409.1556)**  
+- **[ResNet50](https://arxiv.org/abs/1512.03385)**  
+- **[EfficientNet](https://arxiv.org/abs/1905.11946)**
 
+### **Object Detection Algorithms**  
+- **YOLOv9 and YOLOv11n**
+- SVM (to be implemented)
+  
 ### **Image Processing**  
-- Image normalization and applied **black & white filter** for comparison  
+- Image normalization and **black & white filters** for comparison  
 - Data augmentation techniques  
-- **Letterboxing** and **cropping**  
+  - **Letterboxing** and **cropping**
 
 ### **Web Application**  
-- **Flask** - Model deployment framework  
-- **React** + **Vite** for frontend & UI/UX  
-  - **Includes a data analysis page**  
-  - **Showcases each model's classification results**  
-  - **Explores the classification tool**  
+- **Flask**: Model deployment and backend API  
+- **React + Vite**: Frontend UI/UX  
+  - Includes a data analysis page  
+  - Object detection visualization  
+  - Comparative model performance insights
+  - Training results and analysis of performance
 
 ## Features  
 
-- **Deep Learning Models**: Users can toggle between **VGG16, ResNet50, and EfficientNet** for classification.  
-- **Web-Based Interface**: A **React-powered UI** for easy exploration.  
-- **REST API**: Flask backend for **model inference** and **data handling**.  
+- **Classification Models**: Easily switch between **VGG16, ResNet50, and EfficientNet**.
+- **Detection Models**: DSO detection using **YOLOv9 and YOLOv11n**.
+- **Interactive Web Interface**: React-based UI facilitating seamless exploration and analysis.
+- **REST API**: Robust Flask backend supporting comprehensive data management.
 
 ## Project Setup  
 
@@ -69,6 +77,7 @@ Ensure you have the following installed:
 - Flask  
 - NumPy
 - Matplotlib  
+- OpenCV
 - React.js  
 - Vite
 ```
@@ -78,4 +87,3 @@ Ensure you have the following installed:
 - **Toggle between different wavelength spectra for image classification**  
 - **Optimize model performance**  
 - **Expand the dataset**  
-
