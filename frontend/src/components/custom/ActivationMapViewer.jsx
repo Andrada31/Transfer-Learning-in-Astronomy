@@ -5,7 +5,7 @@ import { Slider } from "@/components/ui/slider";
 import { Card, CardContent } from "@/components/ui/card";
 import { BrainCircuit } from "lucide-react";
 
-export default function ActivationMapViewer({ activationMapUrls }) {
+export default function ActivationMapViewer({ activationMapUrls = [], mode }) {
   const [activeLayer, setActiveLayer] = useState(1);
   const totalLayers = activationMapUrls.length;
 
@@ -21,29 +21,34 @@ export default function ActivationMapViewer({ activationMapUrls }) {
     5: ["Object compositions", "Scene elements", "Abstract concepts"],
   };
 
-  const isActive = activationMapUrls[activeLayer - 1];
+  const isClassification = mode === "classification";
+  const imageToShow = isClassification
+    ? activationMapUrls[activeLayer - 1]
+    : activationMapUrls[0];
 
   return (
-    <Card className="p-6 border-none">
+    <Card className="p-6 border-none w-full max-w-md mx-auto">
       <CardContent className="space-y-6">
         <div className="flex justify-center">
           <div className="rounded-md overflow-hidden">
-            {isActive ? (
+            {imageToShow ? (
               <img
-                src={activationMapUrls[activeLayer - 1]}
-                alt={`Activation map for layer ${activeLayer}`}
+                src={imageToShow}
+                alt={isClassification ? `Activation map for layer ${activeLayer}` : "Eigen-CAM activation map"}
                 className="w-[300px] h-[300px] object-cover"
               />
             ) : (
               <div className="w-[300px] h-[300px] bg-transparent flex flex-col items-center justify-center text-gray-400">
                 <BrainCircuit className="w-20 h-20 mb-10 text-white" />
-                <p className="text-md text-center">Activation map inactive</p>
+                <p className="text-md text-center">
+                  {isClassification ? "Activation map inactive" : "Eigen-CAM unavailable"}
+                </p>
               </div>
             )}
           </div>
         </div>
 
-        {isActive && (
+        {isClassification && imageToShow && (
           <>
             <div className="space-y-2">
               <div className="flex justify-between items-center">
@@ -69,6 +74,12 @@ export default function ActivationMapViewer({ activationMapUrls }) {
               </ul>
             </div>
           </>
+        )}
+
+        {!isClassification && imageToShow && (
+          <div className="text-sm text-muted-foreground text-center">
+            <p>This Eigen-CAM highlights regions influencing object detection.</p>
+          </div>
         )}
       </CardContent>
     </Card>

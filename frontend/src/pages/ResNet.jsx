@@ -20,43 +20,44 @@ const ResNet = () => {
   return (
     <div className="flex flex-col items-center justify-center w-full max-w-[90vw] sm:max-w-[80vw] md:max-w-[60vw] lg:w-[80vw] overflow-x-hidden relative">
       <Sidenavbar />
-      <div className="flex flex-col w-full lg:w-[70%] pt-17 ">
-        {/*<h1>ResNet</h1>*/}
-        {/*<a href="https://viso.ai/deep-learning/resnet-residual-neural-network/" className="w-42 mb-7">*/}
-          {/*Documentation*/}
-        {/*</a>*/}
+        <div className="flex flex-col w-full lg:w-[70%] pt-17 ">
+            {/*<h1>ResNet</h1>*/}
+            {/*<a href="https://viso.ai/deep-learning/resnet-residual-neural-network/" className="w-42 mb-7">*/}
+            {/*Documentation*/}
+            {/*</a>*/}
 
-        {/*<TwoLevelPieChart />*/}
-        {/*<h2 id="introduction">Introduction</h2>*/}
-        {/*<p className="my-[40px]">*/}
-        {/*  ResNet (Residual Network) is a deep learning model used for image classification tasks. It addresses the*/}
-        {/*  vanishing gradient problem by introducing residual connections, which allow gradients to flow through the*/}
-        {/*  network more effectively.*/}
-        {/*</p>*/}
-
-        {/*<h2 id="architecture">Architecture</h2>*/}
-        {/*<p className="my-[40px]">*/}
-        {/*  This is achieved by adding shortcut connections that skip one or more layers. ResNet models come in various*/}
-        {/*  depths, such as ResNet-18, ResNet-34, ResNet-50, ResNet-101, and ResNet-152, where the number indicates the*/}
-        {/*  number of layers.*/}
-        {/*</p>*/}
-
-        <ModelDetails defaultModel="resnet50" />
+            {/*<TwoLevelPieChart />*/}
+            {/*<h2 id="introduction">Introduction</h2>*/}
+            {/*<p className="my-[40px]">*/}
+            {/*  ResNet (Residual Network) is a deep learning model used for image classification tasks. It addresses the*/}
+            {/*  vanishing gradient problem by introducing residual connections, which allow gradients to flow through the*/}
+            {/*  network more effectively.*/}
+            {/*</p>*/}
 
 
-        {/*<h2 id="performance" className="my-[40px]">Models overview</h2>*/}
-        {/*<RadioButton />*/}
-        <LineChart />
+            <ModelDetails defaultModel="resnet50"/>
 
-        <div id="results"  className="mt-[80px]">
-          <h2>Results</h2>
-          <p className="my-[40px]">
-            These models have achieved state-of-the-art performance on various image recognition benchmarks.
-          </p>
-          < DataTable/>
+            <h2 id="architecture" className="text-2xl pt-20">Training </h2>
+            <p className="my-[40px]">
+                This is achieved by adding shortcut connections that skip one or more layers. ResNet models come in
+                various
+                depths, such as ResNet-18, ResNet-34, ResNet-50, ResNet-101, and ResNet-152, where the number indicates
+                the
+                number of layers.
+            </p>
+
+            {/*<RadioButton />*/}
+            <LineChart/>
+
+            <div id="results" className="mt-[80px]">
+                <h2>Results</h2>
+                <p className="my-[40px]">
+                    These models have achieved state-of-the-art performance on various image recognition benchmarks.
+                </p>
+                < DataTable/>
+            </div>
         </div>
-      </div>
-      <Tooltip />
+        <Tooltip/>
         <div className="hidden lg:block">
             <ProgressBar sections={sections}/>
         </div>

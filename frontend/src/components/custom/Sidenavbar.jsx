@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from "react-router-dom";
 import CustomButton from "@/components/custom/CustomButton";
 import SolarSystem from "@/components/custom/SolarSystem";
 import detectIcon from "@/images/eye2.svg";
@@ -10,6 +11,8 @@ const Sidenavbar = ({ setMode }) => {
   const [activeTab, setActiveTab] = useState(window.location.pathname);
   const [isOpen, setIsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const navigate = useNavigate(); // 🧭 Like a GPS but sassier
+
 
   const handleTabClick = (path) => {
     setActiveTab(path);
@@ -90,19 +93,19 @@ const Sidenavbar = ({ setMode }) => {
 
             <div className="mt-auto w-full pb-0">
               <CustomButton
-                  text="Classification demo >>"
+                  text="Classification >>"
                   icon={classifyIcon}
                   onClick={() => {
                     setMode("classification");
-                    window.location.href = "/";
+                    navigate("/");
                   }}
               />
               <CustomButton
-                  text="Object Detection demo >>"
+                  text="Object Detection >>"
                   icon={detectIcon}
                   onClick={() => {
                     setMode("detection");
-                    window.location.href = "/detection";
+                   navigate("/detection");
                   }}
               />
             </div>

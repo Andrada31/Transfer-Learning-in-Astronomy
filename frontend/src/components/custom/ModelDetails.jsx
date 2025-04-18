@@ -31,9 +31,9 @@ export default function ModelDetails({ defaultModel }) {
   const modelData = models[selectedModel]
 
   return (
-    <Card className="w-full max-w-4xl mx-auto bg-[#1e2545]/20 border-[#2a3158] text-white">
-      <CardHeader>
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <Card className="w-full max-w-4xl mx-auto border-none text-white px-0">
+      <CardHeader className="px-0">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 px-0">
           <CardTitle className="text-3xl text-white">{modelData.modelName}</CardTitle>
           <Select value={selectedModel} onValueChange={setSelectedModel}>
             <SelectTrigger className="w-full sm:w-[180px] bg-[#2a3158] border-[#3a4168] text-white">
@@ -50,7 +50,7 @@ export default function ModelDetails({ defaultModel }) {
         </div>
         <Separator className="mt-2 bg-[#2a3158]" />
       </CardHeader>
-      <CardContent>
+      <CardContent className="px-0 py-4">
         <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-3 bg-[#2a3158]">
             <TabsTrigger value="overview" className="data-[state=active]:bg-[#161b36] hover:bg-white hover:text-black data-[state=active]:text-white cursor-pointer">

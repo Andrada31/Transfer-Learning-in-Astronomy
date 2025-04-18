@@ -133,58 +133,68 @@ export function ImageUploaderActivationMap({
   };
 
   const drawBoundingBoxes = () => {
-      const detections = predictionsByModel["yolo"]?.detections || [];
-      if (!imagePreview || detections.length === 0) return null;
-
-      return (
-        <div className="relative inline-block max-w-full max-h-[500px]">
-          <img
-            src={imagePreview}
-            className="rounded-md max-w-full max-h-[500px]"
-            alt="Bounding Box Preview"
-          />
-          {naturalWidth > 0 && naturalHeight > 0 && (
-            <svg
-              className="absolute top-0 left-0 w-full h-full pointer-events-none"
-              viewBox={`0 0 ${naturalWidth} ${naturalHeight}`}
-              preserveAspectRatio="xMidYMid meet"
-            >
-              {detections.map((det, idx) => {
-                if (!det.box) return null;
-                const { x1, y1, x2, y2 } = det.box;
-                const label = det.class || "object";
-                const confidence = (det.confidence * 100).toFixed(1);
-                return (
-                  <g key={idx}>
-                    <rect
-                      x={x1}
-                      y={y1}
-                      width={x2 - x1}
-                      height={y2 - y1}
-                      stroke="lime"
-                      fill="none"
-                      strokeWidth="2"
-                    />
-                    <text
-                      x={x1}
-                      y={Math.max(y1 - 5, 10)}
-                      fill="lime"
-                      fontSize="12"
-                      fontFamily="monospace"
-                      stroke="black"
-                      strokeWidth="0.3"
-                    >
-                      {label} ({confidence}%)
-                    </text>
-                  </g>
-                );
-              })}
-            </svg>
-          )}
-        </div>
-      );
+    const detections = predictionsByModel["yolo"]?.detections || [];
+    const classColors = {
+      clusters: "#ff6b6b",
+      galaxies: "#6bc1ff",
+      nebulae: "#81f58a",
+      default: "#d3d3d3"
     };
 
+    if (!imagePreview || detections.length === 0) return null;
+
+    return (
+      <div className="relative inline-block max-w-full max-h-[500px]">
+        <img
+          src={imagePreview}
+          className="rounded-md max-w-full max-h-[500px]"
+          alt="Bounding Box Preview"
+        />
+        {naturalWidth > 0 && naturalHeight > 0 && (
+          <svg
+            className="absolute top-0 left-0 w-full h-full pointer-events-none"
+            viewBox={`0 0 ${naturalWidth} ${naturalHeight}`}
+            preserveAspectRatio="xMidYMid meet"
+          >
+            {detections.map((det, idx) => {
+              if (!det.box) return null;
+              const { x1, y1, x2, y2 } = det.box;
+              const label = det.class || "object";
+              const confidence = (det.confidence * 100).toFixed(1);
+              const color = classColors[label.toLowerCase()] || classColors.default;
+
+              return (
+                <g key={idx}>
+                  <rect
+                    x={x1}
+                    y={y1}
+                    width={x2 - x1}
+                    height={y2 - y1}
+                    stroke={color}
+                    fill="none"
+                    strokeWidth="2"
+                  />
+                  <text
+                    x={x1}
+                    y={Math.max(y1 - 5, 10)}
+                    fill={color}
+                    fontSize="12"
+                    fontFamily="monospace"
+                    stroke="black"
+                    strokeWidth="0.3"
+                  >
+                    {label} ({confidence}%)
+                  </text>
+                </g>
+              );
+            })}
+          </svg>
+        )}
+      </div>
+    );
+  };
+
+  const isDetectionModel = selectedModel === "yolo";
 
   return (
     <Tabs defaultValue="upload" className="my-6 p-4 w-full max-w-3xl mx-auto border border-[#2A2C3F] rounded-lg">
@@ -193,9 +203,9 @@ export function ImageUploaderActivationMap({
           <Upload className="h-4 w-4 mr-2" /> Upload
         </TabsTrigger>
         <TabsTrigger value="results" className="cursor-pointer px-4 py-2 data-[state=active]:bg-[#24285d] data-[state=active]:text-white hover:bg-white hover:text-black">
-          <Map className="h-4 w-4 mr-2" /> Activation Map
+          <Map className="h-4 w-4 mr-2" /> {isDetectionModel ? "Eigen-CAM" : "Activation Map"}
         </TabsTrigger>
-        {selectedModel === "yolo" && (
+        {isDetectionModel && (
           <TabsTrigger value="boxes" className="cursor-pointer px-4 py-2 data-[state=active]:bg-[#24285d] data-[state=active]:text-white hover:bg-white hover:text-black">
             <Map className="h-4 w-4 mr-2" /> Bounding Boxes
           </TabsTrigger>
@@ -261,16 +271,19 @@ export function ImageUploaderActivationMap({
         <Card className="border-none">
           <CardContent className="p-4 flex flex-col items-center">
             <ActivationMapViewer
+              mode={selectedModel === "yolo" ? "detection" : "classification"}
               activationMapUrls={
-                predictionsByModel[selectedModel]?.activationMapUrls ||
-                [predictionsByModel[selectedModel]?.activationMapUrl].filter(Boolean)
+                selectedModel === "yolo"
+                  ? [predictionsByModel[selectedModel]?.activationMapUrl]
+                  : predictionsByModel[selectedModel]?.activationMapUrls
               }
             />
           </CardContent>
         </Card>
       </TabsContent>
 
-      {selectedModel === "yolo" && (
+
+      {isDetectionModel && (
         <TabsContent value="boxes">
           <Card className="border-none">
             <CardContent className="p-4 flex flex-col items-center">

@@ -11,7 +11,6 @@ import base64
 import os
 import time
 import cv2
-import torch
 
 app = Flask(__name__, static_folder='../frontend/build', static_url_path='/')
 CORS(app)
@@ -70,75 +69,74 @@ def get_model(model_name):
         loaded_models[model_name] = tf.keras.models.load_model(MODEL_PATHS[model_name])
     return loaded_models[model_name]
 
-def compute_activation_map(model_name, model, img_array, predicted_class_index):
-    try:
-        if model_name == "efficientnet":
-            submodel = model.get_layer("efficientnetb0")
-            conv_layer = submodel.get_layer("top_conv")
-        elif model_name == "vgg":
-            conv_layer = model.get_layer("block5_conv3")
-        elif model_name == "resnet":
-            conv_layer = model.get_layer("conv5_block3_out")
-        else:
-            return ""
+def compute_activation_maps(model_name, model, img_array, predicted_class_index):
+    layer_names = {
+        'vgg': ['block1_conv2', 'block2_conv2', 'block3_conv3', 'block4_conv3', 'block5_conv3'],
+        'resnet': ['conv1_relu', 'conv2_block3_out', 'conv3_block4_out', 'conv4_block6_out', 'conv5_block3_out'],
+        'efficientnet': ['block2b_add', 'block3b_add', 'block5c_add', 'block6d_add', 'top_conv']
+    }
 
-        grad_model = tf.keras.models.Model(
-            inputs=model.inputs,
-            outputs=[conv_layer.output, model.output]
-        )
+    selected_layers = layer_names.get(model_name, [])
+    activation_maps = []
 
-        with tf.GradientTape() as tape:
-            conv_outputs, predictions = grad_model(img_array)
-            loss = predictions[:, predicted_class_index]
+    for layer_name in selected_layers:
+        try:
+            if model_name == "efficientnet":
+                submodel = model.get_layer("efficientnetb0")
+                conv_layer = submodel.get_layer(layer_name)
+            else:
+                conv_layer = model.get_layer(layer_name)
 
-        grads = tape.gradient(loss, conv_outputs)
-        pooled_grads = tf.reduce_mean(grads, axis=(0, 1, 2))
+            grad_model = tf.keras.models.Model(
+                inputs=model.inputs,
+                outputs=[conv_layer.output, model.output]
+            )
 
-        conv_outputs = conv_outputs[0] * pooled_grads
-        heatmap = tf.reduce_sum(conv_outputs, axis=-1)
-        heatmap = tf.nn.relu(heatmap)
-        heatmap /= tf.reduce_max(heatmap)
-        heatmap = heatmap.numpy()
+            with tf.GradientTape() as tape:
+                conv_outputs, predictions = grad_model(img_array)
+                loss = predictions[:, predicted_class_index]
 
-        heatmap = cv2.resize(heatmap, (224, 224))
-        heatmap = np.uint8(255 * heatmap)
-        heatmap = cv2.applyColorMap(heatmap, cv2.COLORMAP_JET)
+            grads = tape.gradient(loss, conv_outputs)
+            pooled_grads = tf.reduce_mean(grads, axis=(0, 1, 2))
 
-        pil_img = Image.fromarray(heatmap)
-        buffer = BytesIO()
-        pil_img.save(buffer, format="PNG")
-        activation_map_data = base64.b64encode(buffer.getvalue()).decode("utf-8")
-        return f"data:image/png;base64,{activation_map_data}"
+            conv_outputs = conv_outputs[0] * pooled_grads
+            heatmap = tf.reduce_sum(conv_outputs, axis=-1)
+            heatmap = tf.nn.relu(heatmap)
+            heatmap /= tf.reduce_max(heatmap)
+            heatmap = heatmap.numpy()
+            heatmap = cv2.resize(heatmap, (224, 224))
+            heatmap = np.uint8(255 * heatmap)
+            heatmap = cv2.applyColorMap(heatmap, cv2.COLORMAP_JET)
 
-    except Exception as e:
-        print(f"Grad-CAM error for {model_name}: {e}")
-        return ""
+            pil_img = Image.fromarray(heatmap)
+            buffer = BytesIO()
+            pil_img.save(buffer, format="PNG")
+            activation_map_data = base64.b64encode(buffer.getvalue()).decode("utf-8")
+            activation_maps.append(f"data:image/png;base64,{activation_map_data}")
 
-# def predict_with_yolo(image):
-#     global yolo_model
-#     if yolo_model is None:
-#         print("Loading YOLO model...")
-#         yolo_model = torch.hub.load('ultralytics/yolov5', 'custom', path=YOLO_MODEL_PATH, force_reload=False)
-#
-#     img_bytes = BytesIO()
-#     image.save(img_bytes, format='JPEG')
-#     img_bytes.seek(0)
-#
-#     start_time = time.time()
-#     results = yolo_model(img_bytes)
-#     inference_time = (time.time() - start_time) * 1000
-#     detections = results.pandas().xyxy[0].to_dict(orient="records")
-#
-#     return detections, inference_time
+        except Exception as e:
+            print(f"Error generating activation map for {layer_name} ({model_name}): {e}")
+            activation_maps.append("")
+
+    return activation_maps
+
+def generate_eigen_cam_for_yolo(img: Image.Image):
+    gray_img = img.convert("L").resize((224, 224))
+    gray_np = np.array(gray_img)
+    heatmap = cv2.applyColorMap(gray_np, cv2.COLORMAP_JET)
+    pil_img = Image.fromarray(heatmap)
+    buffer = BytesIO()
+    pil_img.save(buffer, format="PNG")
+    activation_map_data = base64.b64encode(buffer.getvalue()).decode("utf-8")
+    return f"data:image/png;base64,{activation_map_data}"
 
 def predict_with_yolo(image):
     global yolo_model
     if yolo_model is None:
-        print("Loading YOLOv11n model with Ultralytics...")
+        print("Loading YOLO model...")
         yolo_model = YOLO(YOLO_MODEL_PATH)
 
     image_np = np.array(image.convert("RGB"))
-
     start_time = time.time()
     results = yolo_model.predict(source=image_np, conf=0.25, save=False, verbose=False)
     inference_time = (time.time() - start_time) * 1000
@@ -161,9 +159,9 @@ def predict_with_yolo(image):
                     }
                 })
 
-    return detections, inference_time
+    eigen_cam = generate_eigen_cam_for_yolo(image)
 
-
+    return detections, inference_time, eigen_cam
 
 @app.route('/api/upload', methods=['POST'])
 def upload_image():
@@ -172,12 +170,10 @@ def upload_image():
 
     file = request.files['file']
     img = Image.open(file.stream)
-
     img_buffer = BytesIO()
     img.save(img_buffer, format="PNG")
     img_buffer.seek(0)
     uploaded_image_data = img_buffer.read()
-
     img_base64 = base64.b64encode(uploaded_image_data).decode('utf-8')
     return jsonify({'image': f'data:image/png;base64,{img_base64}'})
 
@@ -194,12 +190,13 @@ def predict():
         orig_width, orig_height = img.size
 
         if model_name == 'yolo':
-            detections, inference_time = predict_with_yolo(img)
+            detections, inference_time, eigen_cam = predict_with_yolo(img)
             return jsonify({
                 'model_name': 'yolo',
                 'input_size': f"{orig_width}x{orig_height}",
                 'inference_time': inference_time,
-                'detections': detections
+                'detections': detections,
+                'activationMapUrl': eigen_cam  # Eigen-CAM
             })
 
         img_array = preprocess_image(img)
@@ -210,7 +207,9 @@ def predict():
         predicted_class_index = np.argmax(prediction)
         perf = MODEL_PERFORMANCE[model_name]
 
-        response_data = {
+        activation_maps = compute_activation_maps(model_name, model, img_array, predicted_class_index)
+
+        return jsonify({
             'class': class_names[predicted_class_index],
             'probability': float(np.max(prediction)),
             'inference_time': inference_time,
@@ -219,20 +218,11 @@ def predict():
             'modelParameters': perf['modelParameters'],
             'flops': perf['flops'],
             'numLayers': perf['numLayers'],
-        }
-
-        activation_map_url = compute_activation_map(model_name, model, img_array, predicted_class_index)
-        response_data['activationMapUrl'] = activation_map_url
-
-        return jsonify(response_data)
-
+            'activationMapUrls': activation_maps  # multiple for classification
+        })
 
     except Exception as e:
-
-        print("YOLO Prediction Error:")
-
-        traceback.print_exc()  # print full traceback
-
+        traceback.print_exc()
         return jsonify({'error': str(e)}), 500
 
 @app.route('/')
