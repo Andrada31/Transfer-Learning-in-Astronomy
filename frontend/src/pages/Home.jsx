@@ -9,6 +9,7 @@ import { FaTerminal as Terminal } from "react-icons/fa6";
 import ModelSelector from "@/components/custom/ModelSelector";
 import { ImageUploaderActivationMap } from "@/components/custom/ImageUploader_ActivationMap";
 import { PredictionCard } from "@/components/custom/PredictionCard";
+import { DetectionPredictionCard } from "@/components/custom/DetectionPredictionCard";
 import { HomeMetrics } from "@/components/custom/HomeMetrics";
 import { X } from "lucide-react";
 import {
@@ -30,7 +31,6 @@ const Home = ({ mode: initialMode = "classification" }) => {
 
   const currentPrediction = predictionsByMode[mode][activeTab] || null;
 
-  // Load from IndexedDB on mode change
   useEffect(() => {
     getImageData(mode).then((data) => {
       if (data) {
@@ -40,7 +40,6 @@ const Home = ({ mode: initialMode = "classification" }) => {
     });
   }, [mode]);
 
-  // Save to IndexedDB whenever image or prediction changes
   useEffect(() => {
     const image = imagePreviewByMode[mode];
     const predictions = predictionsByMode[mode];
@@ -82,20 +81,19 @@ const Home = ({ mode: initialMode = "classification" }) => {
   };
 
   const handleRemove = () => {
-  const confirmDelete = window.confirm("Are you sure you want to remove this image and its predictions?");
-  if (!confirmDelete) return;
+    const confirmDelete = window.confirm("Are you sure you want to remove this image and its predictions?");
+    if (!confirmDelete) return;
 
-  setImagePreviewByMode((prev) => ({
-    ...prev,
-    [mode]: null,
-  }));
-  setPredictionsByMode((prev) => ({
-    ...prev,
-    [mode]: {},
-  }));
-  removeImageData(mode);
-};
-
+    setImagePreviewByMode((prev) => ({
+      ...prev,
+      [mode]: null,
+    }));
+    setPredictionsByMode((prev) => ({
+      ...prev,
+      [mode]: {},
+    }));
+    removeImageData(mode);
+  };
 
   return (
     <div className="flex min-h-screen">
@@ -135,7 +133,7 @@ const Home = ({ mode: initialMode = "classification" }) => {
             alt={mode === "classification" ? "Classification Icon" : "Detection Icon"}
             className="w-11 h-11 filter invert brightness-[100%] saturate-0"
           />
-          {mode === "classification" ? "DSO CLASSIFICATION" : "DSO DETECTION"}
+          {mode === "classification" ? "CLASSIFICATION" : "DETECTION"}
         </h1>
 
         <ModelSelector mode={mode} onModelChange={handleModelChange} />
@@ -148,9 +146,8 @@ const Home = ({ mode: initialMode = "classification" }) => {
           setLoadingModels={setLoadingModels}
           defaultImageUrl={imagePreviewByMode[mode]}
           defaultPredictions={predictionsByMode[mode]}
-          onRemove={handleRemove} // ✅ this line enables the actual deletion
+          onRemove={handleRemove}
         />
-
 
         {imagePreviewByMode[mode] && (
           <>
@@ -159,21 +156,35 @@ const Home = ({ mode: initialMode = "classification" }) => {
                 <div className="animate-pulse text-sm">Loading {activeTab} prediction...</div>
               </div>
             ) : currentPrediction && (
-              <PredictionCard
-                inputImageUrl={imagePreviewByMode[mode]}
-                activationMapUrl={currentPrediction.activationMapUrl}
-                predictedClass={currentPrediction.class}
-                confidenceScore={currentPrediction.probability}
-                topPredictions={currentPrediction.top_predictions || []}
-                inferenceTime={currentPrediction.inference_time || 0}
-                modelName={currentPrediction.model_name}
-                inputSize={currentPrediction.input_size}
-                datasetOrigin={currentPrediction.dataset_origin}
-                modelParameters={currentPrediction.modelParameters}
-                numLayers={currentPrediction.numLayers}
-                flops={currentPrediction.flops}
-                onRemove={handleRemove}
-              />
+              mode === "classification" ? (
+                <PredictionCard
+                  inputImageUrl={imagePreviewByMode[mode]}
+                  activationMapUrl={currentPrediction.activationMapUrl}
+                  predictedClass={currentPrediction.class}
+                  confidenceScore={currentPrediction.probability}
+                  topPredictions={currentPrediction.top_predictions || []}
+                  inferenceTime={currentPrediction.inference_time || 0}
+                  modelName={currentPrediction.model_name}
+                  inputSize={currentPrediction.input_size}
+                  datasetOrigin={currentPrediction.dataset_origin}
+                  modelParameters={currentPrediction.modelParameters}
+                  numLayers={currentPrediction.numLayers}
+                  flops={currentPrediction.flops}
+                  onRemove={handleRemove}
+                />
+              ) : (
+                <DetectionPredictionCard
+                  inputImageUrl={imagePreviewByMode[mode]}
+                  detections={currentPrediction.detections || []}
+                  inferenceTime={currentPrediction.inference_time || 0}
+                  modelName={currentPrediction.model_name}
+                  inputSize={currentPrediction.input_size}
+                  modelParameters={currentPrediction.modelParameters}
+                  numLayers={currentPrediction.numLayers}
+                  flops={currentPrediction.flops}
+                  onRemove={handleRemove}
+                />
+              )
             )}
           </>
         )}
