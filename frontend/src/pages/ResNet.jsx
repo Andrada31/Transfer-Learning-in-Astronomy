@@ -18,7 +18,7 @@ const sections = [
 
 const ResNet = () => {
   return (
-    <div className="flex flex-col items-center justify-center w-full  overflow-x-hidden relative">
+    <div className="flex flex-col items-center justify-center w-full max-w-[90vw] sm:max-w-[80vw] md:max-w-[60vw] lg:w-[80vw] overflow-x-hidden relative">
       <Sidenavbar />
       <div className="flex flex-col w-full lg:w-[70%] pt-17 ">
         {/*<h1>ResNet</h1>*/}
@@ -57,7 +57,10 @@ const ResNet = () => {
         </div>
       </div>
       <Tooltip />
-      <ProgressBar sections={sections} />
+        <div className="hidden lg:block">
+            <ProgressBar sections={sections}/>
+        </div>
+
     </div>
   )
 }

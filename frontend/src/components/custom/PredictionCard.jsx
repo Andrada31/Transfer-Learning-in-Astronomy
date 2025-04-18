@@ -6,7 +6,7 @@ import { Progress } from "@/components/ui/progress"
 import { Separator } from "@/components/ui/separator"
 import { Clock, Cpu, Database, ImageIcon, BarChart3, Info, Layers, Variable, Binary } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { useIsMobile } from "@/services/use-mobile"
+import { useIsMobile } from "@/lib/use-mobile"
 
 export function PredictionCard({
   inputImageUrl,

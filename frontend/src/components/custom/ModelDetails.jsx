@@ -7,9 +7,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Separator } from "@/components/ui/separator"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
-import { resnetModels } from "@/lib/resnetData"
-import { vggModels } from "@/lib/vggData"
-import { efficientNetModels } from "@/lib/efficientNetData"
+import { resnetModels } from "@/lib/models/resnetData"
+import { vggModels } from "@/lib/models/vggData"
+import { efficientNetModels } from "@/lib/models/efficientNetData"
 
 export default function ModelDetails({ defaultModel }) {
   const location = useLocation()

@@ -6,9 +6,9 @@ import ModelDetails from "@/components/custom/ModelDetails";
 
 const EfficientNet = () => {
     return (
-        <div className="flex flex-col items-center justify-center w-full px-[20%]">
+        <div className="flex flex-col items-center justify-center  w-full max-w-[90vw] sm:max-w-[80vw] md:max-w-[60vw] lg:w-[80vw]]">
             <Sidenavbar/>
-            <div className="flex flex-col w-full lg:w-[70%] pt-17 lg:px-[4%] justify-center align-center">
+            <div className="flex flex-col w-full lg:w-[70%] pt-17">
                 {/*<h1>EfficientNet</h1>*/}
                 {/*<div className="tabs">*/}
                 {/*    <a href="https://viso.ai/deep-learning/efficientnet/">Documentation</a>*/}
