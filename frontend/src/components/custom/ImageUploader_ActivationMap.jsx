@@ -24,15 +24,28 @@ export function ImageUploaderActivationMap({
   defaultPredictions = {},
 }) {
   const [selectedImage, setSelectedImage] = useState(null);
-  const [imagePreview, setImagePreview] = useState(defaultImageUrl); // <- initialize with stored
+  const [imagePreview, setImagePreview] = useState(defaultImageUrl);
   const [predictionsByModel, setPredictionsByModel] = useState({});
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [naturalWidth, setNaturalWidth] = useState(0);
+  const [naturalHeight, setNaturalHeight] = useState(0);
 
-   useEffect(() => {
+  useEffect(() => {
+    if (imagePreview) {
+      const img = new Image();
+      img.onload = () => {
+        setNaturalWidth(img.width);
+        setNaturalHeight(img.height);
+      };
+      img.src = imagePreview;
+    }
+  }, [imagePreview]);
+
+  useEffect(() => {
     if (!defaultImageUrl) {
       setImagePreview(null);
-      setSelectedImage(null); // <- clear internal reference too
+      setSelectedImage(null);
     } else {
       setImagePreview(defaultImageUrl);
     }
@@ -58,7 +71,7 @@ export function ImageUploaderActivationMap({
 
         setSelectedImage(base64Image);
         setImagePreview(base64Image);
-        onImageChange?.(base64Image); // update parent for persistence
+        onImageChange?.(base64Image);
       } catch (err) {
         setError("Image upload failed. Please try again.");
         onError?.("Image upload failed.");
@@ -93,7 +106,6 @@ export function ImageUploaderActivationMap({
       }));
       setLoadingModels((prev) => ({ ...prev, [selectedModel]: false }));
 
-      // Predict with other models in the background
       Promise.allSettled(
         otherModels.map(async (modelName) => {
           try {
@@ -120,21 +132,74 @@ export function ImageUploaderActivationMap({
     }
   };
 
+  const drawBoundingBoxes = () => {
+      const detections = predictionsByModel["yolo"]?.detections || [];
+      if (!imagePreview || detections.length === 0) return null;
+
+      return (
+        <div className="relative inline-block max-w-full max-h-[500px]">
+          <img
+            src={imagePreview}
+            className="rounded-md max-w-full max-h-[500px]"
+            alt="Bounding Box Preview"
+          />
+          {naturalWidth > 0 && naturalHeight > 0 && (
+            <svg
+              className="absolute top-0 left-0 w-full h-full pointer-events-none"
+              viewBox={`0 0 ${naturalWidth} ${naturalHeight}`}
+              preserveAspectRatio="xMidYMid meet"
+            >
+              {detections.map((det, idx) => {
+                if (!det.box) return null;
+                const { x1, y1, x2, y2 } = det.box;
+                const label = det.class || "object";
+                const confidence = (det.confidence * 100).toFixed(1);
+                return (
+                  <g key={idx}>
+                    <rect
+                      x={x1}
+                      y={y1}
+                      width={x2 - x1}
+                      height={y2 - y1}
+                      stroke="lime"
+                      fill="none"
+                      strokeWidth="2"
+                    />
+                    <text
+                      x={x1}
+                      y={Math.max(y1 - 5, 10)}
+                      fill="lime"
+                      fontSize="12"
+                      fontFamily="monospace"
+                      stroke="black"
+                      strokeWidth="0.3"
+                    >
+                      {label} ({confidence}%)
+                    </text>
+                  </g>
+                );
+              })}
+            </svg>
+          )}
+        </div>
+      );
+    };
+
+
   return (
     <Tabs defaultValue="upload" className="my-6 p-4 w-full max-w-3xl mx-auto border border-[#2A2C3F] rounded-lg">
       <TabsList className="border border-[#2A2C3F]">
-        <TabsTrigger
-          value="upload"
-          className="cursor-pointer px-4 py-2 mr-2 data-[state=active]:bg-[#24285d] data-[state=active]:text-white hover:bg-white hover:text-black"
-        >
+        <TabsTrigger value="upload" className="cursor-pointer px-4 py-2 mr-2 data-[state=active]:bg-[#24285d] data-[state=active]:text-white hover:bg-white hover:text-black">
           <Upload className="h-4 w-4 mr-2" /> Upload
         </TabsTrigger>
-        <TabsTrigger
-          value="results"
-          className="cursor-pointer px-4 py-2 data-[state=active]:bg-[#24285d] data-[state=active]:text-white hover:bg-white hover:text-black"
-        >
+        <TabsTrigger value="results" className="cursor-pointer px-4 py-2 data-[state=active]:bg-[#24285d] data-[state=active]:text-white hover:bg-white hover:text-black">
           <Map className="h-4 w-4 mr-2" /> Activation Map
         </TabsTrigger>
+        {selectedModel === "yolo" && (
+          <TabsTrigger value="boxes" className="cursor-pointer px-4 py-2 data-[state=active]:bg-[#24285d] data-[state=active]:text-white hover:bg-white hover:text-black">
+            <Map className="h-4 w-4 mr-2" /> Bounding Boxes
+          </TabsTrigger>
+        )}
       </TabsList>
 
       <TabsContent value="upload">
@@ -145,7 +210,6 @@ export function ImageUploaderActivationMap({
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
-
             {!imagePreview ? (
               <div
                 className="border-gray-300 rounded-lg p-20 text-center cursor-pointer"
@@ -170,7 +234,7 @@ export function ImageUploaderActivationMap({
                   className="object-contain rounded-lg max-h-[400px] w-auto"
                   alt="Uploaded Preview"
                 />
-               <Button
+                <Button
                   onClick={onRemove}
                   variant="ghost"
                   size="icon"
@@ -178,10 +242,8 @@ export function ImageUploaderActivationMap({
                 >
                   <X className="h-4 w-4" />
                 </Button>
-
               </div>
             )}
-
             <Input type="file" className="hidden" id="file-upload" onChange={handleUpload} />
             <Button
               onClick={handlePredict}
@@ -208,6 +270,15 @@ export function ImageUploaderActivationMap({
         </Card>
       </TabsContent>
 
+      {selectedModel === "yolo" && (
+        <TabsContent value="boxes">
+          <Card className="border-none">
+            <CardContent className="p-4 flex flex-col items-center">
+              {drawBoundingBoxes()}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      )}
     </Tabs>
   );
 }

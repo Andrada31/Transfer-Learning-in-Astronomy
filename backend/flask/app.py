@@ -23,7 +23,7 @@ MODEL_PATHS = {
     'resnet': '../models/saved/resnet50.keras',
     'efficientnet': '../models/saved/efficientnet-v4.keras'
 }
-YOLO_MODEL_PATH = '../models/saved/yolo11n-20ep.pt'
+YOLO_MODEL_PATH = '../models/saved/yolo-40ep-3c-ns.pt'
 
 loaded_models = {}
 yolo_model = None
@@ -149,9 +149,16 @@ def predict_with_yolo(image):
             for box in r.boxes:
                 cls_id = int(box.cls[0])
                 conf = float(box.conf[0])
+                xyxy = box.xyxy[0].tolist()
                 detections.append({
                     'class': yolo_model.names[cls_id],
-                    'confidence': conf
+                    'confidence': conf,
+                    'box': {
+                        'x1': xyxy[0],
+                        'y1': xyxy[1],
+                        'x2': xyxy[2],
+                        'y2': xyxy[3]
+                    }
                 })
 
     return detections, inference_time

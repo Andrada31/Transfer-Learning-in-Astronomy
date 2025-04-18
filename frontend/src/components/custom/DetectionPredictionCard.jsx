@@ -3,7 +3,7 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {ImageIcon, Layers, Variable, Clock, Cpu, Binary, ListChecks, Info} from "lucide-react";
+import {ImageIcon, Layers, Variable, Clock, Cpu, Binary, ListChecks, Info, Database} from "lucide-react";
 
 export function DetectionPredictionCard({
   inputImageUrl,
@@ -86,6 +86,12 @@ export function DetectionPredictionCard({
             </div>
             <div className="font-medium text-gray-300">{inputSize || "N/A"}</div>
 
+            <div className="flex items-center gap-2">
+              <Database className="h-4 w-4 text-gray-500"/>
+              <span className="text-gray-500">Dataset:</span>
+            </div>
+            <div className="font-medium text-gray-300">{"Negative Sampling" || "N/A"}</div>
+
             {numLayers && (
                 <>
                   <div className="flex items-center gap-2">
@@ -115,6 +121,7 @@ export function DetectionPredictionCard({
                   <div className="font-medium text-gray-300">{flops}</div>
                 </>
             )}
+
           </div>
         </div>
       </CardContent>
