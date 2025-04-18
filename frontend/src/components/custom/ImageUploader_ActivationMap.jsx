@@ -20,6 +20,7 @@ export function ImageUploaderActivationMap({
   onImageChange,
   onRemove,
   setLoadingModels,
+  mode,
   defaultImageUrl = null,
   defaultPredictions = {},
 }) {
@@ -194,7 +195,7 @@ export function ImageUploaderActivationMap({
     );
   };
 
-  const isDetectionModel = selectedModel === "yolo";
+  const isDetectionModel =mode === "detection";
 
   return (
     <Tabs defaultValue="upload" className="my-6 p-4 w-full max-w-3xl mx-auto border border-[#2A2C3F] rounded-lg">
@@ -203,7 +204,7 @@ export function ImageUploaderActivationMap({
           <Upload className="h-4 w-4 mr-2" /> Upload
         </TabsTrigger>
         <TabsTrigger value="results" className="cursor-pointer px-4 py-2 data-[state=active]:bg-[#24285d] data-[state=active]:text-white hover:bg-white hover:text-black">
-          <Map className="h-4 w-4 mr-2" /> {isDetectionModel ? "Eigen-CAM" : "Activation Map"}
+          <Map className="h-4 w-4 mr-2" /> {isDetectionModel ? "Grad-CAM" : "Activation Map"}
         </TabsTrigger>
         {isDetectionModel && (
           <TabsTrigger value="boxes" className="cursor-pointer px-4 py-2 data-[state=active]:bg-[#24285d] data-[state=active]:text-white hover:bg-white hover:text-black">
@@ -267,13 +268,13 @@ export function ImageUploaderActivationMap({
         </Card>
       </TabsContent>
 
-      <TabsContent value="results">
+     <TabsContent value="results">
         <Card className="border-none">
           <CardContent className="p-4 flex flex-col items-center">
             <ActivationMapViewer
-              mode={selectedModel === "yolo" ? "detection" : "classification"}
+              mode={mode}  // 🔁 Use mode directly from Home
               activationMapUrls={
-                selectedModel === "yolo"
+                mode === "detection"
                   ? [predictionsByModel[selectedModel]?.activationMapUrl]
                   : predictionsByModel[selectedModel]?.activationMapUrls
               }
@@ -282,8 +283,7 @@ export function ImageUploaderActivationMap({
         </Card>
       </TabsContent>
 
-
-      {isDetectionModel && (
+      {mode === "detection" && (
         <TabsContent value="boxes">
           <Card className="border-none">
             <CardContent className="p-4 flex flex-col items-center">
@@ -292,6 +292,7 @@ export function ImageUploaderActivationMap({
           </Card>
         </TabsContent>
       )}
+
     </Tabs>
   );
 }

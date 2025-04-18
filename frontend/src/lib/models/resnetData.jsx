@@ -9,6 +9,9 @@ export const resnetModels = {
       yearPublished: "2015",
       authors: ["Kaiming He", "Xiangyu Zhang", "Shaoqing Ren", "Jian Sun"],
       paperLink: "https://arxiv.org/abs/1512.03385",
+      datasetLink: "https://www.pngwing.com/en/free-png-arnny/download",
+      notebookLink: "https://www.pngwing.com/en/free-png-arnny/download"
+
     },
     architectureData: {
       layers: 18,

@@ -9,7 +9,7 @@ const ModelSelector = ({ mode = "classification", onModelChange }) => {
 
   const detectionModels = {
     yolo: "YOLOv11n",
-    svm: "SVM Classifier",
+    yolo9: "YOLOv9",
   };
 
   const modelLabels = mode === "detection" ? detectionModels : classificationModels;

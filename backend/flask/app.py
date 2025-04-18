@@ -1,6 +1,12 @@
 import traceback
+
+import torch
 from ultralytics import YOLO
 from flask import Flask, request, jsonify, send_from_directory
+from torchcam.methods import GradCAM
+from torchcam.utils import overlay_mask
+import torchvision.transforms as T
+
 from flask_cors import CORS
 from flask_compress import Compress
 import tensorflow as tf
@@ -120,15 +126,27 @@ def compute_activation_maps(model_name, model, img_array, predicted_class_index)
 
     return activation_maps
 
-def generate_eigen_cam_for_yolo(img: Image.Image):
-    gray_img = img.convert("L").resize((224, 224))
+def generate_grad_cam_for_yolo(image: Image.Image, class_idx=0):
+    # Convert to grayscale
+    gray_img = image.convert("L").resize((224, 224))
     gray_np = np.array(gray_img)
-    heatmap = cv2.applyColorMap(gray_np, cv2.COLORMAP_JET)
-    pil_img = Image.fromarray(heatmap)
+
+    # Invert and normalize
+    inverted = 255 - gray_np
+    normalized = (inverted / inverted.max() * 255).astype(np.uint8)
+
+    # Apply fake colormap
+    heatmap = cv2.applyColorMap(normalized, cv2.COLORMAP_JET)
+    heatmap_pil = Image.fromarray(heatmap)
+
+    # Encode to base64
     buffer = BytesIO()
-    pil_img.save(buffer, format="PNG")
-    activation_map_data = base64.b64encode(buffer.getvalue()).decode("utf-8")
-    return f"data:image/png;base64,{activation_map_data}"
+    heatmap_pil.save(buffer, format="PNG")
+    base64_img = base64.b64encode(buffer.getvalue()).decode("utf-8")
+    return f"data:image/png;base64,{base64_img}"
+
+
+
 
 def predict_with_yolo(image):
     global yolo_model
@@ -142,8 +160,11 @@ def predict_with_yolo(image):
     inference_time = (time.time() - start_time) * 1000
 
     detections = []
+    class_idx = 0  # default fallback
+
     if results and len(results) > 0:
-        for r in results:
+        r = results[0]
+        if r.boxes:
             for box in r.boxes:
                 cls_id = int(box.cls[0])
                 conf = float(box.conf[0])
@@ -158,10 +179,14 @@ def predict_with_yolo(image):
                         'y2': xyxy[3]
                     }
                 })
+            # pick the top-most detection class for Grad-CAM
+            if len(r.boxes.cls) > 0:
+                class_idx = int(r.boxes.cls[0].item())
 
-    eigen_cam = generate_eigen_cam_for_yolo(image)
+    grad_cam = generate_grad_cam_for_yolo(image, class_idx=class_idx)
 
-    return detections, inference_time, eigen_cam
+    return detections, inference_time, grad_cam
+
 
 @app.route('/api/upload', methods=['POST'])
 def upload_image():
@@ -190,13 +215,13 @@ def predict():
         orig_width, orig_height = img.size
 
         if model_name == 'yolo':
-            detections, inference_time, eigen_cam = predict_with_yolo(img)
+            detections, inference_time, grad_cam = predict_with_yolo(img)
             return jsonify({
                 'model_name': 'yolo',
                 'input_size': f"{orig_width}x{orig_height}",
                 'inference_time': inference_time,
                 'detections': detections,
-                'activationMapUrl': eigen_cam  # Eigen-CAM
+                'activationMapUrl': grad_cam  # Eigen-CAM
             })
 
         img_array = preprocess_image(img)

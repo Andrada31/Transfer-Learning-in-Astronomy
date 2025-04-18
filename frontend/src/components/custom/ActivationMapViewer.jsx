@@ -24,7 +24,7 @@ export default function ActivationMapViewer({ activationMapUrls = [], mode }) {
   const isClassification = mode === "classification";
   const imageToShow = isClassification
     ? activationMapUrls[activeLayer - 1]
-    : activationMapUrls[0];
+    : activationMapUrls[0]; // Grad-CAM for YOLO
 
   return (
     <Card className="p-6 border-none w-full max-w-md mx-auto">
@@ -34,14 +34,20 @@ export default function ActivationMapViewer({ activationMapUrls = [], mode }) {
             {imageToShow ? (
               <img
                 src={imageToShow}
-                alt={isClassification ? `Activation map for layer ${activeLayer}` : "Eigen-CAM activation map"}
+                alt={
+                  isClassification
+                    ? `Activation map for layer ${activeLayer}`
+                    : "Grad-CAM object detection heatmap"
+                }
                 className="w-[300px] h-[300px] object-cover"
               />
             ) : (
               <div className="w-[300px] h-[300px] bg-transparent flex flex-col items-center justify-center text-gray-400">
                 <BrainCircuit className="w-20 h-20 mb-10 text-white" />
                 <p className="text-md text-center">
-                  {isClassification ? "Activation map inactive" : "Eigen-CAM unavailable"}
+                  {isClassification
+                    ? "Activation map inactive"
+                    : "Grad-CAM unavailable"}
                 </p>
               </div>
             )}
@@ -78,7 +84,10 @@ export default function ActivationMapViewer({ activationMapUrls = [], mode }) {
 
         {!isClassification && imageToShow && (
           <div className="text-sm text-muted-foreground text-center">
-            <p>This Eigen-CAM highlights regions influencing object detection.</p>
+            <p>
+              This Grad-CAM visualization highlights regions that contributed to
+              YOLO's object detection.
+            </p>
           </div>
         )}
       </CardContent>

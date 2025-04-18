@@ -6,7 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Separator } from "@/components/ui/separator"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-
+import { ExternalLink } from "lucide-react"
+import colabLogo from "@/images/colab.png"
+import kaggleLogo from "@/images/kaggle2.svg"
 import { resnetModels } from "@/lib/models/resnetData"
 import { vggModels } from "@/lib/models/vggData"
 import { efficientNetModels } from "@/lib/models/efficientNetData"
@@ -78,17 +80,37 @@ export default function ModelDetails({ defaultModel }) {
                 </div>
               </div>
               {modelData.overviewData.paperLink && (
-                <div className="pt-2">
-                  <a
-                    href={modelData.overviewData.paperLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-300 hover:underline"
-                  >
-                    View Original Paper
-                  </a>
-                </div>
-              )}
+                  <div className="pt-2 flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-2 sm:space-y-0">
+                    <a
+                      href={modelData.overviewData.paperLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-300 hover:underline"
+                    >
+                      View Original Paper
+                    </a>
+
+                    <button
+                      onClick={() => window.open(modelData.overviewData.datasetLink, "_blank")}
+                      className="flex items-center justify-center px-4 py-2 border border-gray-600 text-white cursor-pointer hover:bg-gray-800 bg-transparent rounded w-full sm:w-auto"
+                    >
+                      <img src={kaggleLogo} alt="Kaggle" className="mr-2 h-5 w-5" />
+                      Kaggle Dataset
+                      <ExternalLink className="ml-2 h-4 w-4" />
+                    </button>
+
+                    <button
+                      onClick={() => window.open(modelData.overviewData.notebookLink, "_blank")}
+                      className="flex items-center justify-center px-4 py-2 border border-gray-600 cursor-pointer text-white hover:bg-gray-800 bg-transparent rounded w-full sm:w-auto"
+                    >
+                      <img src={colabLogo} alt="Notebook" className="mr-2 h-5 w-8" />
+                      Notebook
+                      <ExternalLink className="ml-2 h-4 w-4" />
+                    </button>
+                  </div>
+                )}
+
+
             </div>
           </TabsContent>
 

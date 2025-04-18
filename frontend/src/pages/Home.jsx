@@ -147,6 +147,7 @@ const Home = ({ mode: initialMode = "classification" }) => {
           defaultImageUrl={imagePreviewByMode[mode]}
           defaultPredictions={predictionsByMode[mode]}
           onRemove={handleRemove}
+          mode={mode}
         />
 
         {imagePreviewByMode[mode] && (
