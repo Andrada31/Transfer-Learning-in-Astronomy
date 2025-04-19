@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import ResNet from './pages/ResNet';
 import EfficientNet from "@/pages/EfficientNet";
 import VGG from "@/pages/VGG";
+import Yolo from "@/pages/Yolo";
 
 
 function App() {
@@ -16,6 +17,9 @@ function App() {
         <Route path="/resnet" element={<ResNet />} />
         <Route path="/efficientnet" element={<EfficientNet />} />
         <Route path="/vgg" element={<VGG />} />
+        <Route path="/yolo" element={<Yolo />} />
+        {/* Add more routes as needed */}
+
       </Routes>
     </Router>
   );

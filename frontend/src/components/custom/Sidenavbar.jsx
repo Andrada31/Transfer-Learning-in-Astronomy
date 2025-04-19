@@ -81,7 +81,7 @@ const Sidenavbar = ({ setMode }) => {
             </a>
             <a
                 className={`tab block text-white py-2 px-3 rounded border border-white/30 hover:bg-white/10 transition ${activeTab === '/vgg' ? 'bg-white/10' : ''}`}
-                href="/vgg"
+                href="/yolo"
                 onClick={() => handleTabClick('/vgg')}
             >
               YOLO

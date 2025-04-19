@@ -9,7 +9,7 @@ export const resnetModels = {
       yearPublished: "2015",
       authors: ["Kaiming He", "Xiangyu Zhang", "Shaoqing Ren", "Jian Sun"],
       paperLink: "https://arxiv.org/abs/1512.03385",
-      datasetLink: "https://www.pngwing.com/en/free-png-arnny/download",
+      datasetLink: "https://www.kaggle.com/datasets/andradaparaczki/deepspaceyolodataset-3c-ns",
       notebookLink: "https://www.pngwing.com/en/free-png-arnny/download"
 
     },
@@ -25,7 +25,7 @@ export const resnetModels = {
       ],
     },
     trainingData: {
-      dataset: "ImageNet (1.28 million training images)",
+      dataset: "ImageNet",
       accuracy: "69.8%",
       trainingTime: "~1 week on 8 GPUs",
       hardware: "NVIDIA Tesla P100 GPUs",
@@ -46,6 +46,8 @@ export const resnetModels = {
       yearPublished: "2015",
       authors: ["Kaiming He", "Xiangyu Zhang", "Shaoqing Ren", "Jian Sun"],
       paperLink: "https://arxiv.org/abs/1512.03385",
+      datasetLink: "https://www.kaggle.com/datasets/andradaparaczki/deepspaceyolodataset-3c-ns",
+      notebookLink: "https://www.pngwing.com/en/free-png-arnny/download"
     },
     architectureData: {
       layers: 34,
@@ -59,7 +61,7 @@ export const resnetModels = {
       ],
     },
     trainingData: {
-      dataset: "ImageNet (1.28 million training images)",
+      dataset: "ImageNet ",
       accuracy: "73.3%",
       trainingTime: "~10 days on 8 GPUs",
       hardware: "NVIDIA Tesla P100 GPUs",
@@ -80,6 +82,8 @@ export const resnetModels = {
       yearPublished: "2015",
       authors: ["Kaiming He", "Xiangyu Zhang", "Shaoqing Ren", "Jian Sun"],
       paperLink: "https://arxiv.org/abs/1512.03385",
+      datasetLink: "https://www.kaggle.com/datasets/andradaparaczki/deepspaceyolodataset-3c-ns",
+      notebookLink: "https://www.pngwing.com/en/free-png-arnny/download"
     },
     architectureData: {
       layers: 50,
@@ -93,10 +97,10 @@ export const resnetModels = {
       ],
     },
     trainingData: {
-      dataset: "ImageNet (1.28 million training images)",
+      dataset: "ImageNet",
       accuracy: "75.3%",
-      trainingTime: "~2 weeks on 8 GPUs",
-      hardware: "NVIDIA Tesla P100 GPUs",
+      trainingTime: "30 epochs",
+      hardware: "Colab's NVIDIA T4: 16GB VRAM",
       evaluationMetrics: {
         "Top-1 Accuracy": "75.3%",
         "Top-5 Accuracy": "92.2%",
@@ -114,6 +118,8 @@ export const resnetModels = {
       yearPublished: "2015",
       authors: ["Kaiming He", "Xiangyu Zhang", "Shaoqing Ren", "Jian Sun"],
       paperLink: "https://arxiv.org/abs/1512.03385",
+      datasetLink: "https://www.kaggle.com/datasets/andradaparaczki/deepspaceyolodataset-3c-ns",
+      notebookLink: "https://www.pngwing.com/en/free-png-arnny/download"
     },
     architectureData: {
       layers: 101,
@@ -128,7 +134,7 @@ export const resnetModels = {
       ],
     },
     trainingData: {
-      dataset: "ImageNet (1.28 million training images)",
+      dataset: "ImageNet",
       accuracy: "76.4%",
       trainingTime: "~3 weeks on 8 GPUs",
       hardware: "NVIDIA Tesla P100 GPUs",
@@ -149,6 +155,8 @@ export const resnetModels = {
       yearPublished: "2015",
       authors: ["Kaiming He", "Xiangyu Zhang", "Shaoqing Ren", "Jian Sun"],
       paperLink: "https://arxiv.org/abs/1512.03385",
+      datasetLink: "https://www.kaggle.com/datasets/andradaparaczki/deepspaceyolodataset-3c-ns",
+      notebookLink: "https://www.pngwing.com/en/free-png-arnny/download"
     },
     architectureData: {
       layers: 152,
@@ -163,7 +171,7 @@ export const resnetModels = {
       ],
     },
     trainingData: {
-      dataset: "ImageNet (1.28 million training images)",
+      dataset: "ImageNet",
       accuracy: "77.8%",
       trainingTime: "~4 weeks on 8 GPUs",
       hardware: "NVIDIA Tesla P100 GPUs",
