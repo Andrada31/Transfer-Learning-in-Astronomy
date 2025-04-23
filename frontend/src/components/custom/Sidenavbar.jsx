@@ -18,6 +18,7 @@ const Sidenavbar = ({ setMode }) => {
     setActiveTab(path);
   };
 
+
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
@@ -89,14 +90,14 @@ const Sidenavbar = ({ setMode }) => {
           </div>
 
           <div className="flex flex-col h-full">
-            {/* Your existing content above */}
-
             <div className="mt-auto w-full pb-0">
               <CustomButton
                   text="Classification >>"
                   icon={classifyIcon}
                   onClick={() => {
-                    setMode("classification");
+                    if (setMode) {
+                      setMode("classification");
+                    }
                     navigate("/");
                   }}
               />
@@ -104,8 +105,10 @@ const Sidenavbar = ({ setMode }) => {
                   text="Object Detection >>"
                   icon={detectIcon}
                   onClick={() => {
-                    setMode("detection");
-                   navigate("/detection");
+                    if (setMode) {
+                      setMode("detection");
+                    }
+                    navigate("/detection");
                   }}
               />
             </div>

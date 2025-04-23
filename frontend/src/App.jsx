@@ -8,6 +8,7 @@ import VGG from "@/pages/VGG";
 import Yolo from "@/pages/Yolo";
 
 
+
 function App() {
   return (
     <Router>
@@ -18,8 +19,6 @@ function App() {
         <Route path="/efficientnet" element={<EfficientNet />} />
         <Route path="/vgg" element={<VGG />} />
         <Route path="/yolo" element={<Yolo />} />
-        {/* Add more routes as needed */}
-
       </Routes>
     </Router>
   );

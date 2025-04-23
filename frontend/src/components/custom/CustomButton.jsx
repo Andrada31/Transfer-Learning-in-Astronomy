@@ -1,26 +1,18 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const CustomButton = ({ text = "Start classification", icon, onClick }) => {
-  const handleClick = () => {
-    if (onClick) {
-      onClick();
-    } else {
-      window.location.href = "/";
-    }
-  };
+const CustomButton = ({ text = "Start classification", icon, onClick }) => (
 
-  return (
-    <StyledWrapper>
-      <button className="button" onClick={handleClick}>
-        <div className="content">
-          {icon && <img src={icon} alt="Button icon" className="icon filter invert brightness-[100%] saturate-0" />}
-          <span className="text">{text}</span>
-        </div>
-      </button>
-    </StyledWrapper>
-  );
-};
+  <StyledWrapper>
+    <button className="button" onClick={onClick}>
+      <div className="content">
+        {icon && <img src={icon} alt="Button icon" className="icon filter invert brightness-[100%] saturate-0" />}
+        <span className="text">{text}</span>
+      </div>
+    </button>
+  </StyledWrapper>
+);
+
 
 const StyledWrapper = styled.div`
   .button {

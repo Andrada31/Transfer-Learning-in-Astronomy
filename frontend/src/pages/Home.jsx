@@ -163,7 +163,7 @@ const Home = ({ mode: initialMode = "classification" }) => {
                   activationMapUrl={currentPrediction.activationMapUrl}
                   predictedClass={currentPrediction.class}
                   confidenceScore={currentPrediction.probability}
-                  topPredictions={currentPrediction.top_predictions || []}
+                  topPredictions={currentPrediction.topPredictions || []}
                   inferenceTime={currentPrediction.inference_time || 0}
                   modelName={currentPrediction.model_name}
                   inputSize={currentPrediction.input_size}

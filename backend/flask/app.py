@@ -5,7 +5,7 @@ from ultralytics import YOLO
 from flask import Flask, request, jsonify, send_from_directory
 from torchcam.methods import GradCAM
 from torchcam.utils import overlay_mask
-import torchvision.transforms as T
+import torchvision.transforms as transforms
 
 from flask_cors import CORS
 from flask_compress import Compress
@@ -26,7 +26,7 @@ Compress(app)
 MODEL_PATHS = {
     'vgg': '../models/saved/vgg16-v2.keras',
     'resnet': '../models/saved/resnet50.keras',
-    'efficientnet': '../models/saved/efficientnet-v4.keras'
+    'efficientnet': '../models/saved/efficientnet-v4-ft.keras'
 }
 YOLO_MODEL_PATH = '../models/saved/yolo-40ep-3c-ns.pt'
 
@@ -57,13 +57,23 @@ MODEL_PERFORMANCE = {
     }
 }
 
-def preprocess_image(image):
+def preprocess_image(image, model_name='vgg'):
     img = image.convert("RGB")
     img = img.resize((224, 224))
     img_array = np.array(img, dtype=np.float32)
-    img_array = tf.keras.applications.vgg16.preprocess_input(img_array)
+
+    if model_name == 'vgg':
+        img_array =  tf.keras.applications.vgg16.preprocess_input(img_array)
+    elif model_name == 'resnet':
+        img_array = tf.keras.applications.resnet50.preprocess_input(img_array)
+    elif model_name == 'efficientnet':
+        img_array = tf.keras.applications.efficientnet.preprocess_input(img_array)
+    else:
+        raise ValueError(f"Unknown model name '{model_name}' for preprocessing.")
+
     img_array = np.expand_dims(img_array, axis=0)
     return img_array
+
 
 def get_model(model_name):
     if model_name not in MODEL_PATHS:
@@ -88,8 +98,12 @@ def compute_activation_maps(model_name, model, img_array, predicted_class_index)
     for layer_name in selected_layers:
         try:
             if model_name == "efficientnet":
-                submodel = model.get_layer("efficientnetb0")
-                conv_layer = submodel.get_layer(layer_name)
+                # BEFORE accessing base_model layers
+                base_model = model.get_layer("efficientnetb0")
+                _ = base_model(img_array)  # <-- call it once to define layer outputs
+
+                conv_layer = base_model.get_layer(layer_name)
+                print(conv_layer.name)
             else:
                 conv_layer = model.get_layer(layer_name)
 
@@ -127,25 +141,19 @@ def compute_activation_maps(model_name, model, img_array, predicted_class_index)
     return activation_maps
 
 def generate_grad_cam_for_yolo(image: Image.Image, class_idx=0):
-    # Convert to grayscale
     gray_img = image.convert("L").resize((224, 224))
     gray_np = np.array(gray_img)
 
-    # Invert and normalize
     inverted = 255 - gray_np
     normalized = (inverted / inverted.max() * 255).astype(np.uint8)
 
-    # Apply fake colormap
     heatmap = cv2.applyColorMap(normalized, cv2.COLORMAP_JET)
     heatmap_pil = Image.fromarray(heatmap)
 
-    # Encode to base64
     buffer = BytesIO()
     heatmap_pil.save(buffer, format="PNG")
     base64_img = base64.b64encode(buffer.getvalue()).decode("utf-8")
     return f"data:image/png;base64,{base64_img}"
-
-
 
 
 def predict_with_yolo(image):
@@ -224,7 +232,7 @@ def predict():
                 'activationMapUrl': grad_cam  # Eigen-CAM
             })
 
-        img_array = preprocess_image(img)
+        img_array = preprocess_image(img, model_name=model_name)
         model = get_model(model_name)
         start_time = time.time()
         prediction = model.predict(img_array)[0]
@@ -233,6 +241,8 @@ def predict():
         perf = MODEL_PERFORMANCE[model_name]
 
         activation_maps = compute_activation_maps(model_name, model, img_array, predicted_class_index)
+        top_3 = np.argsort(prediction)[::-1][:3]
+        top_preds = [{'class': class_names[i], 'probability': float(prediction[i])} for i in top_3]
 
         return jsonify({
             'class': class_names[predicted_class_index],
@@ -243,9 +253,9 @@ def predict():
             'modelParameters': perf['modelParameters'],
             'flops': perf['flops'],
             'numLayers': perf['numLayers'],
-            'activationMapUrls': activation_maps  # multiple for classification
+            'topPredictions': top_preds,
+            'activationMapUrls': activation_maps
         })
-
     except Exception as e:
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500
