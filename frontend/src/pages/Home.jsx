@@ -81,19 +81,17 @@ const Home = ({ mode: initialMode = "classification" }) => {
   };
 
   const handleRemove = () => {
-    const confirmDelete = window.confirm("Are you sure you want to remove this image and its predictions?");
-    if (!confirmDelete) return;
+  setImagePreviewByMode((prev) => ({
+    ...prev,
+    [mode]: null,
+  }));
+  setPredictionsByMode((prev) => ({
+    ...prev,
+    [mode]: {},
+  }));
+  removeImageData(mode);
+};
 
-    setImagePreviewByMode((prev) => ({
-      ...prev,
-      [mode]: null,
-    }));
-    setPredictionsByMode((prev) => ({
-      ...prev,
-      [mode]: {},
-    }));
-    removeImageData(mode);
-  };
 
   return (
     <div className="flex min-h-screen">

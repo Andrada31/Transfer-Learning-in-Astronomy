@@ -13,6 +13,7 @@ export default function ActivationMapViewer({ activationMapUrls = [], mode }) {
     setActiveLayer(value[0]);
   };
 
+
   const layerFeatures = {
     1: ["Edge detection", "Simple patterns", "Basic textures"],
     2: ["Corners and contours", "Color blobs", "Simple shapes"],

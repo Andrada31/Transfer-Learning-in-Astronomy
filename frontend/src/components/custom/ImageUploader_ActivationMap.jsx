@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Upload, X, Sparkles, Map } from "lucide-react";
 import { uploadImage, predictImage } from "@/services/api";
 import ActivationMapViewer from "@/components/custom/ActivationMapViewer";
+import RemoveImageDialog from "@/components/custom/RemoveImageDialog";
 
 const ALLOWED_FORMATS = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 const MODEL_NAMES = ["resnet", "efficientnet", "vgg"];
@@ -28,9 +29,11 @@ export function ImageUploaderActivationMap({
   const [imagePreview, setImagePreview] = useState(defaultImageUrl);
   const [predictionsByModel, setPredictionsByModel] = useState({});
   const [error, setError] = useState(null);
+  const [similarityInfo, setSimilarityInfo] = useState(null);
   const [loading, setLoading] = useState(false);
   const [naturalWidth, setNaturalWidth] = useState(0);
   const [naturalHeight, setNaturalHeight] = useState(0);
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     if (imagePreview) {
@@ -64,6 +67,7 @@ export function ImageUploaderActivationMap({
         return;
       }
       setError(null);
+      setSimilarityInfo(null);
 
       try {
         setLoading(true);
@@ -86,25 +90,39 @@ export function ImageUploaderActivationMap({
     if (!selectedImage && !imagePreview) return;
 
     const imageToPredict = selectedImage || imagePreview;
-
     const otherModels = MODEL_NAMES.filter((m) => m !== selectedModel);
+
     const initialLoading = {};
     MODEL_NAMES.forEach((model) => {
       initialLoading[model] = true;
     });
     setLoadingModels(initialLoading);
     setError(null);
+    setSimilarityInfo(null);
 
     try {
       const mainResult = await predictImage(imageToPredict, selectedModel);
+      const predictionData = mainResult.data;
+
       setPredictionsByModel((prev) => ({
         ...prev,
-        [selectedModel]: mainResult.data,
+        [selectedModel]: predictionData,
       }));
       onAllPredictions?.((prev) => ({
         ...prev,
-        [selectedModel]: mainResult.data,
+        [selectedModel]: predictionData,
       }));
+
+      setSimilarityInfo({
+        score: predictionData.similarityScore,
+        isOOD: predictionData.in_distribution === false,
+      });
+
+      if (predictionData.in_distribution === false) {
+        setLoadingModels({});
+        return;
+      }
+
       setLoadingModels((prev) => ({ ...prev, [selectedModel]: false }));
 
       Promise.allSettled(
@@ -139,6 +157,7 @@ export function ImageUploaderActivationMap({
       clusters: "#ff6b6b",
       galaxies: "#6bc1ff",
       nebulae: "#81f58a",
+      other: "#facc15",
       default: "#d3d3d3"
     };
 
@@ -195,7 +214,7 @@ export function ImageUploaderActivationMap({
     );
   };
 
-  const isDetectionModel =mode === "detection";
+  const isDetectionModel = mode === "detection";
 
   return (
     <Tabs defaultValue="upload" className="my-6 p-4 w-full max-w-3xl mx-auto border border-[#2A2C3F] rounded-lg">
@@ -221,10 +240,29 @@ export function ImageUploaderActivationMap({
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
+
+            {similarityInfo && (
+              <Alert variant={similarityInfo.isOOD ? "destructive" : "default"} className="mb-4">
+                <AlertDescription>
+                  {similarityInfo.isOOD ? (
+                    <>
+                      ⚠️ The uploaded image is <strong>out-of-distribution</strong>. <br />
+                      Prediction was not performed.
+                    </>
+                  ) : (
+                    <>
+                      ✅ Image is <strong>similar</strong> to known DSOs. <br />
+                      Similarity score: <strong>{(similarityInfo.score * 100).toFixed(2)}%</strong>
+                    </>
+                  )}
+                </AlertDescription>
+              </Alert>
+            )}
+
             {!imagePreview ? (
               <div
                 className="border-gray-300 rounded-lg p-20 text-center cursor-pointer"
-                onClick={() => document.getElementById("file-upload").click()}
+                onClick={() => fileInputRef.current?.click()}
                 onDrop={(e) => {
                   e.preventDefault();
                   handleUpload({ target: { files: e.dataTransfer.files } });
@@ -245,17 +283,35 @@ export function ImageUploaderActivationMap({
                   className="object-contain rounded-lg max-h-[400px] w-auto"
                   alt="Uploaded Preview"
                 />
-                <Button
-                  onClick={onRemove}
-                  variant="ghost"
-                  size="icon"
-                  className="absolute top-2 right-2 cursor-pointer bg-[#24275b]/50 hover:bg-opacity-100"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
+                <RemoveImageDialog
+                  onConfirm={() => {
+                    setSimilarityInfo(null);
+                    setSelectedImage(null);
+                    setImagePreview(null);
+                    if (fileInputRef.current) fileInputRef.current.value = "";
+                    onRemove?.();
+                  }}
+                  trigger={
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="absolute top-2 right-2 cursor-pointer bg-[#24275b]/50 hover:bg-opacity-100"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  }
+                />
               </div>
             )}
-            <Input type="file" className="hidden" id="file-upload" onChange={handleUpload} />
+
+            <Input
+              type="file"
+              className="hidden"
+              id="file-upload"
+              ref={fileInputRef}
+              onChange={handleUpload}
+            />
+
             <Button
               onClick={handlePredict}
               disabled={!imagePreview || loading}
@@ -268,11 +324,11 @@ export function ImageUploaderActivationMap({
         </Card>
       </TabsContent>
 
-     <TabsContent value="results">
+      <TabsContent value="results">
         <Card className="border-none">
           <CardContent className="p-4 flex flex-col items-center">
             <ActivationMapViewer
-              mode={mode}  // 🔁 Use mode directly from Home
+              mode={mode}
               activationMapUrls={
                 mode === "detection"
                   ? [predictionsByModel[selectedModel]?.activationMapUrl]
@@ -283,7 +339,7 @@ export function ImageUploaderActivationMap({
         </Card>
       </TabsContent>
 
-      {mode === "detection" && (
+      {isDetectionModel && (
         <TabsContent value="boxes">
           <Card className="border-none">
             <CardContent className="p-4 flex flex-col items-center">
@@ -292,7 +348,6 @@ export function ImageUploaderActivationMap({
           </Card>
         </TabsContent>
       )}
-
     </Tabs>
   );
 }

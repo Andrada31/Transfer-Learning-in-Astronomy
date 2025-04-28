@@ -3,6 +3,7 @@ import traceback
 import torch
 from ultralytics import YOLO
 from flask import Flask, request, jsonify, send_from_directory
+from sklearn.metrics.pairwise import cosine_similarity
 from torchcam.methods import GradCAM
 from torchcam.utils import overlay_mask
 import torchvision.transforms as transforms
@@ -22,17 +23,36 @@ app = Flask(__name__, static_folder='../frontend/build', static_url_path='/')
 CORS(app)
 Compress(app)
 
-# Model paths
 MODEL_PATHS = {
-    'vgg': '../models/saved/vgg16-v2.keras',
-    'resnet': '../models/saved/resnet50.keras',
-    'efficientnet': '../models/saved/efficientnet-v4-ft.keras'
+    'vgg': '../models/saved/vgg16-4c-20ep.keras',
+    'resnet': '../models/saved/resnet50-4c-10ep-ft.keras',
+    'efficientnet': '../models/saved/efficientnet-4c-20ep.keras'
 }
 YOLO_MODEL_PATH = '../models/saved/yolo-40ep-3c-ns.pt'
 
+EMBEDDING_INFO = {
+    'resnet': {
+        'embedding_layer': 'dense',
+        'path': '../models/embeddings/resnet_embeddings.npz',
+        'preprocess': tf.keras.applications.resnet50.preprocess_input,
+    },
+    'vgg': {
+        'embedding_layer': 'dense',
+        'path': '../models/embeddings/vgg_embeddings.npz',
+        'preprocess': tf.keras.applications.vgg16.preprocess_input,
+    },
+    'efficientnet': {
+        'embedding_layer': 'dense',
+        'path': '../models/embeddings/efficientnet_embeddings.npz',
+        'preprocess': tf.keras.applications.efficientnet.preprocess_input,
+    }
+}
+
+SIMILARITY_THRESHOLD = 0.80
+
 loaded_models = {}
 yolo_model = None
-class_names = ['clusters', 'galaxies', 'nebulae']
+class_names = ['clusters', 'galaxies', 'nebulae', 'other']
 
 MODEL_PERFORMANCE = {
     'vgg': {
@@ -95,18 +115,12 @@ def compute_activation_maps(model_name, model, img_array, predicted_class_index)
     selected_layers = layer_names.get(model_name, [])
     activation_maps = []
 
+    for layer in model.layers:
+        print(layer.name)
+
     for layer_name in selected_layers:
         try:
-            if model_name == "efficientnet":
-                # BEFORE accessing base_model layers
-                base_model = model.get_layer("efficientnetb0")
-                _ = base_model(img_array)  # <-- call it once to define layer outputs
-
-                conv_layer = base_model.get_layer(layer_name)
-                print(conv_layer.name)
-            else:
-                conv_layer = model.get_layer(layer_name)
-
+            conv_layer = model.get_layer(layer_name)
             grad_model = tf.keras.models.Model(
                 inputs=model.inputs,
                 outputs=[conv_layer.output, model.output]
@@ -118,7 +132,6 @@ def compute_activation_maps(model_name, model, img_array, predicted_class_index)
 
             grads = tape.gradient(loss, conv_outputs)
             pooled_grads = tf.reduce_mean(grads, axis=(0, 1, 2))
-
             conv_outputs = conv_outputs[0] * pooled_grads
             heatmap = tf.reduce_sum(conv_outputs, axis=-1)
             heatmap = tf.nn.relu(heatmap)
@@ -127,7 +140,6 @@ def compute_activation_maps(model_name, model, img_array, predicted_class_index)
             heatmap = cv2.resize(heatmap, (224, 224))
             heatmap = np.uint8(255 * heatmap)
             heatmap = cv2.applyColorMap(heatmap, cv2.COLORMAP_JET)
-
             pil_img = Image.fromarray(heatmap)
             buffer = BytesIO()
             pil_img.save(buffer, format="PNG")
@@ -168,7 +180,7 @@ def predict_with_yolo(image):
     inference_time = (time.time() - start_time) * 1000
 
     detections = []
-    class_idx = 0  # default fallback
+    class_idx = 0
 
     if results and len(results) > 0:
         r = results[0]
@@ -187,7 +199,6 @@ def predict_with_yolo(image):
                         'y2': xyxy[3]
                     }
                 })
-            # pick the top-most detection class for Grad-CAM
             if len(r.boxes.cls) > 0:
                 class_idx = int(r.boxes.cls[0].item())
 
@@ -229,20 +240,50 @@ def predict():
                 'input_size': f"{orig_width}x{orig_height}",
                 'inference_time': inference_time,
                 'detections': detections,
-                'activationMapUrl': grad_cam  # Eigen-CAM
+                'activationMapUrl': grad_cam
             })
 
-        img_array = preprocess_image(img, model_name=model_name)
+        img_array_pred = preprocess_image(img, model_name=model_name)
         model = get_model(model_name)
+        max_similarity = None
+
+        if model_name in EMBEDDING_INFO:
+            emb_info = EMBEDDING_INFO[model_name]
+            img_for_embedding = img.resize((224, 224)).convert("RGB")
+            emb_array = np.array(img_for_embedding, dtype=np.float32)
+            emb_array = emb_info['preprocess'](emb_array)
+            emb_array = np.expand_dims(emb_array, axis=0)
+
+            embedding_model = tf.keras.models.Model(
+                inputs=model.input,
+                outputs=model.get_layer(emb_info['embedding_layer']).output
+            )
+
+            input_embedding = embedding_model.predict(emb_array)[0].reshape(1, -1)
+
+            emb_data = np.load(emb_info['path'])
+            gallery_embeddings = emb_data['embeddings']
+            print("Backend embedding:", input_embedding[0][:5])
+            similarities = cosine_similarity(input_embedding, gallery_embeddings)[0]
+            max_similarity = np.max(similarities)
+
+            if max_similarity < SIMILARITY_THRESHOLD:
+                print(f"Image similarity score {max_similarity:.4f} is below threshold {SIMILARITY_THRESHOLD}")
+                return jsonify({
+                    'message': 'Image is not a recognized deep space object (DSO)',
+                    'similarityScore': float(max_similarity),
+                    'in_distribution': False
+                })
+
         start_time = time.time()
-        prediction = model.predict(img_array)[0]
+        prediction = model.predict(img_array_pred)[0]
         inference_time = (time.time() - start_time) * 1000
         predicted_class_index = np.argmax(prediction)
         perf = MODEL_PERFORMANCE[model_name]
 
-        activation_maps = compute_activation_maps(model_name, model, img_array, predicted_class_index)
-        top_3 = np.argsort(prediction)[::-1][:3]
-        top_preds = [{'class': class_names[i], 'probability': float(prediction[i])} for i in top_3]
+        activation_maps = compute_activation_maps(model_name, model, img_array_pred, predicted_class_index)
+        top_3 = np.argsort(prediction)[::-1][:min(3, len(prediction))]
+        top_preds = [{'class': class_names[i] if i < len(class_names) else f'class_{i}', 'probability': float(prediction[i])} for i in top_3]
 
         return jsonify({
             'class': class_names[predicted_class_index],
@@ -254,8 +295,11 @@ def predict():
             'flops': perf['flops'],
             'numLayers': perf['numLayers'],
             'topPredictions': top_preds,
-            'activationMapUrls': activation_maps
+            'activationMapUrls': activation_maps,
+            'similarityScore': float(max_similarity),
+            'in_distribution': True
         })
+
     except Exception as e:
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500
