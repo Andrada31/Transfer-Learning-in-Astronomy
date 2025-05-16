@@ -60,13 +60,13 @@ export default function ModelDetails({ defaultModel }) {
       <CardContent className="px-0 py-4">
         <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-3 bg-[#2a3158]">
-            <TabsTrigger value="overview" className="data-[state=active]:bg-[#161b36] hover:bg-white hover:text-black data-[state=active]:text-white cursor-pointer">
+            <TabsTrigger value="overview" className="data-[state=active]:bg-[#fff] hover:bg-[#161b36] hover:text-white data-[state=active]:text-black cursor-pointer">
               Overview
             </TabsTrigger>
-            <TabsTrigger value="architecture" className="data-[state=active]:bg-[#161b36] hover:bg-white hover:text-black data-[state=active]:text-white cursor-pointer">
+            <TabsTrigger value="architecture" className="data-[state=active]:bg-[#fff] hover:bg-[#161b36] hover:text-white data-[state=active]:text-black cursor-pointer">
               Architecture
             </TabsTrigger>
-            <TabsTrigger value="training" className="data-[state=active]:bg-[#161b36] hover:bg-white hover:text-black data-[state=active]:text-white cursor-pointer">
+            <TabsTrigger value="training" className="data-[state=active]:bg-[#fff] hover:bg-[#161b36] hover:text-white data-[state=active]:text-black cursor-pointer">
               Training & Evaluation
             </TabsTrigger>
           </TabsList>

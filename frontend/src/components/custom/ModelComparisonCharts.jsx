@@ -151,7 +151,7 @@ function parseValue(str) {
   return isNaN(numeric) ? 0 : numeric
 }
 
-export function HomeMetrics({
+export function ModelComparisonCharts({
   predictions = {},
   models = ["ResNet50", "EfficientNetB0", "VGG16"],
   heatmapData = [],

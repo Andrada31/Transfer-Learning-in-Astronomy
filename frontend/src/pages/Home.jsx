@@ -10,7 +10,7 @@ import ModelSelector from "@/components/custom/ModelSelector";
 import { ImageUploaderActivationMap } from "@/components/custom/ImageUploader_ActivationMap";
 import { PredictionCard } from "@/components/custom/PredictionCard";
 import { DetectionPredictionCard } from "@/components/custom/DetectionPredictionCard";
-import { HomeMetrics } from "@/components/custom/HomeMetrics";
+import { ModelComparisonCharts } from "@/components/custom/ModelComparisonCharts";
 import { X } from "lucide-react";
 import {
   saveImageData,
@@ -188,7 +188,7 @@ const Home = ({ mode: initialMode = "classification" }) => {
           </>
         )}
 
-        <HomeMetrics predictions={predictionsByMode[mode]} />
+        <ModelComparisonCharts predictions={predictionsByMode[mode]} />
       </div>
     </div>
   );

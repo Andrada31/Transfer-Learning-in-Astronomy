@@ -28,7 +28,7 @@ MODEL_PATHS = {
     'resnet': '../models/saved/resnet50-4c-10ep-ft.keras',
     'efficientnet': '../models/saved/efficientnet-4c-20ep.keras'
 }
-YOLO_MODEL_PATH = '../models/saved/yolo-40ep-3c-ns.pt'
+YOLO_MODEL_PATH = '../models/saved/yolo-40ep-balanced.pt.'
 
 EMBEDDING_INFO = {
     'resnet': {
@@ -114,9 +114,6 @@ def compute_activation_maps(model_name, model, img_array, predicted_class_index)
 
     selected_layers = layer_names.get(model_name, [])
     activation_maps = []
-
-    for layer in model.layers:
-        print(layer.name)
 
     for layer_name in selected_layers:
         try:
@@ -213,12 +210,17 @@ def upload_image():
         return jsonify({'error': 'No file selected'}), 400
 
     file = request.files['file']
-    img = Image.open(file.stream)
-    img_buffer = BytesIO()
-    img.save(img_buffer, format="PNG")
-    img_buffer.seek(0)
-    uploaded_image_data = img_buffer.read()
-    img_base64 = base64.b64encode(uploaded_image_data).decode('utf-8')
+    img = Image.open(file.stream).convert("RGB")
+
+    # Efficient preview resize (maintains aspect ratio, max dimension ~1024px)
+    img.thumbnail((1024, 1024), Image.LANCZOS)
+
+    # Convert preview image to base64
+    buffer = BytesIO()
+    img.save(buffer, format="PNG")
+    buffer.seek(0)
+    img_base64 = base64.b64encode(buffer.read()).decode('utf-8')
+
     return jsonify({'image': f'data:image/png;base64,{img_base64}'})
 
 @app.route('/api/predict', methods=['POST'])
@@ -233,6 +235,7 @@ def predict():
         img = Image.open(BytesIO(image_data))
         orig_width, orig_height = img.size
 
+        # 🔒 Early exit for YOLO — do not run embedding logic
         if model_name == 'yolo':
             detections, inference_time, grad_cam = predict_with_yolo(img)
             return jsonify({
@@ -243,10 +246,12 @@ def predict():
                 'activationMapUrl': grad_cam
             })
 
+        # Only classification models reach here
         img_array_pred = preprocess_image(img, model_name=model_name)
         model = get_model(model_name)
-        max_similarity = None
 
+        # Embedding similarity check
+        max_similarity = None
         if model_name in EMBEDDING_INFO:
             emb_info = EMBEDDING_INFO[model_name]
             img_for_embedding = img.resize((224, 224)).convert("RGB")
@@ -260,15 +265,12 @@ def predict():
             )
 
             input_embedding = embedding_model.predict(emb_array)[0].reshape(1, -1)
-
             emb_data = np.load(emb_info['path'])
             gallery_embeddings = emb_data['embeddings']
-            print("Backend embedding:", input_embedding[0][:5])
             similarities = cosine_similarity(input_embedding, gallery_embeddings)[0]
             max_similarity = np.max(similarities)
 
             if max_similarity < SIMILARITY_THRESHOLD:
-                print(f"Image similarity score {max_similarity:.4f} is below threshold {SIMILARITY_THRESHOLD}")
                 return jsonify({
                     'message': 'Image is not a recognized deep space object (DSO)',
                     'similarityScore': float(max_similarity),
@@ -304,10 +306,11 @@ def predict():
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500
 
+
 @app.route('/')
 @app.route('/<path:path>')
 def serve_frontend(path=''):
     return send_from_directory(app.static_folder, 'index.html')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)

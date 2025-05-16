@@ -318,7 +318,7 @@ export function ImageUploaderActivationMap({
               className="mt-4 w-full"
             >
               <Sparkles className="mr-2 h-4 w-4" />
-              {loading ? "Predicting..." : "Predict"}
+              {loading ? "Loading..." : "Predict"}
             </Button>
           </CardContent>
         </Card>

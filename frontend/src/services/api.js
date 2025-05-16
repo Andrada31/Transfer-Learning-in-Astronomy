@@ -15,6 +15,19 @@ export const predictImage = (imageBase64, modelName) => {
   });
 };
 
+export const checkSimilarity = (imageBase64, modelName) => {
+  return axios.post(`${API_BASE}/similarity`, {
+    image: imageBase64,
+    model: modelName
+  });
+};
+
+export const predictYolo = (imageBase64) => {
+  return axios.post(`${API_BASE}/predict-yolo`, {
+    image: imageBase64
+  });
+};
+
 export const fetchDocumentation = () => {
   return axios.get(`${API_BASE}/documentation`);
 };
