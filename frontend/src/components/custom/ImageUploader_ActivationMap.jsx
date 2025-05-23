@@ -12,7 +12,10 @@ import ActivationMapViewer from "@/components/custom/ActivationMapViewer";
 import RemoveImageDialog from "@/components/custom/RemoveImageDialog";
 
 const ALLOWED_FORMATS = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
-const MODEL_NAMES = ["resnet", "efficientnet", "vgg"];
+// const CLASSIFICATION_MODELS = ["resnet", "efficientnet", "vgg"];
+// const DETECTION_MODELS = ["yolo11", "yolo8"];
+// const MODEL_NAMES = mode === "detection" ? DETECTION_MODELS : CLASSIFICATION_MODELS;
+
 
 export function ImageUploaderActivationMap({
   selectedModel,
@@ -25,6 +28,9 @@ export function ImageUploaderActivationMap({
   defaultImageUrl = null,
   defaultPredictions = {},
 }) {
+  const CLASSIFICATION_MODELS = ["resnet", "efficientnet", "vgg"];
+  const DETECTION_MODELS = ["yolo11", "yolo8"];
+  const MODEL_NAMES = mode === "detection" ? DETECTION_MODELS : CLASSIFICATION_MODELS;
   const [selectedImage, setSelectedImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(defaultImageUrl);
   const [predictionsByModel, setPredictionsByModel] = useState({});
@@ -34,6 +40,8 @@ export function ImageUploaderActivationMap({
   const [naturalWidth, setNaturalWidth] = useState(0);
   const [naturalHeight, setNaturalHeight] = useState(0);
   const fileInputRef = useRef(null);
+  const [activeTab, setActiveTab] = useState("upload");
+
 
   useEffect(() => {
     if (imagePreview) {
@@ -103,7 +111,9 @@ export function ImageUploaderActivationMap({
     try {
       const mainResult = await predictImage(imageToPredict, selectedModel);
       const predictionData = mainResult.data;
-
+      if (mode === "detection" && predictionData?.detections?.length > 0) {
+        setActiveTab("boxes");
+      }
       setPredictionsByModel((prev) => ({
         ...prev,
         [selectedModel]: predictionData,
@@ -152,7 +162,7 @@ export function ImageUploaderActivationMap({
   };
 
   const drawBoundingBoxes = () => {
-    const detections = predictionsByModel["yolo"]?.detections || [];
+    const detections = predictionsByModel[selectedModel]?.detections || [];
     const classColors = {
       clusters: "#ff6b6b",
       galaxies: "#6bc1ff",
@@ -217,7 +227,7 @@ export function ImageUploaderActivationMap({
   const isDetectionModel = mode === "detection";
 
   return (
-    <Tabs defaultValue="upload" className="my-6 p-4 w-full max-w-3xl mx-auto border border-[#2A2C3F] rounded-lg">
+    <Tabs value={activeTab} onValueChange={setActiveTab} className="my-6 p-4 w-full max-w-3xl mx-auto border border-[#2A2C3F] rounded-lg">
       <TabsList className="border border-[#2A2C3F]">
         <TabsTrigger value="upload" className="cursor-pointer px-4 py-2 mr-2 data-[state=active]:bg-[#24285d] data-[state=active]:text-white hover:bg-white hover:text-black">
           <Upload className="h-4 w-4 mr-2" /> Upload
@@ -241,7 +251,7 @@ export function ImageUploaderActivationMap({
               </Alert>
             )}
 
-            {similarityInfo && (
+            {mode !== "detection" && similarityInfo && (
               <Alert variant={similarityInfo.isOOD ? "destructive" : "default"} className="mb-4">
                 <AlertDescription>
                   {similarityInfo.isOOD ? (
@@ -258,6 +268,7 @@ export function ImageUploaderActivationMap({
                 </AlertDescription>
               </Alert>
             )}
+
 
             {!imagePreview ? (
               <div

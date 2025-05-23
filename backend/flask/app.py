@@ -28,7 +28,12 @@ MODEL_PATHS = {
     'resnet': '../models/saved/resnet50-4c-10ep-ft.keras',
     'efficientnet': '../models/saved/efficientnet-4c-20ep.keras'
 }
-YOLO_MODEL_PATH = '../models/saved/yolo-40ep-balanced.pt.'
+
+YOLO_MODEL_PATHS = {
+    'yolo11': '../models/saved/yolo11-40ep-balanced+galaxies.pt',
+    'yolo8': '../models/saved/yolo8-40ep-3c.pt'
+}
+
 
 EMBEDDING_INFO = {
     'resnet': {
@@ -51,7 +56,7 @@ EMBEDDING_INFO = {
 SIMILARITY_THRESHOLD = 0.80
 
 loaded_models = {}
-yolo_model = None
+yolo_models = {}
 class_names = ['clusters', 'galaxies', 'nebulae', 'other']
 
 MODEL_PERFORMANCE = {
@@ -70,11 +75,17 @@ MODEL_PERFORMANCE = {
         'flops': "1.8B",
         'numLayers': 237
     },
-    'yolo': {
+    'yolo11': {
+        'modelParameters': "5.2M",
+        'flops': "6.1B",
+        'numLayers': 149
+    },
+    'yolo8': {
         'modelParameters': "4.5M",
         'flops': "1.5B",
         'numLayers': 171
-    }
+    },
+
 }
 
 def preprocess_image(image, model_name='vgg'):
@@ -165,12 +176,14 @@ def generate_grad_cam_for_yolo(image: Image.Image, class_idx=0):
     return f"data:image/png;base64,{base64_img}"
 
 
-def predict_with_yolo(image):
-    global yolo_model
-    if yolo_model is None:
-        print("Loading YOLO model...")
-        yolo_model = YOLO(YOLO_MODEL_PATH)
+def predict_with_yolo(image, model_name):
+    if model_name not in YOLO_MODEL_PATHS:
+        raise ValueError(f"Unknown YOLO model: {model_name}")
+    if model_name not in yolo_models:
+        print(f"Loading YOLO model '{model_name}'...")
+        yolo_models[model_name] = YOLO(YOLO_MODEL_PATHS[model_name])
 
+    yolo_model = yolo_models[model_name]
     image_np = np.array(image.convert("RGB"))
     start_time = time.time()
     results = yolo_model.predict(source=image_np, conf=0.25, save=False, verbose=False)
@@ -201,7 +214,8 @@ def predict_with_yolo(image):
 
     grad_cam = generate_grad_cam_for_yolo(image, class_idx=class_idx)
 
-    return detections, inference_time, grad_cam
+    perf = MODEL_PERFORMANCE.get(model_name, {})
+    return detections, inference_time, grad_cam, perf
 
 
 @app.route('/api/upload', methods=['POST'])
@@ -236,14 +250,17 @@ def predict():
         orig_width, orig_height = img.size
 
         # 🔒 Early exit for YOLO — do not run embedding logic
-        if model_name == 'yolo':
-            detections, inference_time, grad_cam = predict_with_yolo(img)
+        if model_name in YOLO_MODEL_PATHS:
+            detections, inference_time, grad_cam, perf = predict_with_yolo(img, model_name)
             return jsonify({
-                'model_name': 'yolo',
+                'model_name': model_name,
                 'input_size': f"{orig_width}x{orig_height}",
                 'inference_time': inference_time,
                 'detections': detections,
-                'activationMapUrl': grad_cam
+                'activationMapUrl': grad_cam,
+                'modelParameters': perf.get('modelParameters'),
+                'flops': perf.get('flops'),
+                'numLayers': perf.get('numLayers'),
             })
 
         # Only classification models reach here

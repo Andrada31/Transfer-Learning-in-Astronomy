@@ -8,8 +8,8 @@ const ModelSelector = ({ mode = "classification", onModelChange }) => {
   };
 
   const detectionModels = {
-    yolo: "YOLOv11n",
-    yolo9: "YOLOv9",
+    yolo11: "YOLOv11n",
+    yolo8: "YOLOv8",
   };
 
   const modelLabels = mode === "detection" ? detectionModels : classificationModels;

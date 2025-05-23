@@ -92,24 +92,25 @@ const Sidenavbar = ({ setMode }) => {
           <div className="flex flex-col h-full">
             <div className="mt-auto w-full pb-0">
               <CustomButton
-                  text="Classification >>"
-                  icon={classifyIcon}
-                  onClick={() => {
-                    if (setMode) {
-                      setMode("classification");
-                    }
-                    navigate("/");
-                  }}
+                text="Classification >>"
+                icon={classifyIcon}
+                active={activeTab === '/'}
+                onClick={() => {
+                  if (setMode) setMode("classification");
+                  navigate("/");
+                  setActiveTab("/");
+                }}
               />
+
               <CustomButton
-                  text="Object Detection >>"
-                  icon={detectIcon}
-                  onClick={() => {
-                    if (setMode) {
-                      setMode("detection");
-                    }
-                    navigate("/detection");
-                  }}
+                text="Object Detection >>"
+                icon={detectIcon}
+                active={activeTab === '/detection'}
+                onClick={() => {
+                  if (setMode) setMode("detection");
+                  navigate("/detection");
+                  setActiveTab("/detection");
+                }}
               />
             </div>
           </div>

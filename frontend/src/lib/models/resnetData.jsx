@@ -83,7 +83,7 @@ export const resnetModels = {
       authors: ["Kaiming He", "Xiangyu Zhang", "Shaoqing Ren", "Jian Sun"],
       paperLink: "https://arxiv.org/abs/1512.03385",
       datasetLink: "https://www.kaggle.com/datasets/andradaparaczki/deepspaceyolodataset-3c-ns",
-      notebookLink: "https://www.pngwing.com/en/free-png-arnny/download"
+      notebookLink: "https://colab.research.google.com/drive/1kfun5ulki8t3s-sRT4EjR8_XYxEbp5p8?authuser=1#scrollTo=7gz6H33fcJK9"
     },
     architectureData: {
       layers: 50,

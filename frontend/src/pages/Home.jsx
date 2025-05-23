@@ -20,7 +20,7 @@ import {
 
 const Home = ({ mode: initialMode = "classification" }) => {
   const [mode, setMode] = useState(initialMode);
-  const [activeTab, setActiveTab] = useState("resnet");
+  const [activeTab, setActiveTab] = useState(initialMode === "detection" ? "yolo11" : "resnet");
   const [imagePreviewByMode, setImagePreviewByMode] = useState({ classification: null, detection: null });
   const [predictionsByMode, setPredictionsByMode] = useState({ classification: {}, detection: {} });
   const [loadingModels, setLoadingModels] = useState({});
@@ -134,7 +134,13 @@ const Home = ({ mode: initialMode = "classification" }) => {
           {mode === "classification" ? "CLASSIFICATION" : "DETECTION"}
         </h1>
 
-        <ModelSelector mode={mode} onModelChange={handleModelChange} />
+       <ModelSelector
+          mode={mode}
+          onModelChange={handleModelChange}
+          models={mode === "classification" ? ["resnet", "efficientnet", "vgg"] : ["yolo11", "yolo8"]}
+        />
+
+
 
         <ImageUploaderActivationMap
           selectedModel={activeTab}

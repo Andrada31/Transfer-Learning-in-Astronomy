@@ -42,6 +42,8 @@ export const vggModels = {
       yearPublished: "2014",
       authors: ["Karen Simonyan", "Andrew Zisserman"],
       paperLink: "https://arxiv.org/abs/1409.1556",
+      datasetLink: "https://www.kaggle.com/datasets/andradaparaczki/deepspaceyolodataset-3c-ns",
+      notebookLink: "https://colab.research.google.com/drive/1JhN31vFhbX7yZKAzIjW6Ll_-CKVLuaJN?authuser=1#scrollTo=_YOsApPOnShb"
     },
     architectureData: {
       layers: 16,

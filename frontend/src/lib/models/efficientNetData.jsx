@@ -7,6 +7,8 @@ export const efficientNetModels = {
       yearPublished: "2019",
       authors: ["Mingxing Tan", "Quoc V. Le"],
       paperLink: "https://arxiv.org/abs/1905.11946",
+      datasetLink: "https://www.kaggle.com/datasets/andradaparaczki/deepspaceyolodataset-3c-ns",
+      notebookLink: "https://colab.research.google.com/drive/1QPgiamn--HrZYts9vc0mm6dops6s4U2n?authuser=1#scrollTo=0Wg9jDF6IQ9c"
     },
     architectureData: {
       layers: 237,
