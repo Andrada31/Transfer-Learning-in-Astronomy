@@ -17,6 +17,7 @@ import {
   getImageData,
   removeImageData
 } from "@/lib/indexedDb";
+import DatasetSelector from "@/components/custom/DatasetSelector";
 
 const Home = ({ mode: initialMode = "classification" }) => {
   const [mode, setMode] = useState(initialMode);
@@ -140,7 +141,7 @@ const Home = ({ mode: initialMode = "classification" }) => {
           models={mode === "classification" ? ["resnet", "efficientnet", "vgg"] : ["yolo11", "yolo8"]}
         />
 
-
+       {mode === "detection" && <DatasetSelector />}
 
         <ImageUploaderActivationMap
           selectedModel={activeTab}
