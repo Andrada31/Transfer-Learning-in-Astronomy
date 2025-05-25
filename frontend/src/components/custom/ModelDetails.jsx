@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Separator } from "@/components/ui/separator"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ExternalLink } from "lucide-react"
+import {BarChart3, ExternalLink, ChartLine, Layers} from "lucide-react"
 import jupyterLogo from "@/images/jupyter.svg"
 import kaggleLogo from "@/images/kaggle2.svg"
 
@@ -37,15 +37,15 @@ export default function ModelDetails({ defaultModel }) {
   const modelData = models[selectedModel]
 
   return (
-    <Card className="w-full max-w-4xl mx-auto border-none text-white px-0">
+    <Card className="w-full max-w-4xl mx-auto border-none text-white px-0 my-15">
       <CardHeader className="px-0">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 px-0">
           <CardTitle className="text-3xl text-white">{modelData.modelName}</CardTitle>
           <Select value={selectedModel} onValueChange={setSelectedModel}>
-            <SelectTrigger className="w-full sm:w-[180px] bg-[#2a3158] border-[#3a4168] text-white">
+            <SelectTrigger className="w-full sm:w-[180px] bg-[#2a3158] border-[#3a4168] text-white cursor-pointer">
               <SelectValue placeholder="Select model" />
             </SelectTrigger>
-            <SelectContent className="bg-[#2a3158] border-[#3a4168] text-white">
+            <SelectContent className="w-full sm:w-[180px] bg-[#2a3158] border-[#3a4168] text-white">
               {Object.keys(models).map((modelKey) => (
                 <SelectItem key={modelKey} value={modelKey} className="focus:bg-[#161b36] focus:text-white">
                   {models[modelKey].modelName}
@@ -61,13 +61,13 @@ export default function ModelDetails({ defaultModel }) {
         <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-3 bg-[#2a3158]">
             <TabsTrigger value="overview" className="data-[state=active]:bg-[#fff] hover:bg-[#161b36] hover:text-white data-[state=active]:text-black cursor-pointer">
-              Overview
+              <BarChart3 className="h-4 w-4 mr-2" /> Overview
             </TabsTrigger>
             <TabsTrigger value="architecture" className="data-[state=active]:bg-[#fff] hover:bg-[#161b36] hover:text-white data-[state=active]:text-black cursor-pointer">
-              Architecture
+              <Layers className="h-4 w-4 mr-2"/> Architecture
             </TabsTrigger>
             <TabsTrigger value="training" className="data-[state=active]:bg-[#fff] hover:bg-[#161b36] hover:text-white data-[state=active]:text-black cursor-pointer">
-              Training & Evaluation
+              <ChartLine className="h-4 w-4 mr-2"/> Training & Evaluation
             </TabsTrigger>
           </TabsList>
 
@@ -103,14 +103,14 @@ export default function ModelDetails({ defaultModel }) {
               <div className="pt-4">
                 <h3 className="text-md font-medium text-gray-300 mb-3">Training Resources</h3>
                 <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0">
-                  <button
-                    onClick={() => window.open(modelData.overviewData.datasetLink, "_blank")}
-                    className="flex items-center justify-center px-4 py-2 border border-gray-600 text-white hover:bg-white hover:text-black cursor-pointer bg-transparent rounded w-full sm:w-auto"
-                  >
-                    <img src={kaggleLogo} alt="Kaggle" className="mr-2 h-5 w-5" />
-                    Dataset
-                    <ExternalLink className="ml-2 h-4 w-4" />
-                  </button>
+                  {/*<button*/}
+                  {/*  onClick={() => window.open(modelData.overviewData.datasetLink, "_blank")}*/}
+                  {/*  className="flex items-center justify-center px-4 py-2 border border-gray-600 text-white hover:bg-white hover:text-black cursor-pointer bg-transparent rounded w-full sm:w-auto"*/}
+                  {/*>*/}
+                  {/*  <img src={kaggleLogo} alt="Kaggle" className="mr-2 h-5 w-5" />*/}
+                  {/*  Dataset*/}
+                  {/*  <ExternalLink className="ml-2 h-4 w-4" />*/}
+                  {/*</button>*/}
 
                   <button
                     onClick={() => window.open(modelData.overviewData.notebookLink, "_blank")}

@@ -8,36 +8,24 @@ import TwoLevelPieChart from "@/components/charts/TwoLevelPieChart";
 import LineChart from "@/components/charts/LineChart";
 import { ProgressBar } from "@/components/custom/ProgressBar"
 import ModelDetails from "@/components/custom/ModelDetails";
+import DatasetComparison from "@/components/custom/DatasetComparison";
 
 const sections = [
-  { id: "introduction", title: "Introduction" },
-  { id: "architecture", title: "Architecture" },
-  { id: "performance", title: "Models overview" },
-  { id: "results", title: "Results" },
+  { id: "model", title: "Model" },
+  { id: "dataset", title: "Dataset" },
+  { id: "training", title: "Training" }
 ]
 
 const Yolo = () => {
   return (
     <div className="flex flex-col items-center justify-center w-full max-w-[90vw] sm:max-w-[80vw] md:max-w-[60vw] lg:w-[80vw] overflow-x-hidden relative">
       <Sidenavbar />
-        <div className="flex flex-col w-full lg:w-[70%] pt-17 ">
-            {/*<h1>ResNet</h1>*/}
-            {/*<a href="https://viso.ai/deep-learning/resnet-residual-neural-network/" className="w-42 mb-7">*/}
-            {/*Documentation*/}
-            {/*</a>*/}
-
-            {/*<TwoLevelPieChart />*/}
-            {/*<h2 id="introduction">Introduction</h2>*/}
-            {/*<p className="my-[40px]">*/}
-            {/*  ResNet (Residual Network) is a deep learning model used for image classification tasks. It addresses the*/}
-            {/*  vanishing gradient problem by introducing residual connections, which allow gradients to flow through the*/}
-            {/*  network more effectively.*/}
-            {/*</p>*/}
-
-
+        <div className="flex flex-col w-full lg:w-[70%] pt-17" id="model">
             <ModelDetails defaultModel="yolo11"/>
+            <div id="dataset"></div>
+            <DatasetComparison/>
 
-            <h2 id="architecture" className="text-2xl pt-20">Training </h2>
+            <h2 id="training" className="text-2xl pt-20">Training </h2>
             <p className="my-[40px]">
                 This is achieved by adding shortcut connections that skip one or more layers. ResNet models come in
                 various
