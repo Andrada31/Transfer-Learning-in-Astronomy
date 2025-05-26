@@ -5,6 +5,7 @@
 @tailwind utilities;
 
 
+
 :root {
   --primary-color: #5298e3;
   --secondary-color: #6ac9ca;
@@ -38,4 +39,25 @@ body {
 ::-webkit-scrollbar-thumb {
   background: #fff;
   /*border-radius: 10px;*/
+}
+
+
+
+/* Custom scrollbar for sidebar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #505360;
+  border-radius: 8px;
+}
+
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #2a3158 transparent;
 }

@@ -30,7 +30,7 @@ MODEL_PATHS = {
 }
 
 YOLO_MODEL_PATHS = {
-    # 'yolo11-deepspace': '../models/saved/yolo-40ep-3c-ns.pt',
+    'yolo11-deepspace': '../models/saved/yolo11-deepspace-3c-40ep.pt',
     # 'yolo11-augmented': '../models/saved/yolo11-augmented.pt',
     'yolo11-balanced': '../models/saved/yolo11-40ep-balanced+galaxies.pt',
     # 'yolo8-deepspace': '../models/saved/yolo8-40ep-3c.pt',
@@ -249,12 +249,36 @@ def predict():
 
     try:
         model_name = data['model']
-        dataset_name = data.get('dataset', 'deepspace')  # Default to 'deepspace' if not provided
+        dataset_name = data.get('dataset', 'deepspace')  # optional, used for YOLO
         image_data = base64.b64decode(data['image'].split(',')[1])
-        img = Image.open(BytesIO(image_data))
+        img = Image.open(BytesIO(image_data)).convert("RGB")
         orig_width, orig_height = img.size
 
-        # 🔒 Handle YOLO dynamically based on model + dataset
+        # Step 1: Run ResNet similarity check (gatekeeper)
+        resnet_info = EMBEDDING_INFO['resnet']
+        img_resized = img.resize((224, 224))
+        emb_array = np.array(img_resized, dtype=np.float32)
+        emb_array = resnet_info['preprocess'](emb_array)
+        emb_array = np.expand_dims(emb_array, axis=0)
+
+        resnet_model = get_model('resnet')
+        embedding_model = tf.keras.models.Model(
+            inputs=resnet_model.input,
+            outputs=resnet_model.get_layer(resnet_info['embedding_layer']).output
+        )
+        input_embedding = embedding_model.predict(emb_array)[0].reshape(1, -1)
+        gallery_embeddings = np.load(resnet_info['path'])['embeddings']
+        similarities = cosine_similarity(input_embedding, gallery_embeddings)[0]
+        resnet_similarity = np.max(similarities)
+
+        if resnet_similarity < SIMILARITY_THRESHOLD:
+            return jsonify({
+                'message': 'Image is not a recognized deep space object (DSO)',
+                'similarityScore': float(resnet_similarity),
+                'in_distribution': False
+            })
+
+        # Step 2: Proceed to predict using the selected model
         if model_name.startswith("yolo"):
             composite_key = f"{model_name}-{dataset_name}"
             if composite_key not in YOLO_MODEL_PATHS:
@@ -270,48 +294,22 @@ def predict():
                 'modelParameters': perf.get('modelParameters'),
                 'flops': perf.get('flops'),
                 'numLayers': perf.get('numLayers'),
+                'similarityScore': float(resnet_similarity),
+                'in_distribution': True
             })
 
-        # Classification model path
-        img_array_pred = preprocess_image(img, model_name=model_name)
+        # Classification model
         model = get_model(model_name)
-
-        # Embedding similarity check
-        max_similarity = None
-        if model_name in EMBEDDING_INFO:
-            emb_info = EMBEDDING_INFO[model_name]
-            img_for_embedding = img.resize((224, 224)).convert("RGB")
-            emb_array = np.array(img_for_embedding, dtype=np.float32)
-            emb_array = emb_info['preprocess'](emb_array)
-            emb_array = np.expand_dims(emb_array, axis=0)
-
-            embedding_model = tf.keras.models.Model(
-                inputs=model.input,
-                outputs=model.get_layer(emb_info['embedding_layer']).output
-            )
-
-            input_embedding = embedding_model.predict(emb_array)[0].reshape(1, -1)
-            emb_data = np.load(emb_info['path'])
-            gallery_embeddings = emb_data['embeddings']
-            similarities = cosine_similarity(input_embedding, gallery_embeddings)[0]
-            max_similarity = np.max(similarities)
-
-            if max_similarity < SIMILARITY_THRESHOLD:
-                return jsonify({
-                    'message': 'Image is not a recognized deep space object (DSO)',
-                    'similarityScore': float(max_similarity),
-                    'in_distribution': False
-                })
-
+        img_array_pred = preprocess_image(img, model_name=model_name)
         start_time = time.time()
         prediction = model.predict(img_array_pred)[0]
         inference_time = (time.time() - start_time) * 1000
         predicted_class_index = np.argmax(prediction)
-        perf = MODEL_PERFORMANCE[model_name]
 
         activation_maps = compute_activation_maps(model_name, model, img_array_pred, predicted_class_index)
+        perf = MODEL_PERFORMANCE[model_name]
         top_3 = np.argsort(prediction)[::-1][:min(3, len(prediction))]
-        top_preds = [{'class': class_names[i] if i < len(class_names) else f'class_{i}', 'probability': float(prediction[i])} for i in top_3]
+        top_preds = [{'class': class_names[i], 'probability': float(prediction[i])} for i in top_3]
 
         return jsonify({
             'class': class_names[predicted_class_index],
@@ -324,7 +322,7 @@ def predict():
             'numLayers': perf['numLayers'],
             'topPredictions': top_preds,
             'activationMapUrls': activation_maps,
-            'similarityScore': float(max_similarity),
+            'similarityScore': float(resnet_similarity),
             'in_distribution': True
         })
 

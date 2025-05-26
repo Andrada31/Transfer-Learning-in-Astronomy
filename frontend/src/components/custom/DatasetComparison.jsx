@@ -163,7 +163,7 @@ export function DatasetComparison() {
             Select Dataset:
           </Label>
           <Select value={selectedDataset} onValueChange={setSelectedDataset}>
-            <SelectTrigger className="w-[300px] bg-[#2a3158] border-white/20 text-white">
+            <SelectTrigger className="w-[300px] bg-[#2a3158] border-white/20 text-white cursor-pointer">
               <SelectValue placeholder="Choose a dataset" />
             </SelectTrigger>
             <SelectContent className="border-white/20 bg-[#2a3158]">
@@ -191,7 +191,7 @@ export function DatasetComparison() {
       </div>
 
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="grid w-full grid-cols-4 bg-[#2a3158] border border-white/10">
+        <TabsList className="grid w-full grid-cols-4 bg-[#2a3158] border border-white/10 pt-[2px]">
           <TabsTrigger value="overview" className="data-[state=active]:bg-[#fff] hover:bg-[#161b36] hover:text-white data-[state=active]:text-black cursor-pointer">
             <BarChart3 className="h-4 w-4 mr-2" /> Overview
           </TabsTrigger>

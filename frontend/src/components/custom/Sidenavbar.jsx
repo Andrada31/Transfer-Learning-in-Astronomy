@@ -47,7 +47,7 @@ const Sidenavbar = ({ setMode }) => {
 
       <div className={`z-40 fixed left-0 top-0 h-full w-[min(90vw,350px)] bg-slate-950 flex flex-col transform ${isOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform md:translate-x-0`}>
 
-        <div className="flex flex-col h-full overflow-y-auto px-4 pt-6 space-y-6">
+        <div className="flex flex-col h-full overflow-y-auto px-4 pt-6 space-y-6 custom-scrollbar">
           <SolarSystem/>
           <h2 className="text-white text-[clamp(1.1rem,1.7vw,1.6rem)] leading-tight p-2 flex items-center">
             {/*<img*/}

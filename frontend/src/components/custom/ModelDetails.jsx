@@ -37,9 +37,9 @@ export default function ModelDetails({ defaultModel }) {
   const modelData = models[selectedModel]
 
   return (
-    <Card className="w-full max-w-4xl mx-auto border-none text-white px-0 my-15">
+    <Card className="w-full max-w-4xl mx-auto border-none text-white my-15">
       <CardHeader className="px-0">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 px-0">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <CardTitle className="text-3xl text-white">{modelData.modelName}</CardTitle>
           <Select value={selectedModel} onValueChange={setSelectedModel}>
             <SelectTrigger className="w-full sm:w-[180px] bg-[#2a3158] border-[#3a4168] text-white cursor-pointer">
