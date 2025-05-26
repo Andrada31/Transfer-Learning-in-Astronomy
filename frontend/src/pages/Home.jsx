@@ -29,7 +29,7 @@ const Home = ({ mode: initialMode = "classification" }) => {
     return localStorage.getItem("hideDSOAlert") !== "true";
   });
   const [isPending, startTransition] = useTransition();
-
+  const [selectedDatasetKey, setSelectedDatasetKey] = useState("deepspace");
   const currentPrediction = predictionsByMode[mode][activeTab] || null;
 
   useEffect(() => {
@@ -141,10 +141,13 @@ const Home = ({ mode: initialMode = "classification" }) => {
           models={mode === "classification" ? ["resnet", "efficientnet", "vgg"] : ["yolo11", "yolo8"]}
         />
 
-       {mode === "detection" && <DatasetSelector />}
+       {mode === "detection" && (
+          <DatasetSelector onDatasetChange={(key) => setSelectedDatasetKey(key)} />
+        )}
 
         <ImageUploaderActivationMap
           selectedModel={activeTab}
+          selectedDatasetKey={selectedDatasetKey}
           onImageChange={handleImageChange}
           onAllPredictions={handleAllPredictions}
           onError={handleError}

@@ -8,12 +8,20 @@ export const uploadImage = (file) => {
   return axios.post(`${API_BASE}/upload`, formData);
 };
 
-export const predictImage = (imageBase64, modelName) => {
-  return axios.post(`${API_BASE}/predict`, {
+export const predictImage = (imageBase64, modelName, dataset = null) => {
+  const payload = {
     image: imageBase64,
     model: modelName
-  });
+  };
+
+  if (dataset) {
+    payload.dataset = dataset;
+  }
+
+  return axios.post(`${API_BASE}/predict`, payload);
 };
+
+
 
 export const checkSimilarity = (imageBase64, modelName) => {
   return axios.post(`${API_BASE}/similarity`, {

@@ -30,9 +30,13 @@ MODEL_PATHS = {
 }
 
 YOLO_MODEL_PATHS = {
-    'yolo11': '../models/saved/yolo11-40ep-balanced+galaxies.pt',
-    'yolo8': '../models/saved/yolo8-40ep-3c.pt'
+    # 'yolo11-deepspace': '../models/saved/yolo-40ep-3c-ns.pt',
+    # 'yolo11-augmented': '../models/saved/yolo11-augmented.pt',
+    'yolo11-balanced': '../models/saved/yolo11-40ep-balanced+galaxies.pt',
+    # 'yolo8-deepspace': '../models/saved/yolo8-40ep-3c.pt',
+    'yolo8-balanced': '../models/saved/yolo8-40ep-3c.pt'
 }
+
 
 
 EMBEDDING_INFO = {
@@ -245,13 +249,18 @@ def predict():
 
     try:
         model_name = data['model']
+        dataset_name = data.get('dataset', 'deepspace')  # Default to 'deepspace' if not provided
         image_data = base64.b64decode(data['image'].split(',')[1])
         img = Image.open(BytesIO(image_data))
         orig_width, orig_height = img.size
 
-        # 🔒 Early exit for YOLO — do not run embedding logic
-        if model_name in YOLO_MODEL_PATHS:
-            detections, inference_time, grad_cam, perf = predict_with_yolo(img, model_name)
+        # 🔒 Handle YOLO dynamically based on model + dataset
+        if model_name.startswith("yolo"):
+            composite_key = f"{model_name}-{dataset_name}"
+            if composite_key not in YOLO_MODEL_PATHS:
+                return jsonify({'error': f"Model path for {composite_key} not found."}), 400
+
+            detections, inference_time, grad_cam, perf = predict_with_yolo(img, composite_key)
             return jsonify({
                 'model_name': model_name,
                 'input_size': f"{orig_width}x{orig_height}",
@@ -263,7 +272,7 @@ def predict():
                 'numLayers': perf.get('numLayers'),
             })
 
-        # Only classification models reach here
+        # Classification model path
         img_array_pred = preprocess_image(img, model_name=model_name)
         model = get_model(model_name)
 

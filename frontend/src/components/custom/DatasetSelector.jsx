@@ -50,14 +50,14 @@ const DatasetSelector = ({ onDatasetChange }) => {
                 onClick={() => handleDatasetChange(key)}
                 className={`relative p-3 rounded-lg border transition-all duration-200 text-left ${
                   isSelected
-                    ? "bg-[#252960]/20 border-blue-300/50 text-white"
+                    ? "bg-[#252960]/20 border-[#7c9fff]/50 text-white"
                     : "bg-gray-900/30 border-gray-600/30 text-gray-300 hover:bg-gray-600/40 hover:border-gray-500/50"
                 }`}
               >
                 <div className="flex items-start gap-3">
                   <div
                     className={`p-1.5 rounded-md flex-shrink-0 ${
-                      isSelected ? "bg-blue-300/30" : "bg-gray-600/50"
+                      isSelected ? "bg-[#7c9fff]/30" : "bg-gray-600/50"
                     }`}
                   >
                     <IconComponent className="w-4 h-4" />
@@ -77,7 +77,7 @@ const DatasetSelector = ({ onDatasetChange }) => {
 
                 {isSelected && (
                   <div className="absolute top-2 right-2">
-                    <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+                    <div className="w-2 h-2 bg-[#7c9fff] rounded-full"></div>
                   </div>
                 )}
               </button>

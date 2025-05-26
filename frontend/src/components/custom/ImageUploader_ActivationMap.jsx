@@ -12,13 +12,10 @@ import ActivationMapViewer from "@/components/custom/ActivationMapViewer";
 import RemoveImageDialog from "@/components/custom/RemoveImageDialog";
 
 const ALLOWED_FORMATS = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
-// const CLASSIFICATION_MODELS = ["resnet", "efficientnet", "vgg"];
-// const DETECTION_MODELS = ["yolo11", "yolo8"];
-// const MODEL_NAMES = mode === "detection" ? DETECTION_MODELS : CLASSIFICATION_MODELS;
-
 
 export function ImageUploaderActivationMap({
   selectedModel,
+  selectedDatasetKey,   // ✅ Just use the name directly here
   onAllPredictions,
   onError,
   onImageChange,
@@ -41,7 +38,6 @@ export function ImageUploaderActivationMap({
   const [naturalHeight, setNaturalHeight] = useState(0);
   const fileInputRef = useRef(null);
   const [activeTab, setActiveTab] = useState("upload");
-
 
   useEffect(() => {
     if (imagePreview) {
@@ -108,16 +104,29 @@ export function ImageUploaderActivationMap({
     setError(null);
     setSimilarityInfo(null);
 
+    console.log("Sending prediction payload:", {
+      image: imageToPredict,
+      model: selectedModel,
+      dataset: mode === "detection" ? selectedDatasetKey : undefined
+    });
+
     try {
-      const mainResult = await predictImage(imageToPredict, selectedModel);
+      const mainResult = await predictImage(
+        imageToPredict,
+        selectedModel,
+        mode === "detection" ? selectedDatasetKey : null
+      );
+
       const predictionData = mainResult.data;
       if (mode === "detection" && predictionData?.detections?.length > 0) {
         setActiveTab("boxes");
       }
+
       setPredictionsByModel((prev) => ({
         ...prev,
         [selectedModel]: predictionData,
       }));
+
       onAllPredictions?.((prev) => ({
         ...prev,
         [selectedModel]: predictionData,
@@ -138,7 +147,11 @@ export function ImageUploaderActivationMap({
       Promise.allSettled(
         otherModels.map(async (modelName) => {
           try {
-            const result = await predictImage(imageToPredict, modelName);
+            const result = await predictImage(
+              imageToPredict,
+              modelName,
+              mode === "detection" ? selectedDatasetKey : null
+            );
             setPredictionsByModel((prev) => ({
               ...prev,
               [modelName]: result.data,
@@ -168,7 +181,7 @@ export function ImageUploaderActivationMap({
       galaxies: "#6bc1ff",
       nebulae: "#81f58a",
       other: "#facc15",
-      default: "#d3d3d3"
+      default: "#d3d3d3",
     };
 
     if (!imagePreview || detections.length === 0) return null;
@@ -268,7 +281,6 @@ export function ImageUploaderActivationMap({
                 </AlertDescription>
               </Alert>
             )}
-
 
             {!imagePreview ? (
               <div
