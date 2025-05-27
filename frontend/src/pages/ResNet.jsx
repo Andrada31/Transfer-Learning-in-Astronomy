@@ -8,6 +8,9 @@ import TwoLevelPieChart from "@/components/charts/TwoLevelPieChart";
 import LineChart from "@/components/charts/LineChart";
 import { ProgressBar } from "@/components/custom/ProgressBar"
 import ModelDetails from "@/components/custom/ModelDetails";
+import { TrainingMetricsChart } from "@/components/charts/TrainingMetricsChart.jsx";
+import { resnetMetrics } from "@/components/charts/resnetMetrics"
+
 
 const sections = [
   { id: "introduction", title: "Introduction" },
@@ -37,17 +40,19 @@ const ResNet = () => {
 
             <ModelDetails defaultModel="resnet50"/>
 
-            <h2 id="architecture" className="text-2xl pt-20">Training </h2>
-            <p className="my-[40px]">
-                This is achieved by adding shortcut connections that skip one or more layers. ResNet models come in
-                various
-                depths, such as ResNet-18, ResNet-34, ResNet-50, ResNet-101, and ResNet-152, where the number indicates
-                the
-                number of layers.
-            </p>
+            {/*<h2 id="architecture" className="text-2xl pt-20">Training </h2>*/}
+            {/*<p className="my-[40px]">*/}
+            {/*    This is achieved by adding shortcut connections that skip one or more layers. ResNet models come in*/}
+            {/*    various*/}
+            {/*    depths, such as ResNet-18, ResNet-34, ResNet-50, ResNet-101, and ResNet-152, where the number indicates*/}
+            {/*    the*/}
+            {/*    number of layers.*/}
+            {/*</p>*/}
 
             {/*<RadioButton />*/}
-            <LineChart/>
+            {/*<LineChart/>*/}
+            <TrainingMetricsChart modelName="ResNet50" data={resnetMetrics} />
+
 
             <div id="results" className="mt-[80px]">
                 <h2>Results</h2>

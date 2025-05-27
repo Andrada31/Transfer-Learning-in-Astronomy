@@ -30,7 +30,11 @@ const Home = ({ mode: initialMode = "classification" }) => {
   });
   const [isPending, startTransition] = useTransition();
   const [selectedDatasetKey, setSelectedDatasetKey] = useState("deepspace");
-  const currentPrediction = predictionsByMode[mode][activeTab] || null;
+  const currentPrediction =
+    mode === "detection"
+      ? predictionsByMode[mode][activeTab]?.[selectedDatasetKey] || null
+      : predictionsByMode[mode][activeTab] || null;
+
 
   useEffect(() => {
     getImageData(mode).then((data) => {

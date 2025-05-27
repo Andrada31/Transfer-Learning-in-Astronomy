@@ -90,12 +90,10 @@ export function ImageUploaderActivationMap({
     }
   }, [onError, onImageChange]);
 
-  const handlePredict = async () => {
+ const handlePredict = async () => {
     if (!selectedImage && !imagePreview) return;
 
     const imageToPredict = selectedImage || imagePreview;
-    const otherModels = MODEL_NAMES.filter((m) => m !== selectedModel);
-
     const initialLoading = {};
     MODEL_NAMES.forEach((model) => {
       initialLoading[model] = true;
@@ -104,23 +102,44 @@ export function ImageUploaderActivationMap({
     setError(null);
     setSimilarityInfo(null);
 
-    console.log("Sending prediction payload:", {
-      image: imageToPredict,
-      model: selectedModel,
-      dataset: mode === "detection" ? selectedDatasetKey : undefined
-    });
-
     try {
-      const mainResult = await predictImage(
-        imageToPredict,
-        selectedModel,
-        mode === "detection" ? selectedDatasetKey : null
-      );
+      if (mode === "detection") {
+        const datasets = ["deepspace", "augmented", "balanced"];
+        const resultsByDataset = {};
+        const results = await Promise.allSettled(
+          datasets.map(async (dsKey) => {
+            const result = await predictImage(imageToPredict, selectedModel, dsKey);
+            return { key: dsKey, data: result.data };
+          })
+        );
 
-      const predictionData = mainResult.data;
-      if (mode === "detection" && predictionData?.detections?.length > 0) {
-        setActiveTab("boxes");
+        results.forEach((res) => {
+          if (res.status === "fulfilled") {
+            resultsByDataset[res.value.key] = res.value.data;
+          }
+        });
+
+        setPredictionsByModel((prev) => ({
+          ...prev,
+          [selectedModel]: resultsByDataset,
+        }));
+
+        onAllPredictions?.((prev) => ({
+          ...prev,
+          [selectedModel]: resultsByDataset,
+        }));
+
+        if (resultsByDataset[selectedDatasetKey]?.detections?.length > 0) {
+          setActiveTab("boxes");
+        }
+
+        setLoadingModels((prev) => ({ ...prev, [selectedModel]: false }));
+        return;
       }
+
+      // Classification mode:
+      const mainResult = await predictImage(imageToPredict, selectedModel);
+      const predictionData = mainResult.data;
 
       setPredictionsByModel((prev) => ({
         ...prev,
@@ -144,27 +163,18 @@ export function ImageUploaderActivationMap({
 
       setLoadingModels((prev) => ({ ...prev, [selectedModel]: false }));
 
-      Promise.allSettled(
-        otherModels.map(async (modelName) => {
-          try {
-            const result = await predictImage(
-              imageToPredict,
-              modelName,
-              mode === "detection" ? selectedDatasetKey : null
-            );
-            setPredictionsByModel((prev) => ({
-              ...prev,
-              [modelName]: result.data,
-            }));
-            onAllPredictions?.((prev) => ({
-              ...prev,
-              [modelName]: result.data,
-            }));
-          } catch (err) {
-            console.error(`Error predicting with ${modelName}:`, err);
-          } finally {
-            setLoadingModels((prev) => ({ ...prev, [modelName]: false }));
-          }
+      await Promise.allSettled(
+        MODEL_NAMES.filter((m) => m !== selectedModel).map(async (modelName) => {
+          const result = await predictImage(imageToPredict, modelName);
+          setPredictionsByModel((prev) => ({
+            ...prev,
+            [modelName]: result.data,
+          }));
+          onAllPredictions?.((prev) => ({
+            ...prev,
+            [modelName]: result.data,
+          }));
+          setLoadingModels((prev) => ({ ...prev, [modelName]: false }));
         })
       );
     } catch (err) {
@@ -174,8 +184,9 @@ export function ImageUploaderActivationMap({
     }
   };
 
+
   const drawBoundingBoxes = () => {
-    const detections = predictionsByModel[selectedModel]?.detections || [];
+    const detections = predictionsByModel[selectedModel]?.[selectedDatasetKey]?.detections || [];
     const classColors = {
       clusters: "#ff6b6b",
       galaxies: "#6bc1ff",
@@ -237,6 +248,7 @@ export function ImageUploaderActivationMap({
     );
   };
 
+
   const isDetectionModel = mode === "detection";
 
   return (
@@ -245,9 +257,9 @@ export function ImageUploaderActivationMap({
         <TabsTrigger value="upload" className="cursor-pointer px-4 py-2 mr-2 data-[state=active]:bg-[#24285d] data-[state=active]:text-white hover:bg-white hover:text-black">
           <Upload className="h-4 w-4 mr-2" /> Upload
         </TabsTrigger>
-        {/*<TabsTrigger value="results" className="cursor-pointer px-4 py-2 data-[state=active]:bg-[#24285d] data-[state=active]:text-white hover:bg-white hover:text-black">*/}
-        {/*  <Map className="h-4 w-4 mr-2" /> {isDetectionModel ? "Grad-CAM" : "Activation Map"}*/}
-        {/*</TabsTrigger>*/}
+        <TabsTrigger value="results" className="cursor-pointer px-4 py-2 data-[state=active]:bg-[#24285d] data-[state=active]:text-white hover:bg-white hover:text-black">
+          <Map className="h-4 w-4 mr-2" /> {isDetectionModel ? "Grad-CAM" : "Activation Map"}
+        </TabsTrigger>
         {isDetectionModel && (
           <TabsTrigger value="boxes" className="cursor-pointer px-4 py-2 data-[state=active]:bg-[#24285d] data-[state=active]:text-white hover:bg-white hover:text-black">
             <Map className="h-4 w-4 mr-2" /> Bounding Boxes
