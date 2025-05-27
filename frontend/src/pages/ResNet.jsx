@@ -3,9 +3,6 @@ import '@/styles/App.css';
 import Tooltip from "@/components/custom/Tooltip";
 import Sidenavbar from "@/components/custom/Sidenavbar";
 import DataTable from "@/components/charts/DataTable";
-import RadioButton from "@/components/headlessui/RadioGroup";
-import TwoLevelPieChart from "@/components/charts/TwoLevelPieChart";
-import LineChart from "@/components/charts/LineChart";
 import { ProgressBar } from "@/components/custom/ProgressBar"
 import ModelDetails from "@/components/custom/ModelDetails";
 import { TrainingMetricsChart } from "@/components/charts/TrainingMetricsChart.jsx";
@@ -30,25 +27,7 @@ const ResNet = () => {
             {/*</a>*/}
 
             {/*<TwoLevelPieChart />*/}
-            {/*<h2 id="introduction">Introduction</h2>*/}
-            {/*<p className="my-[40px]">*/}
-            {/*  ResNet (Residual Network) is a deep learning model used for image classification tasks. It addresses the*/}
-            {/*  vanishing gradient problem by introducing residual connections, which allow gradients to flow through the*/}
-            {/*  network more effectively.*/}
-            {/*</p>*/}
-
-
             <ModelDetails defaultModel="resnet50"/>
-
-            {/*<h2 id="architecture" className="text-2xl pt-20">Training </h2>*/}
-            {/*<p className="my-[40px]">*/}
-            {/*    This is achieved by adding shortcut connections that skip one or more layers. ResNet models come in*/}
-            {/*    various*/}
-            {/*    depths, such as ResNet-18, ResNet-34, ResNet-50, ResNet-101, and ResNet-152, where the number indicates*/}
-            {/*    the*/}
-            {/*    number of layers.*/}
-            {/*</p>*/}
-
             {/*<RadioButton />*/}
             {/*<LineChart/>*/}
             <TrainingMetricsChart modelName="ResNet50" data={resnetMetrics} />

@@ -1,13 +1,10 @@
 "use client"
 
 import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
@@ -27,7 +24,6 @@ import {
 } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import {Database, BarChart3, Shuffle, Settings, ExternalLink} from "lucide-react"
-import kaggleLogo from "@/images/kaggle2.svg";
 
 const datasets = [
   {
@@ -153,7 +149,7 @@ export function DatasetComparison() {
   return (
     <div className="w-full max-w-5xl mx-auto backdrop-blur-sm rounded-lg 0">
       <div className="mb-6">
-        <div className="flex items-center gap-2 mb-4">
+        <div className="flex items-center gap-2 my-8">
           <Database className="h-8 w-8 text-white" />
           <h2 className="text-2xl text-white">Dataset Comparison</h2>
         </div>
@@ -183,7 +179,7 @@ export function DatasetComparison() {
             <Badge variant="secondary" className="bg-blue-500/20 text-blue-300 border-blue-500/30">
               {currentDataset.size}
             </Badge>
-            <Badge variant="secondary" className="bg-green-500/20 text-green-300 border-green-500/30">
+            <Badge variant="secondary" className="bg-purple-500/20 text-purple-300 border-purple-500/30">
               {currentDataset.format}
             </Badge>
           </div>

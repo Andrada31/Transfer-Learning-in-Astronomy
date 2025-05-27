@@ -43,10 +43,16 @@ a:hover{
   border-bottom: solid 2px;
 }
 
+/*.tab:hover {*/
+/*  border-bottom-color: #7c9fff;*/
+/*  background-color: #151847;*/
+/*  color: #fff;*/
+/*}*/
+
 .tab:hover {
-  border-bottom-color: #7c9fff;
-  background-color: #151847;
-  color: #fff;
+  border-bottom-color: #6c88da;
+  background-color: white;
+  color: #151847;
 }
 
 .tab.active{

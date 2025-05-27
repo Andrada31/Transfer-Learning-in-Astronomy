@@ -14,9 +14,8 @@ import {
 export function TrainingMetricsChart({ modelName, data }) {
   return (
     <div className="w-full p-8 bg-transparent">
-      {/* Accuracy Chart */}
       <div className="bg-transparent mb-20">
-        <h2 className="text-white text-xl mb-4 text-center">Training and Validation Accuracy</h2>
+        <h2 className="text-white text-xl mb-4 text-center"><b>ACCURACY</b> for Training and Validation </h2>
         <ResponsiveContainer width="100%" height={400}>
           <LineChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#333" />
@@ -52,7 +51,7 @@ export function TrainingMetricsChart({ modelName, data }) {
 
       {/* Loss Chart */}
       <div className="bg-transparent">
-        <h2 className="text-white text-xl mb-4 text-center">Training and Validation Loss</h2>
+        <h2 className="text-white text-xl mb-4 text-center"><b>LOSS</b> for Training and Validation</h2>
         <ResponsiveContainer width="100%" height={400}>
           <LineChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#333" />

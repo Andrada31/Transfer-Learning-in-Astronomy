@@ -9,11 +9,12 @@ import LineChart from "@/components/charts/LineChart";
 import { ProgressBar } from "@/components/custom/ProgressBar"
 import ModelDetails from "@/components/custom/ModelDetails";
 import DatasetComparison from "@/components/custom/DatasetComparison";
+import YoloMetricsDashboard from "@/components/charts/YOLOMetricsChart";
 
 const sections = [
   { id: "model", title: "Model" },
   { id: "dataset", title: "Dataset" },
-  { id: "training", title: "Training" }
+  { id: "results", title: "Results" },
 ]
 
 const Yolo = () => {
@@ -25,25 +26,18 @@ const Yolo = () => {
             <div id="dataset"></div>
             <DatasetComparison/>
 
-            <h2 id="training" className="text-2xl pt-20">Training </h2>
-            <p className="my-[40px]">
-                This is achieved by adding shortcut connections that skip one or more layers. ResNet models come in
-                various
-                depths, such as ResNet-18, ResNet-34, ResNet-50, ResNet-101, and ResNet-152, where the number indicates
-                the
-                number of layers.
-            </p>
-
             {/*<RadioButton />*/}
-            <LineChart/>
+            {/*<LineChart/>*/}
+            <div id="results"></div>
+            <YoloMetricsDashboard/>
 
-            <div id="results" className="mt-[80px]">
-                <h2>Results</h2>
-                <p className="my-[40px]">
-                    These models have achieved state-of-the-art performance on various image recognition benchmarks.
-                </p>
-                < DataTable/>
-            </div>
+            {/*<div id="results" className="mt-[80px]">*/}
+            {/*    <h2>Results</h2>*/}
+            {/*    <p className="my-[40px]">*/}
+            {/*        These models have achieved state-of-the-art performance on various image recognition benchmarks.*/}
+            {/*    </p>*/}
+            {/*    < DataTable/>*/}
+            {/*</div>*/}
         </div>
         <Tooltip/>
         <div className="hidden lg:block">

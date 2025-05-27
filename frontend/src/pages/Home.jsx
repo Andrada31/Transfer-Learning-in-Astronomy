@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useTransition } from "react";
 import "@/styles/App.css";
 import Sidenavbar from "@/components/custom/Sidenavbar";
-import Tooltip from "@/components/custom/Tooltip";
 import detectIcon from "@/images/eye2.svg";
 import classifyIcon from "@/images/tl3.svg";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -35,13 +34,31 @@ const Home = ({ mode: initialMode = "classification" }) => {
       ? predictionsByMode[mode][activeTab]?.[selectedDatasetKey] || null
       : predictionsByMode[mode][activeTab] || null;
 
+  const fallbackPrediction = {
+    activationMapUrl: "",
+    class: "",
+    probability: 0,
+    topPredictions: [],
+    inference_time: 0,
+    model_name: "",
+    input_size: "",
+    dataset_origin: "",
+    modelParameters: "",
+    numLayers: 0,
+    flops: "",
+  };
+
+  const prediction = currentPrediction || fallbackPrediction;
+
+
 
   useEffect(() => {
     getImageData(mode).then((data) => {
-      if (data) {
-        setImagePreviewByMode((prev) => ({ ...prev, [mode]: data.image }));
-        setPredictionsByMode((prev) => ({ ...prev, [mode]: data.predictions }));
-      }
+      const image = data?.image ?? null;
+      const predictions = data?.predictions ?? {};
+
+      setImagePreviewByMode((prev) => ({ ...prev, [mode]: image }));
+      setPredictionsByMode((prev) => ({ ...prev, [mode]: predictions }));
     });
   }, [mode]);
 
@@ -49,7 +66,9 @@ const Home = ({ mode: initialMode = "classification" }) => {
     const image = imagePreviewByMode[mode];
     const predictions = predictionsByMode[mode];
     if (image && predictions) {
-      saveImageData(mode, image, predictions);
+      (async () => {
+        await saveImageData(mode, image, predictions);
+      })();
     }
   }, [imagePreviewByMode, predictionsByMode, mode]);
 
@@ -64,7 +83,7 @@ const Home = ({ mode: initialMode = "classification" }) => {
     }));
     setPredictionsByMode((prev) => ({
       ...prev,
-      [mode]: {}, // reset predictions for current mode
+      [mode]: {},
     }));
   };
 
@@ -94,7 +113,7 @@ const Home = ({ mode: initialMode = "classification" }) => {
     ...prev,
     [mode]: {},
   }));
-  removeImageData(mode);
+  (async () => await removeImageData(mode))();
 };
 
 
@@ -110,7 +129,7 @@ const Home = ({ mode: initialMode = "classification" }) => {
       />
 
       <div
-        className="flex-grow grow-0 pt-20 px-4 md:px-8 transition-opacity duration-300 ease-in-out"
+        className="grow-0 pt-20 px-4 md:px-8 transition-opacity duration-300 ease-in-out"
         style={{ opacity: isPending ? 0 : 1 }}
       >
         {showAlert && (
@@ -172,29 +191,29 @@ const Home = ({ mode: initialMode = "classification" }) => {
               mode === "classification" ? (
                 <PredictionCard
                   inputImageUrl={imagePreviewByMode[mode]}
-                  activationMapUrl={currentPrediction.activationMapUrl}
-                  predictedClass={currentPrediction.class}
-                  confidenceScore={currentPrediction.probability}
-                  topPredictions={currentPrediction.topPredictions || []}
-                  inferenceTime={currentPrediction.inference_time || 0}
-                  modelName={currentPrediction.model_name}
-                  inputSize={currentPrediction.input_size}
-                  datasetOrigin={currentPrediction.dataset_origin}
-                  modelParameters={currentPrediction.modelParameters}
-                  numLayers={currentPrediction.numLayers}
-                  flops={currentPrediction.flops}
+                  activationMapUrl={prediction.activationMapUrl}
+                  predictedClass={prediction.class}
+                  confidenceScore={prediction?.probability || 0}
+                  topPredictions={prediction.topPredictions || 0}
+                  inferenceTime={prediction.inference_time || 0}
+                  modelName={prediction.model_name}
+                  inputSize={prediction.input_size || 0}
+                  datasetOrigin={prediction.dataset_origin || 0}
+                  modelParameters={prediction.modelParameters}
+                  numLayers={prediction.numLayers}
+                  flops={prediction.flops}
                   onRemove={handleRemove}
                 />
               ) : (
                 <DetectionPredictionCard
                   inputImageUrl={imagePreviewByMode[mode]}
-                  detections={currentPrediction.detections || []}
-                  inferenceTime={currentPrediction.inference_time || 0}
-                  modelName={currentPrediction.model_name}
-                  inputSize={currentPrediction.input_size}
-                  modelParameters={currentPrediction.modelParameters}
-                  numLayers={currentPrediction.numLayers}
-                  flops={currentPrediction.flops}
+                  detections={prediction.detections || []}
+                  inferenceTime={prediction.inference_time || 0}
+                  modelName={prediction.model_name}
+                  inputSize={prediction.input_size}
+                  modelParameters={prediction.modelParameters}
+                  numLayers={prediction.numLayers}
+                  flops={prediction.flops}
                   onRemove={handleRemove}
                 />
               )

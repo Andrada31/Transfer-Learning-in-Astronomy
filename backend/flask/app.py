@@ -1,23 +1,19 @@
 import traceback
-
-import torch
-from ultralytics import YOLO
-from flask import Flask, request, jsonify, send_from_directory
-from sklearn.metrics.pairwise import cosine_similarity
-from torchcam.methods import GradCAM
-from torchcam.utils import overlay_mask
-import torchvision.transforms as transforms
-
-from flask_cors import CORS
-from flask_compress import Compress
 import tensorflow as tf
 import numpy as np
-from PIL import Image
-from io import BytesIO
 import base64
 import os
 import time
 import cv2
+
+from ultralytics import YOLO
+from flask import Flask, request, jsonify, send_from_directory
+from sklearn.metrics.pairwise import cosine_similarity
+from flask_cors import CORS
+from flask_compress import Compress
+from PIL import Image
+from io import BytesIO
+
 
 app = Flask(__name__, static_folder='../frontend/build', static_url_path='/')
 CORS(app)
@@ -31,13 +27,12 @@ MODEL_PATHS = {
 
 YOLO_MODEL_PATHS = {
     'yolo11-deepspace': '../models/saved/yolo11-deepspace-50ep.pt',
-    'yolo11-augmented': '../models/saved/yolo11-augmented-20ep.pt',
+    'yolo11-augmented': '../models/saved/yolo11-augmented-50ep.pt',
     'yolo11-balanced': '../models/saved/yolo11-balanced3-50ep.pt',
-    # 'yolo8-deepspace': '../models/saved/yolo8-40ep-3c.pt',
-    'yolo8-balanced': '../models/saved/yolo8-40ep-3c.pt'
+    'yolo8-deepspace': '../models/saved/yolo8-40ep-3c.pt',
+    'yolo8-balanced': '../models/saved/yolo8-balanced3-50ep.pt',
+    'yolo8-augmented': '../models/saved/yolo8-augmented-50ep.pt'
 }
-
-
 
 EMBEDDING_INFO = {
     'resnet': {
@@ -92,13 +87,14 @@ MODEL_PERFORMANCE = {
 
 }
 
+
 def preprocess_image(image, model_name='vgg'):
     img = image.convert("RGB")
     img = img.resize((224, 224))
     img_array = np.array(img, dtype=np.float32)
 
     if model_name == 'vgg':
-        img_array =  tf.keras.applications.vgg16.preprocess_input(img_array)
+        img_array = tf.keras.applications.vgg16.preprocess_input(img_array)
     elif model_name == 'resnet':
         img_array = tf.keras.applications.resnet50.preprocess_input(img_array)
     elif model_name == 'efficientnet':
@@ -119,6 +115,7 @@ def get_model(model_name):
         print(f"Loading model '{model_name}' from disk...")
         loaded_models[model_name] = tf.keras.models.load_model(MODEL_PATHS[model_name])
     return loaded_models[model_name]
+
 
 def compute_activation_maps(model_name, model, img_array, predicted_class_index):
     layer_names = {
@@ -163,6 +160,7 @@ def compute_activation_maps(model_name, model, img_array, predicted_class_index)
             activation_maps.append("")
 
     return activation_maps
+
 
 def generate_grad_cam_for_yolo(image: Image.Image, class_idx=0):
     gray_img = image.convert("L").resize((224, 224))
@@ -229,17 +227,13 @@ def upload_image():
 
     file = request.files['file']
     img = Image.open(file.stream).convert("RGB")
-
-    # Efficient preview resize (maintains aspect ratio, max dimension ~1024px)
     img.thumbnail((1024, 1024), Image.LANCZOS)
-
-    # Convert preview image to base64
     buffer = BytesIO()
     img.save(buffer, format="PNG")
     buffer.seek(0)
     img_base64 = base64.b64encode(buffer.read()).decode('utf-8')
-
     return jsonify({'image': f'data:image/png;base64,{img_base64}'})
+
 
 @app.route('/api/predict', methods=['POST'])
 def predict():
@@ -249,12 +243,11 @@ def predict():
 
     try:
         model_name = data['model']
-        dataset_name = data.get('dataset', 'deepspace')  # optional, used for YOLO
+        dataset_name = data.get('dataset', 'deepspace')
         image_data = base64.b64decode(data['image'].split(',')[1])
         img = Image.open(BytesIO(image_data)).convert("RGB")
         orig_width, orig_height = img.size
 
-        # Step 1: Run ResNet similarity check (gatekeeper)
         resnet_info = EMBEDDING_INFO['resnet']
         img_resized = img.resize((224, 224))
         emb_array = np.array(img_resized, dtype=np.float32)
@@ -278,7 +271,6 @@ def predict():
                 'in_distribution': False
             })
 
-        # Step 2: Proceed to predict using the selected model
         if model_name.startswith("yolo"):
             composite_key = f"{model_name}-{dataset_name}"
             print(f"[DEBUG] Received YOLO model={model_name}, dataset={dataset_name}")
@@ -301,7 +293,6 @@ def predict():
                 'similarityScore': float(resnet_similarity),
                 'in_distribution': True
             })
-
 
         # Classification model
         model = get_model(model_name)
