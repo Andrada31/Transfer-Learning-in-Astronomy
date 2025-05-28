@@ -7,6 +7,8 @@ import { ProgressBar } from "@/components/custom/ProgressBar"
 import ModelDetails from "@/components/custom/ModelDetails";
 import { TrainingMetricsChart } from "@/components/charts/TrainingMetricsChart.jsx";
 import { resnet50 } from "@/components/charts/results/resnet50"
+import ResNetMetricsChart from "@/components/charts/ResNetMetricsChart";
+
 
 
 const sections = [
@@ -34,11 +36,12 @@ const ResNet = () => {
 
 
             <div id="results" className="mt-[80px]">
-                <h2>Results</h2>
-                <p className="my-[40px]">
-                    These models have achieved state-of-the-art performance on various image recognition benchmarks.
-                </p>
-                < DataTable/>
+                {/*<h2>Results</h2>*/}
+                {/*<p className="my-[40px]">*/}
+                {/*    These models have achieved state-of-the-art performance on various image recognition benchmarks.*/}
+                {/*</p>*/}
+                {/*< DataTable/>*/}
+                <ResNetMetricsChart/>
             </div>
         </div>
         <Tooltip/>

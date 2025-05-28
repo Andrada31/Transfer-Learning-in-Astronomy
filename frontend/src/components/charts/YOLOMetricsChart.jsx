@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
+import { LineChartIcon as ChartLine, Expand } from "lucide-react"
 
 export default function YoloMetricsDashboard() {
   const [models, setModels] = useState([])
@@ -13,16 +14,15 @@ export default function YoloMetricsDashboard() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  // Define the model configurations with Google Drive URLs
   const modelConfigs = [
     {
       name: "YOLO11n",
-      path: "https://drive.google.com/file/d/16Y_p6YYs5tSdFEzZzBPKs0rz5uhpB3oI/view?usp=sharing",
+      path: "https://raw.githubusercontent.com/Andrada31/Transfer-Learning-in-Astronomy/main/frontend/src/components/charts/results/yolo11n.csv",
       description: "YOLO11 Nano model - latest architecture"
     },
     {
       name: "YOLOv8",
-      path: "https://drive.google.com/file/d/1l3-XJg4GvRK_hGmlpIJJRB-Zkdg-6Wyz/view?usp=sharing",
+      path: "https://raw.githubusercontent.com/Andrada31/Transfer-Learning-in-Astronomy/main/frontend/src/components/charts/results/yolov8.csv",
       description: "YOLOv8 model - proven performance"
     }
   ]
@@ -43,63 +43,31 @@ export default function YoloMetricsDashboard() {
   }
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true)
-      setError(null)
-
+    const fetchModelCSV = async (config) => {
       try {
-        const modelData = await Promise.all(
-          modelConfigs.map(async (config) => {
-            try {
-              const response = await fetch(config.path)
-              if (!response.ok) {
-                throw new Error(`Failed to fetch ${config.name}: ${response.status}`)
-              }
-              const csvText = await response.text()
-              const parsedData = parseCSV(csvText)
-
-              // Debug: Log the first few rows and headers
-              console.log(`${config.name} CSV Headers:`, Object.keys(parsedData[0] || {}))
-              console.log(`${config.name} First Row:`, parsedData[0])
-              console.log(`${config.name} Data Length:`, parsedData.length)
-
-              return {
-                name: config.name,
-                data: parsedData,
-                description: config.description,
-                loaded: true
-              }
-            } catch (err) {
-              console.error(`Error loading ${config.name}:`, err)
-              return {
-                name: config.name,
-                data: [],
-                description: config.description,
-                loaded: false,
-                error: err.message
-              }
-            }
-          })
-        )
-
-        // Filter out models that failed to load
-        const successfullyLoaded = modelData.filter(model => model.loaded)
-
-        if (successfullyLoaded.length === 0) {
-          throw new Error("No models could be loaded successfully")
-        }
-
-        setModels(modelData)
-        setSelectedModel(successfullyLoaded[0].name)
-      } catch (error) {
-        console.error("Failed to load YOLO metrics", error)
-        setError(error.message)
-      } finally {
-        setLoading(false)
+        const response = await fetch(config.path)
+        if (!response.ok) throw new Error(`Failed to fetch ${config.name}: ${response.status}`)
+        const csvText = await response.text()
+        const parsedData = parseCSV(csvText)
+        return { ...config, data: parsedData, loaded: true }
+      } catch (err) {
+        return { ...config, data: [], loaded: false, error: err.message }
       }
     }
 
-    fetchData()
+    const loadModels = async () => {
+      setLoading(true)
+      setError(null)
+
+      const results = await Promise.all(modelConfigs.map(fetchModelCSV))
+      const loaded = results.filter(m => m.loaded)
+      setModels(results)
+      setSelectedModel(loaded[0]?.name || "")
+      if (!loaded.length) setError("No models could be loaded")
+      setLoading(false)
+    }
+
+    loadModels()
   }, [])
 
   const currentModel = models.find(m => m.name === selectedModel)
@@ -132,7 +100,7 @@ export default function YoloMetricsDashboard() {
               size="sm"
               className="opacity-0 group-hover:opacity-100 transition-opacity p-1 h-6 w-6 text-white/60 hover:text-white hover:bg-white/10 cursor-pointer select-none"
             >
-              Expand
+              <Expand className="h-3 w-3" />
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-7xl sm:max-w-4xl bg-[#0b0b11] border-white/20 text-white">
@@ -145,7 +113,7 @@ export default function YoloMetricsDashboard() {
                   <LineChart data={currentData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#333" />
                     <XAxis dataKey="epoch" stroke="#fff" tick={{ fill: "#fff" }} label={{ value: "Epoch", position: "insideBottom", offset: -10, style: { textAnchor: "middle", fill: "#fff" } }} />
-                    <YAxis stroke="#fff" tick={{ fill: "#fff" }} domain={domain || ["dataMin", "dataMax"]}  />
+                    <YAxis stroke="#fff" tick={{ fill: "#fff" }} domain={domain || ["dataMin", "dataMax"]} />
                     <Tooltip {...chartConfig.tooltip} />
                     <Line type="monotone" dataKey={dataKey} stroke={color} strokeWidth={3} dot={{ fill: color, strokeWidth: 0, r: 3 }} activeDot={{ r: 5 }} />
                   </LineChart>
@@ -185,6 +153,17 @@ export default function YoloMetricsDashboard() {
     </div>
   )
 
+  const renderChartGroup = (title, metrics) => (
+    <>
+      <h2 className="text-white text-xl font-semibold mb-6">{title}</h2>
+      <div className={`grid ${metrics.length > 3 ? 'grid-cols-4' : 'grid-cols-1 md:grid-cols-3'} gap-4 mb-8`}>
+        {metrics.map(m => (
+          <MetricChart key={m.key} title={m.title} dataKey={m.key} domain={m.domain} />
+        ))}
+      </div>
+    </>
+  )
+
   if (loading) {
     return (
       <div className="w-full min-h-screen px-0 py-10 bg-[#0b0b11] flex items-center justify-center">
@@ -205,9 +184,10 @@ export default function YoloMetricsDashboard() {
   }
 
   return (
-    <div className="w-full min-h-screen px-0 py-10 bg-[#0b0b11]">
+    <div className="w-full min-h-screen px-0 py-10">
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center gap-2 my-8">
+          <ChartLine className="h-8 w-8 text-white" />
           <h2 className="text-2xl text-white">Results on Balanced Dataset</h2>
         </div>
 
@@ -219,92 +199,43 @@ export default function YoloMetricsDashboard() {
             </SelectTrigger>
             <SelectContent className="border-white/20 bg-[#2a3158]">
               {models.map(m => (
-                <SelectItem
-                  key={m.name}
-                  value={m.name}
-                  className="text-white focus:bg-[#161b36]"
-                  disabled={!m.loaded}
-                >
-                  <div className="flex flex-col">
-                    <span>{m.name}</span>
-                    {!m.loaded && <span className="text-xs text-red-400">Failed to load</span>}
-                  </div>
+                <SelectItem key={m.name} value={m.name} className="text-white focus:bg-[#161b36]">
+                  {m.name}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
-
-          {currentModel && (
-            <div className="text-white/60 text-sm">
-              {currentModel.description}
-              {!currentModel.loaded && (
-                <span className="text-red-400 ml-2">Failed to load</span>
-              )}
-            </div>
-          )}
         </div>
 
-        {currentModel?.loaded ? (
-          <>
-            {/* Debug Section - Remove this after fixing */}
-            <div className="border border-yellow-500/50 p-4 rounded-lg bg-yellow-900/20 mb-6">
-              <h3 className="text-yellow-300 text-lg mb-2">Debug Info for {selectedModel}</h3>
-              <div className="text-white/80 text-sm">
-                <div><strong>Available Columns:</strong></div>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2">
-                  {Object.keys(currentData[0] || {}).map(col => (
-                    <div key={col} className="bg-gray-800 p-1 rounded text-xs">{col}</div>
-                  ))}
-                </div>
-                <div className="mt-2"><strong>Total Rows:</strong> {currentData.length}</div>
-                <div><strong>Sample Data:</strong></div>
-                <pre className="text-xs mt-1 bg-gray-900 p-2 rounded overflow-x-auto">
-                  {JSON.stringify(currentData[0] || {}, null, 2)}
-                </pre>
-              </div>
-            </div>
+        {renderChartGroup("Training Losses", [
+          { title: "train/box_loss", key: "train/box_loss" },
+          { title: "train/cls_loss", key: "train/cls_loss" },
+          { title: "train/dfl_loss", key: "train/dfl_loss" }
+        ])}
 
-            <h2 className="text-white text-xl font-semibold mb-6">Training Losses</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-              <MetricChart title="train/box_loss" dataKey="train/box_loss" />
-              <MetricChart title="train/cls_loss" dataKey="train/cls_loss" />
-              <MetricChart title="train/dfl_loss" dataKey="train/dfl_loss" />
-            </div>
+        {renderChartGroup("Validation Losses", [
+          { title: "val/box_loss", key: "val/box_loss" },
+          { title: "val/cls_loss", key: "val/cls_loss" },
+          { title: "val/dfl_loss", key: "val/dfl_loss" }
+        ])}
 
-            <h2 className="text-white text-xl font-semibold mb-6">Validation Losses</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-              <MetricChart title="val/box_loss" dataKey="val/box_loss" />
-              <MetricChart title="val/cls_loss" dataKey="val/cls_loss" />
-              <MetricChart title="val/dfl_loss" dataKey="val/dfl_loss" />
-            </div>
+        {renderChartGroup("Performance Metrics", [
+          { title: "Precision", key: "metrics/precision(B)", domain: [0, 1] },
+          { title: "Recall", key: "metrics/recall(B)", domain: [0, 1] },
+          { title: "mAP@50", key: "metrics/mAP50(B)", domain: [0, 1] },
+          { title: "mAP@50:95", key: "metrics/mAP50-95(B)", domain: [0, 1] }
+        ])}
 
-            <h2 className="text-white text-xl font-semibold mb-6">Performance Metrics</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-              <MetricChart title="Precision" dataKey="metrics/precision(B)" domain={[0, 1]} />
-              <MetricChart title="Recall" dataKey="metrics/recall(B)" domain={[0, 1]} />
-              <MetricChart title="mAP@50" dataKey="metrics/mAP50(B)" domain={[0, 1]} />
-              <MetricChart title="mAP@50:95" dataKey="metrics/mAP50-95(B)" domain={[0, 1]} />
-            </div>
-
-            <div className="border border-white/20 p-6 rounded-lg bg-[#17173a]">
-              <h2 className="text-white text-xl mb-4">Final RESULTS - {selectedModel}</h2>
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-center">
-                <div><div className="text-gray-400 text-sm">Total Epochs</div><div className="text-blue-300 text-2xl font-bold">{currentData.length}</div></div>
-                <div><div className="text-gray-400 text-sm">Final Precision</div><div className="text-blue-300 text-2xl font-bold">{(lastEpoch["metrics/precision(B)"] * 100).toFixed(1)}%</div></div>
-                <div><div className="text-gray-400 text-sm">Final Recall</div><div className="text-blue-300 text-2xl font-bold">{(lastEpoch["metrics/recall(B)"] * 100).toFixed(1)}%</div></div>
-                <div><div className="text-gray-400 text-sm">Final mAP@50</div><div className="text-blue-300 text-2xl font-bold">{(lastEpoch["metrics/mAP50(B)"] * 100).toFixed(1)}%</div></div>
-                <div><div className="text-gray-400 text-sm">Final mAP@50:95</div><div className="text-blue-300 text-2xl font-bold">{(lastEpoch["metrics/mAP50-95(B)"] * 100).toFixed(1)}%</div></div>
-              </div>
-            </div>
-          </>
-        ) : (
-          <div className="text-center text-white/60">
-            <div>No valid data available for the selected model.</div>
-            {currentModel?.error && (
-              <div className="text-red-400 text-sm mt-2">Error: {currentModel.error}</div>
-            )}
+        <div className="border border-white/20 p-6 rounded-lg bg-[#2a3158]/10">
+          <h2 className="text-white text-xl mb-4">Final RESULTS - {selectedModel}</h2>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-center">
+            <div><div className="text-gray-400 text-sm">Total Epochs</div><div className="text-blue-300 text-2xl font-bold">{currentData.length}</div></div>
+            <div><div className="text-gray-400 text-sm">Final Precision</div><div className="text-blue-300 text-2xl font-bold">{(lastEpoch["metrics/precision(B)"] * 100).toFixed(1)}%</div></div>
+            <div><div className="text-gray-400 text-sm">Final Recall</div><div className="text-blue-300 text-2xl font-bold">{(lastEpoch["metrics/recall(B)"] * 100).toFixed(1)}%</div></div>
+            <div><div className="text-gray-400 text-sm">Final mAP@50</div><div className="text-blue-300 text-2xl font-bold">{(lastEpoch["metrics/mAP50(B)"] * 100).toFixed(1)}%</div></div>
+            <div><div className="text-gray-400 text-sm">Final mAP@50:95</div><div className="text-blue-300 text-2xl font-bold">{(lastEpoch["metrics/mAP50-95(B)"] * 100).toFixed(1)}%</div></div>
           </div>
-        )}
+        </div>
       </div>
     </div>
   )
