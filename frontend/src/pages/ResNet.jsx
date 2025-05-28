@@ -6,7 +6,7 @@ import DataTable from "@/components/charts/DataTable";
 import { ProgressBar } from "@/components/custom/ProgressBar"
 import ModelDetails from "@/components/custom/ModelDetails";
 import { TrainingMetricsChart } from "@/components/charts/TrainingMetricsChart.jsx";
-import { resnetMetrics } from "@/components/charts/resnetMetrics"
+import { resnet50 } from "@/components/charts/results/resnet50"
 
 
 const sections = [
@@ -30,7 +30,7 @@ const ResNet = () => {
             <ModelDetails defaultModel="resnet50"/>
             {/*<RadioButton />*/}
             {/*<LineChart/>*/}
-            <TrainingMetricsChart modelName="ResNet50" data={resnetMetrics} />
+            <TrainingMetricsChart modelName="ResNet50" data={resnet50} />
 
 
             <div id="results" className="mt-[80px]">

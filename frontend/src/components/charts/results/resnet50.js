@@ -1,5 +1,5 @@
-// components/charts/resnetMetrics.js
-export const resnetMetrics = [
+// components/charts/resnet50.js
+export const resnet50 = [
   { epoch: 1, trainingAccuracy: 0.4733, validationAccuracy: 0.8924, trainingLoss: 1.4465, validationLoss: 0.3835 },
   { epoch: 2, trainingAccuracy: 0.8750, validationAccuracy: 0.8889, trainingLoss: 0.6660, validationLoss: 0.3802 },
   { epoch: 3, trainingAccuracy: 0.8318, validationAccuracy: 0.8993, trainingLoss: 0.5039, validationLoss: 0.2998 },
