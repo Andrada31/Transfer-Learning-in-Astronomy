@@ -226,7 +226,7 @@ export default function YoloMetricsDashboard() {
           { title: "mAP@50:95", key: "metrics/mAP50-95(B)", domain: [0, 1] }
         ])}
 
-        <div className="border border-white/20 p-6 rounded-lg bg-[#2a3158]/10">
+        <div className="border border-white/20 p-6 rounded-lg bg-gradient-to-r from-[#2a3158]/50 to-[#1a1f36]/50">
           <h2 className="text-white text-xl mb-4">Final RESULTS - {selectedModel}</h2>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-center">
             <div><div className="text-gray-400 text-sm">Total Epochs</div><div className="text-blue-300 text-2xl font-bold">{currentData.length}</div></div>

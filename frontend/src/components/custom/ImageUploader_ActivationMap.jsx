@@ -15,7 +15,7 @@ const ALLOWED_FORMATS = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
 export function ImageUploaderActivationMap({
   selectedModel,
-  selectedDatasetKey,   // ✅ Just use the name directly here
+  selectedDatasetKey,
   onAllPredictions,
   onError,
   onImageChange,

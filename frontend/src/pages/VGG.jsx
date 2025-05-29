@@ -6,6 +6,8 @@ import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
 import { ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { ChartLegend, ChartLegendContent, ChartContainer } from "@/components/ui/chart"
 import ModelDetails from "@/components/custom/ModelDetails";
+import DatasetClassification from "@/components/custom/DatasetClassification";
+import ClassificationMetrics from "@/components/charts/ClassificationMetrics";
 
 
 
@@ -32,34 +34,19 @@ const chartConfig = {
 }
 const VGG = () => {
      return (
-        <div className="flex flex-col items-center justify-center w-full max-w-[90vw] sm:max-w-[80vw] md:max-w-[60vw] lg:w-[80vw]">
+        <div className="flex flex-col items-center justify-center w-full max-w-[90vw] sm:max-w-[80vw] md:max-w-[60vw] lg:w-[80vw] overflow-x-hidden relative">
             <Sidenavbar/>
             <div className="flex flex-col w-full lg:w-[70%] pt-17">
-                {/*<h1>VGG</h1>*/}
-                {/*<div className="tabs">*/}
-                {/*    <a href="https://viso.ai/deep-learning/vgg-very-deep-convolutional-networks/">Documentation</a>*/}
-                {/*</div>*/}
-                <ModelDetails defaultModel="vgg11" />
-                <p  className="my-[40px]">VGG is a convolutional neural network model proposed by K. Simonyan and A. Zisserman from the University of Oxford. It is known for its simplicity and use of very small (3x3) convolution filters. The model comes in several variants, such as VGG-16 and VGG-19, where the number indicates the number of weight layers. VGG models have been widely used for image classification tasks and have achieved excellent performance on various benchmarks</p>
-                <ChartContainer config={chartConfig} className="h-[3cd00px] w-full">
-                  <BarChart accessibilityLayer data={chartData}>
-                    <CartesianGrid vertical={false} />
-                    <XAxis
-                      dataKey="month"
-                      tickLine={false}
-                      tickMargin={10}
-                      axisLine={false}
-                      tickFormatter={(value) => value.slice(0, 3)}
-                    />
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                    <ChartLegend content={<ChartLegendContent />} />
-                    <Bar dataKey="VGG16" fill="var(--color-VGG16)" radius={4} />
-                    <Bar dataKey="VGG19" fill="var(--color-VGG19)" radius={4} />
-                  </BarChart>
-                </ChartContainer>
+                <div id="model">
+                    <ModelDetails defaultModel="vgg16" />
+                </div>
+                <div id="dataset">
+                    <DatasetClassification/>
+                </div>
 
-                <DataTable/>
-
+                <div id="results" className="mt-[80px]">
+                   <ClassificationMetrics modelName="vgg16" />
+                </div>
 
             </div>
             <Tooltip/>

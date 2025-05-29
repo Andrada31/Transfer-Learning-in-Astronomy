@@ -8,7 +8,7 @@ import TwoLevelPieChart from "@/components/charts/TwoLevelPieChart";
 import LineChart from "@/components/charts/LineChart";
 import { ProgressBar } from "@/components/custom/ProgressBar"
 import ModelDetails from "@/components/custom/ModelDetails";
-import DatasetComparison from "@/components/custom/DatasetComparison";
+import DatasetDetection from "@/components/custom/DatasetDetection";
 import YoloMetricsDashboard from "@/components/charts/YOLOMetricsChart";
 
 const sections = [
@@ -24,7 +24,7 @@ const Yolo = () => {
         <div className="flex flex-col w-full lg:w-[70%] pt-17" id="model">
             <ModelDetails defaultModel="yolo11"/>
             <div id="dataset"></div>
-            <DatasetComparison/>
+            <DatasetDetection/>
 
             {/*<RadioButton />*/}
             {/*<LineChart/>*/}

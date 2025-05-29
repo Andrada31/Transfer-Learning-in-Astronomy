@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Separator } from "@/components/ui/separator"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import {BarChart3, ExternalLink, ChartLine, Layers} from "lucide-react"
+import {BarChart3, ExternalLink, ChartLine, Layers, BrainCircuit, BrainCog} from "lucide-react"
 import jupyterLogo from "@/images/jupyter.svg"
 import kaggleLogo from "@/images/kaggle2.svg"
 
@@ -40,21 +40,24 @@ export default function ModelDetails({ defaultModel }) {
     <Card className="w-full max-w-4xl mx-auto border-none text-white my-15">
       <CardHeader className="px-0">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <CardTitle className="text-3xl text-white">{modelData.modelName}</CardTitle>
+          <div className="flex items-center gap-2 my-8">
+            <BrainCog className="h-8 w-8 text-white"/>
+            <CardTitle className="text-3xl text-white">{modelData.modelName}</CardTitle>
+          </div>
           <Select value={selectedModel} onValueChange={setSelectedModel}>
             <SelectTrigger className="w-full sm:w-[180px] bg-[#2a3158] border-[#3a4168] text-white cursor-pointer">
-              <SelectValue placeholder="Select model" />
+              <SelectValue placeholder="Select model"/>
             </SelectTrigger>
             <SelectContent className="w-full sm:w-[180px] bg-[#2a3158] border-[#3a4168] text-white">
               {Object.keys(models).map((modelKey) => (
-                <SelectItem key={modelKey} value={modelKey} className="focus:bg-[#161b36] focus:text-white">
-                  {models[modelKey].modelName}
-                </SelectItem>
+                  <SelectItem key={modelKey} value={modelKey} className="focus:bg-[#161b36] focus:text-white">
+                    {models[modelKey].modelName}
+                  </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
-        <Separator className="mt-2 bg-[#2a3158]" />
+        <Separator className="mt-2 bg-[#2a3158]"/>
       </CardHeader>
 
       <CardContent className="px-0 py-4">

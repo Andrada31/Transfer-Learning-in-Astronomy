@@ -142,7 +142,7 @@ const datasets = [
   },
 ]
 
-export function DatasetComparison() {
+export function DatasetDetection() {
   const [selectedDataset, setSelectedDataset] = useState(datasets[0].id)
   const currentDataset = datasets.find((d) => d.id === selectedDataset) || datasets[0]
 
@@ -341,4 +341,4 @@ export function DatasetComparison() {
     </div>
   )
 }
-export default DatasetComparison
+export default DatasetDetection
