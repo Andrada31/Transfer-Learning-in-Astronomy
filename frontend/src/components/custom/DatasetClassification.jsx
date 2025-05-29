@@ -27,7 +27,8 @@ const dataset = {
   overview: {
     samples: 4696,
     features: 608 * 608 * 3,
-    classes: 1,
+    classes: 3,
+    classDistribution: "300/400/500", //come BAAAACK
     splitRatio: "80/10/10"
   },
   preprocessing: {

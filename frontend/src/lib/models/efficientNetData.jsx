@@ -24,7 +24,8 @@ export const efficientNetModels = {
     trainingData: {
       dataset: "ImageNet",
       accuracy: "77.1%",
-      trainingTime: "~3 days on 8 TPUs",
+      framework: "TensorFlow / Keras",
+      trainingPlatform: "Google Colab",
       hardware: "Google TPU v3",
       evaluationMetrics: {
         "Top-1 Accuracy": "77.1%",
@@ -33,6 +34,10 @@ export const efficientNetModels = {
         FLOPs: "0.39B",
         "Inference Time": "2.0ms/image",
       },
+      lossFunction: "Categorical Cross-Entropy",
+      optimizer: "Adam",
+      learningRate: "0.001",
+      batchSize: "32"
     },
   },
 
@@ -56,19 +61,6 @@ export const efficientNetModels = {
         "More accurate than B0/B1 while still efficient",
       ],
     },
-    trainingData: {
-      dataset: "ImageNet",
-      accuracy: "81.6%",
-      trainingTime: "~6 days on 8 TPUs",
-      hardware: "Google TPU v3",
-      evaluationMetrics: {
-        "Top-1 Accuracy": "81.6%",
-        "Top-5 Accuracy": "94.9%",
-        Parameters: "12M",
-        FLOPs: "1.8B",
-        "Inference Time": "6.2ms/image",
-      },
-    },
   },
 
   efficientnetb7: {
@@ -90,19 +82,6 @@ export const efficientNetModels = {
         "Massive input resolution",
         "Designed for high-end GPUs/TPUs",
       ],
-    },
-    trainingData: {
-      dataset: "ImageNet",
-      accuracy: "84.3%",
-      trainingTime: "~10 days on TPU pods",
-      hardware: "Google TPU v3 Pod",
-      evaluationMetrics: {
-        "Top-1 Accuracy": "84.3%",
-        "Top-5 Accuracy": "97.0%",
-        Parameters: "66M",
-        FLOPs: "37B",
-        "Inference Time": "34.9ms/image",
-      },
     },
   },
 };

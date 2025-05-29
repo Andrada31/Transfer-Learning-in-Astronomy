@@ -407,7 +407,7 @@ export function ClassificationMetrics({ modelName }) {
 
         {/* Summary Stats */}
         <div className="border border-white/20 p-6 rounded-lg bg-gradient-to-r from-[#2a3158]/50 to-[#1a1f36]/50">
-          <h2 className="text-white text-xl font-semibold mb-4">Training Summary - {selectedModel}</h2>
+          <h2 className="text-white text-xl font-semibold mb-4">Evaluation Summary - {selectedModel}</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
             <div>
               <div className="text-gray-400 text-sm">Total Epochs</div>

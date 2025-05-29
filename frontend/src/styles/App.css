@@ -15,22 +15,6 @@ h1 {
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
-
-a{
-    color: white;
-    padding: 10px 20px;
-    border-radius: 6px;
-    border: 1px solid white;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-a:hover{
-    background-color: white;
-    color: #1a2a6c;
-    transition: background-color 0.3s;
-}
-
 .tab{
   color: white;
   text-decoration: none;
@@ -43,11 +27,6 @@ a:hover{
   border-bottom: solid 2px;
 }
 
-/*.tab:hover {*/
-/*  border-bottom-color: #7c9fff;*/
-/*  background-color: #151847;*/
-/*  color: #fff;*/
-/*}*/
 
 .tab:hover {
   border-bottom-color: #6c88da;

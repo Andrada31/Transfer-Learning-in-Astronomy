@@ -11,7 +11,6 @@ export const resnetModels = {
       paperLink: "https://arxiv.org/abs/1512.03385",
       datasetLink: "https://www.kaggle.com/datasets/andradaparaczki/deepspaceyolodataset-3c-ns",
       notebookLink: "https://www.pngwing.com/en/free-png-arnny/download"
-
     },
     architectureData: {
       layers: 18,
@@ -24,20 +23,8 @@ export const resnetModels = {
         "Fewer bottleneck blocks than deeper variants",
       ],
     },
-    trainingData: {
-      dataset: "ImageNet",
-      accuracy: "69.8%",
-      trainingTime: "~1 week on 8 GPUs",
-      hardware: "NVIDIA Tesla P100 GPUs",
-      evaluationMetrics: {
-        "Top-1 Accuracy": "69.8%",
-        "Top-5 Accuracy": "89.1%",
-        Parameters: "11.7M",
-        FLOPs: "1.8G",
-        "Inference Time": "1.4ms/image",
-      },
-    },
   },
+
   resnet34: {
     modelName: "ResNet34",
     overviewData: {
@@ -60,20 +47,8 @@ export const resnetModels = {
         "Basic blocks with two 3×3 convolutions",
       ],
     },
-    trainingData: {
-      dataset: "ImageNet ",
-      accuracy: "73.3%",
-      trainingTime: "~10 days on 8 GPUs",
-      hardware: "NVIDIA Tesla P100 GPUs",
-      evaluationMetrics: {
-        "Top-1 Accuracy": "73.3%",
-        "Top-5 Accuracy": "91.4%",
-        Parameters: "21.8M",
-        FLOPs: "3.6G",
-        "Inference Time": "3.6ms/image",
-      },
-    },
   },
+
   resnet50: {
     modelName: "ResNet50",
     overviewData: {
@@ -99,7 +74,8 @@ export const resnetModels = {
     trainingData: {
       dataset: "ImageNet",
       accuracy: "75.3%",
-      trainingTime: "30 epochs",
+      framework: "TensorFlow / Keras",
+      trainingPlatform: "Google Colab",
       hardware: "Colab's NVIDIA T4: 16GB VRAM",
       evaluationMetrics: {
         "Top-1 Accuracy": "75.3%",
@@ -108,8 +84,13 @@ export const resnetModels = {
         FLOPs: "3.8G",
         "Inference Time": "4.6ms/image",
       },
+      lossFunction: "Categorical Cross-Entropy",
+      optimizer: "Adam",
+      learningRate: "0.0001",
+      batchSize: "32"
     },
   },
+
   resnet101: {
     modelName: "ResNet101",
     overviewData: {
@@ -133,20 +114,8 @@ export const resnetModels = {
         "Higher representational capacity",
       ],
     },
-    trainingData: {
-      dataset: "ImageNet",
-      accuracy: "76.4%",
-      trainingTime: "~3 weeks on 8 GPUs",
-      hardware: "NVIDIA Tesla P100 GPUs",
-      evaluationMetrics: {
-        "Top-1 Accuracy": "76.4%",
-        "Top-5 Accuracy": "92.9%",
-        Parameters: "44.5M",
-        FLOPs: "7.6G",
-        "Inference Time": "7.8ms/image",
-      },
-    },
   },
+
   resnet152: {
     modelName: "ResNet152",
     overviewData: {
@@ -169,19 +138,6 @@ export const resnetModels = {
         "Very deep bottleneck architecture",
         "Highest representational capacity in the ResNet family",
       ],
-    },
-    trainingData: {
-      dataset: "ImageNet",
-      accuracy: "77.8%",
-      trainingTime: "~4 weeks on 8 GPUs",
-      hardware: "NVIDIA Tesla P100 GPUs",
-      evaluationMetrics: {
-        "Top-1 Accuracy": "77.8%",
-        "Top-5 Accuracy": "93.6%",
-        Parameters: "60.2M",
-        FLOPs: "11.3G",
-        "Inference Time": "12.1ms/image",
-      },
     },
   },
 };
