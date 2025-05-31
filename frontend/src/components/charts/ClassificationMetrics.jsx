@@ -353,14 +353,15 @@ export function ClassificationMetrics({ modelName }) {
     <div className="w-full min-h-screen px-0 pb-10">
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center gap-2 my-8">
-          <ChartLine className="h-8 w-8 text-white" />
+          <ChartLine className="h-8 w-8 text-white"/>
           <h2 className="text-2xl text-white">Results</h2>
         </div>
 
         {/* Best Model Performance */}
-        <div className="mb-8 bg-gradient-to-r from-[#2a3158]/50 to-[#1a1f36]/50 p-6 rounded-lg border border-[#6c88da]/20">
+        <div
+            className="mb-8 bg-gradient-to-r from-[#2a3158]/50 to-[#1a1f36]/50 p-6 rounded-lg border border-[#6c88da]/20">
           <div className="flex items-center gap-3 mb-4">
-            <Award className="h-6 w-6 text-[#6c88da]" />
+            <Award className="h-6 w-6 text-[#6c88da]"/>
             <h2 className="text-white text-xl font-semibold">Best Model Performance</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -383,13 +384,13 @@ export function ClassificationMetrics({ modelName }) {
         <h2 className="text-white text-xl font-semibold mb-6 ">Training Metrics</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 ">
           <MetricChart
-            title="Model Accuracy"
-            dataKeys={["accuracy", "val_accuracy"]}
-            colors={["#6c88da", "orange"]}
-            domain={[0, 1]}
-            percentage={true}
+              title="Model Accuracy"
+              dataKeys={["accuracy", "val_accuracy"]}
+              colors={["#6c88da", "orange"]}
+              domain={[0, 1]}
+              percentage={true}
           />
-          <MetricChart title="Model Loss" dataKeys={["loss", "val_loss"]} colors={["#6c88da", "orange"]} />
+          <MetricChart title="Model Loss" dataKeys={["loss", "val_loss"]} colors={["#6c88da", "orange"]}/>
         </div>
 
         {/* Advanced Visualizations */}
@@ -402,34 +403,47 @@ export function ClassificationMetrics({ modelName }) {
         {/* Metric Cards */}
         <div className="mb-8">
 
-        <MetricCards />
+          <MetricCards/>
         </div>
 
         {/* Summary Stats */}
         <div className="border border-white/20 p-6 rounded-lg bg-gradient-to-r from-[#2a3158]/50 to-[#1a1f36]/50">
           <h2 className="text-white text-xl font-semibold mb-4">Evaluation Summary - {selectedModel}</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-center">
+
             <div>
               <div className="text-gray-400 text-sm">Total Epochs</div>
               <div className="text-white text-2xl font-bold">{currentData.length}</div>
             </div>
-            <div>
-              <div className="text-gray-400 text-sm">Final Accuracy</div>
-              <div className="text-white text-2xl font-bold">
-                {(currentData[currentData.length - 1]?.accuracy * 100).toFixed(1)}%
+
+            <div className="text-center">
+              <div className="text-gray-400 text-sm">Test Accuracy</div>
+              <div className="text-blue-400 text-2xl font-bold">
+                {(currentModel?.overall_accuracy * 100).toFixed(1)}%
               </div>
             </div>
 
-            <div className="text-center">
-              <div className="text-gray-400 text-sm">Overall Test Accuracy</div>
-              <div className="text-white text-2xl font-bold">{(currentModel?.overall_accuracy * 100).toFixed(1)}%</div>
-            </div>
             <div>
-              <div className="text-gray-400 text-sm">Improvement</div>
+              <div className="text-gray-400 text-sm">Initial Val Acc</div>
+              <div className="text-white text-2xl font-bold">
+                {(currentData[0]?.val_accuracy * 100).toFixed(1)}%
+              </div>
+            </div>
+
+            <div>
+              <div className="text-gray-400 text-sm">Final Val Acc</div>
+              <div className="text-white text-2xl font-bold">
+                {(currentData[currentData.length - 1]?.val_accuracy * 100).toFixed(1)}%
+              </div>
+            </div>
+
+            <div>
+              <div className="text-gray-400 text-sm">Validation Gain</div>
               <div className="text-green-400 text-2xl font-bold">
                 {((currentData[currentData.length - 1]?.val_accuracy - currentData[0]?.val_accuracy) * 100).toFixed(1)}%
               </div>
             </div>
+
           </div>
         </div>
       </div>

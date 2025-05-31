@@ -19,44 +19,60 @@ import { Database, BarChart3, Shuffle, Settings, ExternalLink } from "lucide-rea
 
 const dataset = {
   id: "dataset1",
-  name: "Deep Space Objects HEN 4",
-  datasetLink: "https://www.kaggle.com/datasets/andradaparaczki/dso-3c",
-  description: "Annotated RGB images of deep sky objects (DSOs) captured using smart telescopes from light-polluted locations in Europe, designed for training YOLO object detection models.",
-  size: "2.3 GB",
-  format: "JPEG + YOLO TXT",
+  name: "DeepSky3-HEN",
+  datasetLink: "https://www.kaggle.com/datasets/andradaparaczki/deepsky3-hen",
+  description: "A curated dataset of RGB images of deep space objects (DSOs) collected from ESA/Hubble, NOIRLab, and ESO archives. Designed for training and evaluating deep learning classification models using transfer learning.",
+  size: "18.98 MB",
+  format: "JPEG",
   overview: {
-    samples: 4696,
-    features: 608 * 608 * 3,
-    classes: 3,
-    classDistribution: "300/400/500", //come BAAAACK
+    samples: 1951,
+    features: 224 * 224 * 3,
+    classes: 4,
+    classDistribution: {
+      train: { clusters: 302, galaxies: 305, nebulae: 327, other: 317 },
+      validation: { clusters: 75, galaxies: 76, nebulae: 81, other: 79 },
+      test: { clusters: 94, galaxies: 95, nebulae: 102, other: 98 }
+    },
     splitRatio: "80/10/10"
   },
   preprocessing: {
     steps: [
-      "Cropping to 608x608 patches",
-      "Filtering for visible DSOs",
-      "Align and stack exposures",
-      "Convert to RGB (JPEG, minimal compression)"
+      "Resize all images to 224x224 pixels",
+      "Class labels inferred from filenames",
+      "Images grouped into train/validation/test folders"
     ],
-    normalization: "None applied before annotation; dataset is ready-to-use as is",
-    missingValues: "No missing labels; one YOLO-format label file per image",
-    outliers: "Faint or ambiguous detections were filtered during annotation"
+    normalization: "Keras `preprocess_input()` used during training and inference",
+    missingValues: "No missing labels; all images are categorized into 4 classes",
+    outliers: "Low-quality or unidentifiable DSOs were excluded manually"
   },
   augmentation: {
     techniques: [
-      "Not explicitly applied in the dataset, but recommended during training",
-      "Compatible with YOLO pipeline augmentation"
+      "Rotation (±30°)",
+      "Width/height shift (±10%)",
+      "Zoom (±10%)",
+      "Brightness adjustment (range: 0.8 to 1.2)",
+      "Shear transformation (0.2)",
+      "Horizontal flipping",
+      "Nearest neighbor fill"
     ],
     multiplier: 1,
-    enabled: false
+    enabled: true
   },
   statistics: {
-    accuracy: 89.7,
-    precision: 88.5,
-    recall: 90.2,
-    f1Score: 89.3
+    accuracy: null,      // To be filled after evaluation
+    precision: null,
+    recall: null,
+    f1Score: null
+  },
+  metadata: {
+    sourceArchives: ["ESA/Hubble", "NOIRLab", "ESO"],
+    imageDimensions: "224x224",
+    imageType: "RGB",
+    labelingMethod: "Keyword-based auto-labeling with manual verification",
+    classNames: ["clusters", "galaxies", "nebulae", "other"]
   }
-}
+};
+
 
 export default function DatasetClassification() {
   return (
@@ -92,8 +108,8 @@ export default function DatasetClassification() {
           <TabsTrigger value="augmentation" className="data-[state=active]:bg-[#fff] hover:bg-[#161b36] hover:text-white data-[state=active]:text-black cursor-pointer">
             <Shuffle className="h-4 w-4 mr-2" /> Augmentation
           </TabsTrigger>
-          <TabsTrigger value="statistics" className="data-[state=active]:bg-[#fff] hover:bg-[#161b36] hover:text-white data-[state=active]:text-black cursor-pointer">
-            <BarChart3 className="h-4 w-4 mr-2" /> Statistics
+          <TabsTrigger value="metadata" className="data-[state=active]:bg-[#fff] hover:bg-[#161b36] hover:text-white data-[state=active]:text-black cursor-pointer">
+            <BarChart3 className="h-4 w-4 mr-2" /> Metadata
           </TabsTrigger>
         </TabsList>
 
@@ -201,28 +217,32 @@ export default function DatasetClassification() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="statistics">
+        <TabsContent value="metadata">
           <Card className="border-none backdrop-blur-sm">
             <CardHeader className="px-1">
-              <CardTitle className="text-white">Performance Statistics</CardTitle>
-              <CardDescription className="text-white/70">Model performance metrics on this dataset</CardDescription>
+              <CardTitle className="text-white">Dataset Metadata</CardTitle>
+              <CardDescription className="text-white/70">Static information about the dataset’s source and structure</CardDescription>
             </CardHeader>
-            <CardContent className="grid grid-cols-2 gap-4 px-0">
+            <CardContent className="grid grid-cols-2 gap-4 px-1">
               <div className="p-4 rounded-lg border border-white/10">
-                <Label className="text-white/80 text-sm">Accuracy</Label>
-                <div className="text-3xl font-bold mt-1">{dataset.statistics.accuracy}%</div>
+                <Label className="text-white/80 text-sm">Source Archives</Label>
+                <div className="text-white mt-1 text-sm">{dataset.metadata.sourceArchives.join(", ")}</div>
               </div>
               <div className="p-4 rounded-lg border border-white/10">
-                <Label className="text-white/80 text-sm">Precision</Label>
-                <div className="text-3xl font-bold mt-1">{dataset.statistics.precision}%</div>
+                <Label className="text-white/80 text-sm">Image Dimensions</Label>
+                <div className="text-white mt-1 text-sm">{dataset.metadata.imageDimensions}</div>
               </div>
               <div className="p-4 rounded-lg border border-white/10">
-                <Label className="text-white/80 text-sm">Recall</Label>
-                <div className="text-3xl font-bold mt-1">{dataset.statistics.recall}%</div>
+                <Label className="text-white/80 text-sm">Image Type</Label>
+                <div className="text-white mt-1 text-sm">{dataset.metadata.imageType}</div>
               </div>
+              {/*<div className="p-4 rounded-lg border border-white/10 col-span-2">*/}
+              {/*  <Label className="text-white/80 text-sm">Labeling Method</Label>*/}
+              {/*  <div className="text-white mt-1 text-sm">{dataset.metadata.labelingMethod}</div>*/}
+              {/*</div>*/}
               <div className="p-4 rounded-lg border border-white/10">
-                <Label className="text-white/80 text-sm">F1 Score</Label>
-                <div className="text-3xl font-bold mt-1">{dataset.statistics.f1Score}%</div>
+                <Label className="text-white/80 text-sm">Class Names</Label>
+                <div className="text-white mt-1 text-sm">{dataset.metadata.classNames.join(", ")}</div>
               </div>
             </CardContent>
           </Card>

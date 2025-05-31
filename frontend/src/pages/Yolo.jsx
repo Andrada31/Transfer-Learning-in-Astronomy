@@ -19,9 +19,9 @@ const sections = [
 
 const Yolo = () => {
   return (
-    <div className="flex flex-col items-center justify-center w-full max-w-[90vw] sm:max-w-[80vw] md:max-w-[60vw] lg:w-[80vw] overflow-x-hidden relative">
+    <div className="flex flex-col items-center justify-center w-full max-w-[90vw] sm:max-w-[80vw] md:max-w-[67vw] lg:w-[80vw] overflow-x-hidden relative">
       <Sidenavbar />
-        <div className="flex flex-col w-full lg:w-[70%] pt-17" id="model">
+        <div className="flex flex-col w-full lg:w-[70%] pt-5" id="model">
             <ModelDetails defaultModel="yolo11"/>
             <div id="dataset"></div>
             <DatasetDetection/>

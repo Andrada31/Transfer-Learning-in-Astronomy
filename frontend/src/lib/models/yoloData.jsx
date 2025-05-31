@@ -3,38 +3,38 @@
 export const yoloModels = {
   // Existing YOLO models...
 
-  yolov9: {
-    modelName: "YOLOv9",
+  yolov8c: {
+    modelName: "YOLOv8-C",
     overviewData: {
       description:
-        "YOLOv9 introduces the GELAN (Generalized Efficient Layer Aggregation Network) architecture and Programmable Gradient Information (PGI) to enhance accuracy and efficiency in real-time object detection.",
-      yearPublished: "2024",
-      authors: ["Chien-Yao Wang", "I-Hau Yeh", "Hong-Yuan Mark Liao"],
-      paperLink: "https://arxiv.org/abs/2402.13616",
+        "YOLOv8-C is a compact variant of the YOLOv8 architecture designed for real-time object detection with balanced performance and speed. It is well-suited for custom training tasks on lightweight datasets like DeepSpaceYoloDataset.",
+      yearPublished: "2023",
+      authors: ["Ultralytics Team"],
+      paperLink: "https://docs.ultralytics.com/models/yolov8/",
       datasetLink: "https://www.kaggle.com/datasets/andradaparaczki/deepspaceyolodataset-3c-ns",
-      notebookLink: "https://github.com/WongKinYiu/yolov9"
+      notebookLink: "https://github.com/ultralytics/ultralytics"
     },
     architectureData: {
-      layers: "Varies by model size (e.g., YOLOv9s, YOLOv9m, YOLOv9e)",
-      parameters: "2M (YOLOv9t) to 57.3M (YOLOv9e)",
+      layers: "~139",
+      parameters: "11.2 million",
       inputSize: "640 x 640 pixels",
       keyFeatures: [
-        "GELAN architecture for efficient layer aggregation",
-        "Programmable Gradient Information (PGI) for improved gradient flow",
-        "Enhanced accuracy with reduced computational complexity",
-        "Suitable for deployment across various hardware platforms"
+        "Anchor-free detection head for simplicity and speed",
+        "Task-specific decoupled heads for classification and localization",
+        "C2f modules for efficient computation",
+        "Designed for easy deployment and fine-tuning"
       ],
     },
     trainingData: {
       dataset: "MS COCO",
-      accuracy: "mAP50-95: 55.6% (YOLOv9e)",
-      trainingTime: "~1 week on 8 GPUs",
-      hardware: "NVIDIA Tesla P100 GPUs",
+      accuracy: "mAP50-95: 47.6%",
+      trainingTime: "~3 hours on 1 Tesla P100",
+      hardware: "NVIDIA Tesla P100 GPU",
       evaluationMetrics: {
-        "mAP50-95": "55.6%",
-        Parameters: "2M to 57.3M",
-        FLOPs: "7.7B (YOLOv9t) to 189.0B (YOLOv9e)",
-        "Inference Time": "2.3ms (YOLOv9t) to 16.77ms (YOLOv9e)"
+        "mAP50-95": "47.6%",
+        "Parameters": "11.2M",
+        "FLOPs": "28.8B",
+        "Inference Time": "5.8ms/image"
       },
     },
   },
