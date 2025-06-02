@@ -254,17 +254,22 @@ export function ImageUploaderActivationMap({
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab} className="my-6 p-4 w-full max-w-3xl mx-auto border border-[#2A2C3F] rounded-lg">
       <TabsList className="border border-[#2A2C3F]">
-        <TabsTrigger value="upload" className="cursor-pointer px-4 py-2 mr-2 data-[state=active]:bg-[#24285d] data-[state=active]:text-white hover:bg-white hover:text-black">
-          <Upload className="h-4 w-4 mr-2" /> Upload
-        </TabsTrigger>
-        <TabsTrigger value="results" className="cursor-pointer px-4 py-2 data-[state=active]:bg-[#24285d] data-[state=active]:text-white hover:bg-white hover:text-black">
-          <Map className="h-4 w-4 mr-2" /> {isDetectionModel ? "Grad-CAM" : "Activation Map"}
-        </TabsTrigger>
-        {isDetectionModel && (
-          <TabsTrigger value="boxes" className="cursor-pointer px-4 py-2 data-[state=active]:bg-[#24285d] data-[state=active]:text-white hover:bg-white hover:text-black">
-            <Map className="h-4 w-4 mr-2" /> Bounding Boxes
-          </TabsTrigger>
-        )}
+        {[
+          { value: "upload", label: "Upload", icon: Upload },
+          !isDetectionModel && { value: "results", label: "Activation Map", icon: Map },
+          isDetectionModel && { value: "boxes", label: "Bounding Boxes", icon: Map },
+        ]
+          .filter(Boolean)
+          .map(({ value, label, icon: Icon }) => (
+            <TabsTrigger
+              key={value}
+              value={value}
+              className="cursor-pointer px-4 py-2 mr-2 data-[state=active]:bg-[#24285d] data-[state=active]:text-white hover:bg-white hover:text-black"
+            >
+              <Icon className="h-4 w-4 mr-2" />
+              {label}
+            </TabsTrigger>
+          ))}
       </TabsList>
 
       <TabsContent value="upload">
@@ -364,11 +369,7 @@ export function ImageUploaderActivationMap({
           <CardContent className="p-4 flex flex-col items-center">
             <ActivationMapViewer
               mode={mode}
-              activationMapUrls={
-                mode === "detection"
-                  ? [predictionsByModel[selectedModel]?.activationMapUrl]
-                  : predictionsByModel[selectedModel]?.activationMapUrls
-              }
+              activationMapUrls={predictionsByModel[selectedModel]?.activationMapUrls}
             />
           </CardContent>
         </Card>

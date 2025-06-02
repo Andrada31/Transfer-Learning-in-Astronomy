@@ -5,14 +5,13 @@ import { Slider } from "@/components/ui/slider";
 import { Card, CardContent } from "@/components/ui/card";
 import { BrainCircuit } from "lucide-react";
 
-export default function ActivationMapViewer({ activationMapUrls = [], mode }) {
+export default function ActivationMapViewer({ activationMapUrls = [], activationMapUrl = "", mode }) {
   const [activeLayer, setActiveLayer] = useState(1);
   const totalLayers = activationMapUrls.length;
 
   const handleLayerChange = (value) => {
     setActiveLayer(value[0]);
   };
-
 
   const layerFeatures = {
     1: ["Edge detection", "Simple patterns", "Basic textures"],
@@ -25,7 +24,7 @@ export default function ActivationMapViewer({ activationMapUrls = [], mode }) {
   const isClassification = mode === "classification";
   const imageToShow = isClassification
     ? activationMapUrls[activeLayer - 1]
-    : activationMapUrls[0]; // Grad-CAM for YOLO
+    : activationMapUrl; // Fixed: was activationMapUrls[0]
 
   return (
     <Card className="p-6 border-none w-full max-w-md mx-auto">
@@ -38,7 +37,7 @@ export default function ActivationMapViewer({ activationMapUrls = [], mode }) {
                 alt={
                   isClassification
                     ? `Activation map for layer ${activeLayer}`
-                    : "Grad-CAM object detection heatmap"
+                    : "YOLO feature map"
                 }
                 className="w-[300px] h-[300px] object-cover"
               />
@@ -48,7 +47,7 @@ export default function ActivationMapViewer({ activationMapUrls = [], mode }) {
                 <p className="text-md text-center">
                   {isClassification
                     ? "Activation map inactive"
-                    : "Grad-CAM unavailable"}
+                    : "Feature map unavailable"}
                 </p>
               </div>
             )}
@@ -86,8 +85,7 @@ export default function ActivationMapViewer({ activationMapUrls = [], mode }) {
         {!isClassification && imageToShow && (
           <div className="text-sm text-muted-foreground text-center">
             <p>
-              This Grad-CAM visualization highlights regions that contributed to
-              YOLO's object detection.
+              This feature map shows the internal attention of YOLO's mid-layer during object detection.
             </p>
           </div>
         )}

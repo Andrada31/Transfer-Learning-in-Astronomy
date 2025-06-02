@@ -5,6 +5,7 @@ import base64
 import os
 import time
 import cv2
+import torch
 
 from ultralytics import YOLO
 from flask import Flask, request, jsonify, send_from_directory
@@ -162,23 +163,6 @@ def compute_activation_maps(model_name, model, img_array, predicted_class_index)
 
     return activation_maps
 
-
-def generate_grad_cam_for_yolo(image: Image.Image, class_idx=0):
-    gray_img = image.convert("L").resize((224, 224))
-    gray_np = np.array(gray_img)
-
-    inverted = 255 - gray_np
-    normalized = (inverted / inverted.max() * 255).astype(np.uint8)
-
-    heatmap = cv2.applyColorMap(normalized, cv2.COLORMAP_JET)
-    heatmap_pil = Image.fromarray(heatmap)
-
-    buffer = BytesIO()
-    heatmap_pil.save(buffer, format="PNG")
-    base64_img = base64.b64encode(buffer.getvalue()).decode("utf-8")
-    return f"data:image/png;base64,{base64_img}"
-
-
 def predict_with_yolo(image, model_name):
     if model_name not in YOLO_MODEL_PATHS:
         raise ValueError(f"Unknown YOLO model: {model_name}")
@@ -188,6 +172,7 @@ def predict_with_yolo(image, model_name):
 
     yolo_model = yolo_models[model_name]
     image_np = np.array(image.convert("RGB"))
+
     start_time = time.time()
     results = yolo_model.predict(source=image_np, conf=0.30, save=False, verbose=False)
     inference_time = (time.time() - start_time) * 1000
@@ -215,10 +200,9 @@ def predict_with_yolo(image, model_name):
             if len(r.boxes.cls) > 0:
                 class_idx = int(r.boxes.cls[0].item())
 
-    grad_cam = generate_grad_cam_for_yolo(image, class_idx=class_idx)
-
     perf = MODEL_PERFORMANCE.get(model_name, {})
-    return detections, inference_time, grad_cam, perf
+    return detections, inference_time, perf
+
 
 
 @app.route('/api/upload', methods=['POST'])
@@ -249,21 +233,31 @@ def predict():
         img = Image.open(BytesIO(image_data)).convert("RGB")
         orig_width, orig_height = img.size
 
-        resnet_info = EMBEDDING_INFO['resnet']
-        img_resized = img.resize((224, 224))
-        emb_array = np.array(img_resized, dtype=np.float32)
-        emb_array = resnet_info['preprocess'](emb_array)
-        emb_array = np.expand_dims(emb_array, axis=0)
+        if not model_name.startswith("yolo"):
+            resnet_info = EMBEDDING_INFO['resnet']
+            img_resized = img.resize((224, 224))
+            emb_array = np.array(img_resized, dtype=np.float32)
+            emb_array = resnet_info['preprocess'](emb_array)
+            emb_array = np.expand_dims(emb_array, axis=0)
 
-        resnet_model = get_model('resnet')
-        embedding_model = tf.keras.models.Model(
-            inputs=resnet_model.input,
-            outputs=resnet_model.get_layer(resnet_info['embedding_layer']).output
-        )
-        input_embedding = embedding_model.predict(emb_array)[0].reshape(1, -1)
-        gallery_embeddings = np.load(resnet_info['path'])['embeddings']
-        similarities = cosine_similarity(input_embedding, gallery_embeddings)[0]
-        resnet_similarity = np.max(similarities)
+            resnet_model = get_model('resnet')
+            embedding_model = tf.keras.models.Model(
+                inputs=resnet_model.input,
+                outputs=resnet_model.get_layer(resnet_info['embedding_layer']).output
+            )
+            input_embedding = embedding_model.predict(emb_array)[0].reshape(1, -1)
+            gallery_embeddings = np.load(resnet_info['path'])['embeddings']
+            similarities = cosine_similarity(input_embedding, gallery_embeddings)[0]
+            resnet_similarity = np.max(similarities)
+
+            if resnet_similarity < SIMILARITY_THRESHOLD:
+                return jsonify({
+                    'message': 'Image is not a recognized deep space object (DSO)',
+                    'similarityScore': float(resnet_similarity),
+                    'in_distribution': False
+                })
+        else:
+            resnet_similarity = 1.0
 
         if resnet_similarity < SIMILARITY_THRESHOLD:
             return jsonify({
@@ -280,14 +274,13 @@ def predict():
             if composite_key not in YOLO_MODEL_PATHS:
                 return jsonify({'error': f"Model path for {composite_key} not found."}), 400
 
-            detections, inference_time, grad_cam, perf = predict_with_yolo(img, composite_key)
+            detections, inference_time, perf = predict_with_yolo(img, composite_key)
 
             return jsonify({
                 'model_name': model_name,
                 'input_size': f"{orig_width}x{orig_height}",
                 'inference_time': inference_time,
                 'detections': detections,
-                'activationMapUrl': grad_cam,
                 'modelParameters': perf.get('modelParameters'),
                 'flops': perf.get('flops'),
                 'numLayers': perf.get('numLayers'),
