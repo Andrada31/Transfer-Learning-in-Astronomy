@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import {Database, BarChart3, Shuffle, Settings, ExternalLink} from "lucide-react"
+import CustomSelectTrigger from "@/components/custom/CustomSelectTrigger"
 
 const datasets = [
   {
@@ -49,23 +50,23 @@ const datasets = [
       "normalization": "None applied before annotation; dataset is ready-to-use as is",
       "missingValues": "No missing labels; one YOLO-format label file per image",
       "outliers": "Faint or ambiguous detections were filtered during annotation"
-      },
-      "augmentation": {
-        "techniques": [
-          "Not explicitly applied in the dataset, but recommended during training",
-          "Compatible with YOLO pipeline augmentation"
-        ],
-        "multiplier": 1,
-        "enabled": false
-      },
-      "statistics": {
-        "accuracy": 89.7,
-        "precision": 88.5,
-        "recall": 90.2,
-        "f1Score": 89.3
-      }
     },
-    {
+    "augmentation": {
+      "techniques": [
+        "Not explicitly applied in the dataset, but recommended during training",
+        "Compatible with YOLO pipeline augmentation"
+      ],
+      "multiplier": 1,
+      "enabled": false
+    },
+    "statistics": {
+      "accuracy": "-",
+      "precision": 74.6,
+      "recall": 62.7,
+      "f1Score": 68.1
+    }
+  },
+  {
     "id": "dataset2",
     "name": "Augmented Deep Space Yolo Dataset",
     "datasetLink": "https://github.com/Leo-Thomas/Augmented-DeepSpaceYolo",
@@ -89,31 +90,31 @@ const datasets = [
       "normalization": "None applied pre-release; augmentations simulate natural observational conditions",
       "missingValues": "None; each image has a corresponding YOLO-format label file",
       "outliers": "Controlled via augmentation; faint objects maintained, artifacts excluded"
-      },
-      "augmentation": {
-        "techniques": [
-          "Zooming and cropping",
-          "Rotation",
-          "Brightness adjustment",
-          "Blurring",
-          "Noise addition"
-        ],
-        "multiplier": 1.79,
-        "enabled": true
-      },
-      "statistics": {
-        "accuracy": "-",
-        "precision": 82.9,
-        "recall": 65.3,
-        "f1Score": 72.5,
-        "mAP@50": 76.1,
-        "mAP@50:95": 59.4
-      }
     },
+    "augmentation": {
+      "techniques": [
+        "Zooming and cropping",
+        "Rotation",
+        "Brightness adjustment",
+        "Blurring",
+        "Noise addition"
+      ],
+      "multiplier": 1.79,
+      "enabled": true
+    },
+    "statistics": {
+      "accuracy": "-",
+      "precision": 81.0,
+      "recall": 57.9,
+      "f1Score": 67.5,
+      "mAP@50": 76.1,
+      "mAP@50:95": 59.4
+    }
+  },
   {
     id: "dataset3",
     name: "Balanced Yolo Dataset",
-    description: "Financial market data for prediction",
+    description: "Reannotated and balanced DeepSpaceYoloDataset, including nebulae, galaxies, and globular clusters, designed for training YOLO models with improved class balance.",
     size: "1.1 GB",
     format: "PNG/JPEG/WEBP/JPG",
     overview: {
@@ -134,10 +135,10 @@ const datasets = [
       enabled: false,
     },
     statistics: {
-      accuracy: 78.3,
-      precision: 77.8,
-      recall: 78.1,
-      f1Score: 77.9,
+      accuracy: "-",
+      precision: 79.7,
+      recall: 71.4,
+      f1Score: 75.3,
     },
   },
 ]
@@ -159,9 +160,13 @@ export function DatasetDetection() {
             Select Dataset:
           </Label>
           <Select value={selectedDataset} onValueChange={setSelectedDataset}>
-            <SelectTrigger className="w-[300px] bg-[#2a3158] border-white/20 text-white cursor-pointer">
-              <SelectValue placeholder="Choose a dataset" />
-            </SelectTrigger>
+
+          <CustomSelectTrigger
+            value={selectedDataset}
+            onChange={setSelectedDataset}
+            options={datasets}
+          />
+
             <SelectContent className="border-white/20 bg-[#2a3158]">
               {datasets.map((dataset) => (
                 <SelectItem key={dataset.id} value={dataset.id} className="text-white focus:bg-[#161b36] focus:text-white">

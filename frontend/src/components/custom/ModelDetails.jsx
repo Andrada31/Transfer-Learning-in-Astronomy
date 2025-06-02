@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import {BarChart3, ExternalLink, ChartLine, Layers, BrainCircuit, BrainCog} from "lucide-react"
 import jupyterLogo from "@/images/jupyter.svg"
 import kaggleLogo from "@/images/kaggle2.svg"
+import CustomSelectTrigger from "@/components/custom/CustomSelectTrigger"
 
 import { resnetModels } from "@/lib/models/resnetData"
 import { vggModels } from "@/lib/models/vggData"
@@ -41,21 +42,18 @@ export default function ModelDetails({ defaultModel }) {
       <CardHeader className="px-0">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center gap-2 my-8">
-            <BrainCog className="h-8 w-8 text-white"/>
-            <CardTitle className="text-4xl text-white">{modelData.modelName}</CardTitle>
+            <BrainCog className="h-10 w-10 text-white"/>
+            <CardTitle className="text-[42px] text-white">{modelData.modelName}</CardTitle>
           </div>
-          <Select value={selectedModel} onValueChange={setSelectedModel}>
-            <SelectTrigger className="w-full sm:w-[180px] bg-[#2a3158] border-[#3a4168] text-white cursor-pointer">
-              <SelectValue placeholder="Select model"/>
-            </SelectTrigger>
-            <SelectContent className="w-full sm:w-[180px] bg-[#2a3158] border-[#3a4168] text-white">
-              {Object.keys(models).map((modelKey) => (
-                  <SelectItem key={modelKey} value={modelKey} className="focus:bg-[#161b36] focus:text-white">
-                    {models[modelKey].modelName}
-                  </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <CustomSelectTrigger
+            value={selectedModel}
+            onChange={setSelectedModel}
+            options={Object.keys(models).map((key) => ({
+              id: key,
+              name: models[key].modelName
+            }))}
+          />
+
         </div>
         <Separator className="mt-2 bg-[#2a3158]"/>
       </CardHeader>

@@ -28,7 +28,8 @@ MODEL_PATHS = {
 YOLO_MODEL_PATHS = {
     'yolo11-deepspace': '../models/saved/yolo11-deepspace-50ep.pt',
     'yolo11-augmented': '../models/saved/yolo11-augmented-50ep.pt',
-    'yolo11-balanced': '../models/saved/yolo11-balanced3-50ep.pt',
+    'yolo11-balanced': '../models/saved/yolo11-balanced2-50ep.pt',
+
     'yolo8-deepspace': '../models/saved/yolo8-40ep-3c.pt',
     'yolo8-balanced': '../models/saved/yolo8-balanced3-50ep.pt',
     'yolo8-augmented': '../models/saved/yolo8-augmented-50ep.pt'
@@ -188,7 +189,7 @@ def predict_with_yolo(image, model_name):
     yolo_model = yolo_models[model_name]
     image_np = np.array(image.convert("RGB"))
     start_time = time.time()
-    results = yolo_model.predict(source=image_np, conf=0.25, save=False, verbose=False)
+    results = yolo_model.predict(source=image_np, conf=0.30, save=False, verbose=False)
     inference_time = (time.time() - start_time) * 1000
 
     detections = []

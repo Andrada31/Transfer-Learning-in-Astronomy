@@ -366,17 +366,19 @@ export function ClassificationMetrics({ modelName }) {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="text-center">
+              <div className="text-gray-400  text-sm">Overall Test Accuracy</div>
+              <div className="text-[#6c88da] text-3xl font-bold">{(currentModel?.overall_accuracy * 100).toFixed(1)}%
+              </div>
+            </div>
+            <div className="text-center">
               <div className="text-gray-400 text-sm">Best Validation Accuracy</div>
-              <div className="text-[#6c88da] text-3xl font-bold">{(bestValAccuracy * 100).toFixed(2)}%</div>
+              <div className="text-white  text-3xl font-bold">{(bestValAccuracy * 100).toFixed(2)}%</div>
             </div>
             <div className="text-center">
               <div className="text-gray-400 text-sm">Best Epoch</div>
               <div className="text-white text-3xl font-bold">{bestEpoch}</div>
             </div>
-            <div className="text-center">
-              <div className="text-gray-400 text-sm">Overall Test Accuracy</div>
-              <div className="text-white text-3xl font-bold">{(currentModel?.overall_accuracy * 100).toFixed(1)}%</div>
-            </div>
+
           </div>
         </div>
 
