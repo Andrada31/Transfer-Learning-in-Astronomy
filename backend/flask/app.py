@@ -233,7 +233,9 @@ def predict():
         img = Image.open(BytesIO(image_data)).convert("RGB")
         orig_width, orig_height = img.size
 
-        if not model_name.startswith("yolo"):
+        if model_name.startswith("yolo"):
+            resnet_similarity = None
+        else:
             resnet_info = EMBEDDING_INFO['resnet']
             img_resized = img.resize((224, 224))
             emb_array = np.array(img_resized, dtype=np.float32)
@@ -256,8 +258,6 @@ def predict():
                     'similarityScore': float(resnet_similarity),
                     'in_distribution': False
                 })
-        else:
-            resnet_similarity = 1.0
 
         if resnet_similarity < SIMILARITY_THRESHOLD:
             return jsonify({
@@ -284,7 +284,6 @@ def predict():
                 'modelParameters': perf.get('modelParameters'),
                 'flops': perf.get('flops'),
                 'numLayers': perf.get('numLayers'),
-                'similarityScore': float(resnet_similarity),
                 'in_distribution': True
             })
 

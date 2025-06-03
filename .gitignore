@@ -2,3 +2,4 @@ backend/models/data/*
 **/data/
 backend/models/saved/*
 .venv/
+.idea/
