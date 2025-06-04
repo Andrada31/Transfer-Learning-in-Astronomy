@@ -61,3 +61,20 @@ body {
   scrollbar-width: thin;
   scrollbar-color: #2a3158 transparent;
 }
+
+/* TRANSITIONS */
+.fade-in {
+  animation: fadeSlide 0.3s ease both;
+}
+
+@keyframes fadeSlide {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+

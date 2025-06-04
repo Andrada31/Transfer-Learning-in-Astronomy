@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useTransition } from "react";
 import "@/styles/App.css";
-import Sidenavbar from "@/components/custom/Sidenavbar";
 import detectIcon from "@/images/eye2.svg";
 import classifyIcon from "@/images/tl3.svg";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { FaTerminal as Terminal } from "react-icons/fa6";
 import ModelSelector from "@/components/custom/ModelSelector";
+import { ModeProvider } from "@/lib/ModeContext";
+import { useMode } from "@/lib/ModeContext";
 import { ImageUploaderActivationMap } from "@/components/custom/ImageUploader_ActivationMap";
 import { PredictionCard } from "@/components/custom/PredictionCard";
 import { DetectionPredictionCard } from "@/components/custom/DetectionPredictionCard";
@@ -19,7 +20,7 @@ import {
 import DatasetSelector from "@/components/custom/DatasetSelector";
 
 const Home = ({ mode: initialMode = "classification" }) => {
-  const [mode, setMode] = useState(initialMode);
+  const { mode, setMode } = useMode();
   const [activeTab, setActiveTab] = useState(initialMode === "detection" ? "yolo11" : "resnet");
   const [imagePreviewByMode, setImagePreviewByMode] = useState({ classification: null, detection: null });
   const [predictionsByMode, setPredictionsByMode] = useState({ classification: {}, detection: {} });
@@ -49,8 +50,6 @@ const Home = ({ mode: initialMode = "classification" }) => {
   };
 
   const prediction = currentPrediction || fallbackPrediction;
-
-
 
   useEffect(() => {
     getImageData(mode).then((data) => {
@@ -119,15 +118,6 @@ const Home = ({ mode: initialMode = "classification" }) => {
 
   return (
     <div className="flex min-h-screen">
-      <Sidenavbar
-        setMode={(newMode) => {
-          startTransition(() => {
-            setMode(newMode);
-          });
-          window.history.pushState(null, "", newMode === "classification" ? "/" : "/detection");
-        }}
-      />
-
       <div
         className="grow-0 pt-20 px-4 md:px-8 transition-opacity duration-300 ease-in-out"
         style={{ opacity: isPending ? 0 : 1 }}

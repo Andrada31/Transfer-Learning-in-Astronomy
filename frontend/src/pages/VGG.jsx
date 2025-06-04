@@ -1,67 +1,39 @@
 import React from 'react';
-import Sidenavbar from "@/components/custom/Sidenavbar";
-import DataTable from "@/components/charts/DataTable";
 import Tooltip from "@/components/custom/Tooltip";
-import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
-import { ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
-import { ChartLegend, ChartLegendContent, ChartContainer } from "@/components/ui/chart"
 import ModelDetails from "@/components/custom/ModelDetails";
 import DatasetClassification from "@/components/custom/DatasetClassification";
 import ClassificationMetrics from "@/components/charts/ClassificationMetrics";
-import {ProgressBar} from "@/components/custom/ProgressBar";
-
-
-
-
-// const chartData = [
-//   { month: "10", VGG16: 55.2, VGG19: 64.8 },
-//   { month: "50", VGG16: 65.4, VGG19: 71.9 },
-//   { month: "100", VGG16: 70.6, VGG19: 77.8 },
-//   { month: "150", VGG16: 82.1, VGG19: 70.5 },
-//   { month: "200", VGG16: 85.3, VGG19: 79.9 },
-//   { month: "250", VGG16: 87.0, VGG19: 80.4 },
-// ];
+import { ProgressBar } from "@/components/custom/ProgressBar";
 
 const sections = [
   { id: "model", title: "Model" },
   { id: "dataset", title: "Dataset" },
   { id: "results", title: "Results" }
-]
+];
 
-// const chartConfig = {
-//   VGG16: {
-//     label: "VGG16",
-//     color: "#2563eb",
-//   },
-//   VGG19: {
-//     label: "VGG19",
-//     color: "#60a5fa",
-//   },
-// }
 const VGG = () => {
-     return (
-         <div
-             className="flex flex-col items-center justify-center w-full max-w-[90vw] sm:max-w-[80vw] md:max-w-[67vw] lg:w-[80vw] overflow-x-hidden relative">
-             <Sidenavbar/>
-             <div className="flex flex-col w-full lg:w-[70%] pt-5">
-                 <div id="model">
-                     <ModelDetails defaultModel="vgg16"/>
-                 </div>
-                 <div id="dataset">
-                     <DatasetClassification/>
-                 </div>
+  return (
+    <div className="relative w-full flex justify-center">
+      {/* Main scrollable content */}
+      <div className="flex flex-col w-full max-w-[90vw] sm:max-w-[80vw] md:max-w-[67vw] lg:w-[46vw] overflow-x-hidden pt-5">
+        <div id="model" className="fade-in">
+          <ModelDetails defaultModel="vgg16" />
+        </div>
+        <div id="dataset" className="fade-in">
+          <DatasetClassification />
+        </div>
+        <div id="results" className="mt-[80px]">
+          <ClassificationMetrics modelName="vgg16" />
+        </div>
+      </div>
 
-                 <div id="results" className="mt-[80px]">
-                     <ClassificationMetrics modelName="vgg16"/>
-                 </div>
-
-             </div>
-             <Tooltip/>
-             <div className="hidden lg:block">
-                 <ProgressBar sections={sections}/>
-             </div>
-         </div>
-     );
-}
+      {/* Floating ProgressBar pinned to the right */}
+      <div className="relative right-[-23vw] z-40">
+        <ProgressBar sections={sections} />
+        {/* <Tooltip /> */}
+      </div>
+    </div>
+  );
+};
 
 export default VGG;

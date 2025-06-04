@@ -17,7 +17,7 @@ export function DetectionPredictionCard({
   onRemove,
 }) {
   return (
-    <Card className="fixed right-4 top-4 bottom-4 w-[24rem] shadow-xl overflow-y-auto border-[#2A2C3F]">
+    <Card className="fixed right-[-26vw] top-4 bottom-4 w-[24rem] shadow-xl overflow-y-auto border-[#2A2C3F]">
       <CardHeader className="pb-2 border-b border-[#2A2C3F]">
         <CardTitle className="text-lg flex items-center gap-2 text-white">
           <ListChecks className="h-5 w-5 text-[#6c88da]" />

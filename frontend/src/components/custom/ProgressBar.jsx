@@ -35,7 +35,7 @@ export function ProgressBar({ sections }) {
   }
 
   return (
-    <div className="fixed right-16 top-1/2 transform -translate-y-1/2 flex items-center">
+    <div className="sticky top-[15%] transform flex items-center">
       <div className="relative h-[700px] flex items-center">
         <div className="absolute right-full mr-4 h-full flex flex-col justify-between">
           {sections.map((section, index) => (

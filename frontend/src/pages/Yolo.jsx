@@ -1,12 +1,6 @@
 import React from 'react';
 import '@/styles/App.css';
-import Tooltip from "@/components/custom/Tooltip";
-import Sidenavbar from "@/components/custom/Sidenavbar";
-import DataTable from "@/components/charts/DataTable";
-import RadioButton from "@/components/headlessui/RadioGroup";
-import TwoLevelPieChart from "@/components/charts/TwoLevelPieChart";
-import LineChart from "@/components/charts/LineChart";
-import { ProgressBar } from "@/components/custom/ProgressBar"
+import { ProgressBar } from "@/components/custom/ProgressBar";
 import ModelDetails from "@/components/custom/ModelDetails";
 import DatasetDetection from "@/components/custom/DatasetDetection";
 import YoloMetricsDashboard from "@/components/charts/YOLOMetricsChart";
@@ -15,38 +9,28 @@ const sections = [
   { id: "model", title: "Model" },
   { id: "dataset", title: "Dataset" },
   { id: "results", title: "Results" },
-]
+];
 
 const Yolo = () => {
   return (
-    <div className="flex flex-col items-center justify-center w-full max-w-[90vw] sm:max-w-[80vw] md:max-w-[67vw] lg:w-[80vw] overflow-x-hidden relative">
-      <Sidenavbar />
-        <div className="flex flex-col w-full lg:w-[70%] pt-5" id="model">
-            <ModelDetails defaultModel="yolo11"/>
-            <div id="dataset"></div>
-            <DatasetDetection/>
-
-            {/*<RadioButton />*/}
-            {/*<LineChart/>*/}
-            <div id="results"></div>
-            <YoloMetricsDashboard/>
-
-            {/*<div id="results" className="mt-[80px]">*/}
-            {/*    <h2>Results</h2>*/}
-            {/*    <p className="my-[40px]">*/}
-            {/*        These models have achieved state-of-the-art performance on various image recognition benchmarks.*/}
-            {/*    </p>*/}
-            {/*    < DataTable/>*/}
-            {/*</div>*/}
+    <div className="relative w-full flex justify-center">
+      <div className="flex flex-col w-full max-w-[90vw] sm:max-w-[80vw] md:max-w-[67vw] lg:w-[46vw] overflow-y-hidden pt-5">
+        <div id="model" className="fade-in">
+          <ModelDetails defaultModel="yolo11" />
         </div>
-        <Tooltip/>
-        <div className="hidden lg:block">
-            <ProgressBar sections={sections}/>
+        <div id="dataset" className="fade-in">
+          <DatasetDetection />
         </div>
+        <div id="results" className="fade-in">
+          <YoloMetricsDashboard />
+        </div>
+      </div>
 
+      <div className="relative right-[-23vw] z-40">
+        <ProgressBar sections={sections} />
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default Yolo
-
+export default Yolo;

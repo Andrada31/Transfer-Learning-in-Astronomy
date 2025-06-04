@@ -15,13 +15,6 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import {Database, BarChart3, Shuffle, Settings, ExternalLink} from "lucide-react"
 import CustomSelectTrigger from "@/components/custom/CustomSelectTrigger"
@@ -159,7 +152,6 @@ export function DatasetDetection() {
           <Label htmlFor="dataset-select" className="text-white/80">
             Select Dataset:
           </Label>
-          <Select value={selectedDataset} onValueChange={setSelectedDataset}>
 
           <CustomSelectTrigger
             value={selectedDataset}
@@ -167,14 +159,7 @@ export function DatasetDetection() {
             options={datasets}
           />
 
-            <SelectContent className="border-white/20 bg-[#2a3158]">
-              {datasets.map((dataset) => (
-                <SelectItem key={dataset.id} value={dataset.id} className="text-white focus:bg-[#161b36] focus:text-white">
-                  {dataset.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+
         </div>
 
         <div className="rounded-lg p-4 border border-white/10">
