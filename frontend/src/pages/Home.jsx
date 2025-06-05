@@ -173,43 +173,44 @@ const Home = ({ mode: initialMode = "classification" }) => {
 
         {imagePreviewByMode[mode] && (
           <>
-            {loadingModels[activeTab] ? (
+            {loadingModels[activeTab] && !currentPrediction && (
               <div className="fixed right-4 top-4 bg-[#1c1c2e] text-white px-6 py-4 rounded-lg shadow-lg">
                 <div className="animate-pulse text-sm">Loading {activeTab} prediction...</div>
               </div>
-            ) : currentPrediction && (
-              mode === "classification" ? (
-                <PredictionCard
-                  inputImageUrl={imagePreviewByMode[mode]}
-                  activationMapUrl={prediction.activationMapUrl}
-                  predictedClass={prediction.class}
-                  confidenceScore={prediction?.probability || 0}
-                  topPredictions={prediction.topPredictions || 0}
-                  inferenceTime={prediction.inference_time || 0}
-                  modelName={prediction.model_name}
-                  inputSize={prediction.input_size || 0}
-                  datasetOrigin={prediction.dataset_origin || 0}
-                  modelParameters={prediction.modelParameters}
-                  numLayers={prediction.numLayers}
-                  flops={prediction.flops}
-                  onRemove={handleRemove}
-                />
-              ) : (
-                <DetectionPredictionCard
-                  inputImageUrl={imagePreviewByMode[mode]}
-                  detections={prediction.detections || []}
-                  inferenceTime={prediction.inference_time || 0}
-                  modelName={prediction.model_name}
-                  inputSize={prediction.input_size}
-                  modelParameters={prediction.modelParameters}
-                  numLayers={prediction.numLayers}
-                  flops={prediction.flops}
-                  onRemove={handleRemove}
-                />
-              )
+            )}
+
+            {mode === "classification" ? (
+              <PredictionCard
+                inputImageUrl={imagePreviewByMode[mode]}
+                activationMapUrl={prediction.activationMapUrl}
+                predictedClass={prediction.class}
+                confidenceScore={prediction?.probability || 0}
+                topPredictions={prediction.topPredictions || 0}
+                inferenceTime={prediction.inference_time || 0}
+                modelName={prediction.model_name}
+                inputSize={prediction.input_size || 0}
+                datasetOrigin={prediction.dataset_origin || 0}
+                modelParameters={prediction.modelParameters}
+                numLayers={prediction.numLayers}
+                flops={prediction.flops}
+                onRemove={handleRemove}
+              />
+            ) : (
+              <DetectionPredictionCard
+                inputImageUrl={imagePreviewByMode[mode]}
+                detections={prediction.detections || []}
+                inferenceTime={prediction.inference_time || 0}
+                modelName={prediction.model_name}
+                inputSize={prediction.input_size}
+                modelParameters={prediction.modelParameters}
+                numLayers={prediction.numLayers}
+                flops={prediction.flops}
+                onRemove={handleRemove}
+              />
             )}
           </>
         )}
+
 
         <ModelComparisonCharts predictions={predictionsByMode[mode]} />
       </div>

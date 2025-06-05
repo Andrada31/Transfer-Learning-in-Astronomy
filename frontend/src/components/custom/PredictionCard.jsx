@@ -45,7 +45,7 @@ export function PredictionCard({
     <Card
       className={cn(
         "border-[#2A2C3F] shadow-xl",
-        isMobile ? "w-full mt-4" : "fixed right-[-26vw] top-4 bottom-4 w-100 overflow-y-auto",
+        isMobile ? "w-full mt-4" : "fixed right-[-26vw] top-4 bottom-4 w-100 overflow-y-auto custom-scrollbar",
         className
       )}
     >

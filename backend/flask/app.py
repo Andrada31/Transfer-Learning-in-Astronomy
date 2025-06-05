@@ -20,6 +20,10 @@ app = Flask(__name__, static_folder='../frontend/build', static_url_path='/')
 CORS(app)
 Compress(app)
 
+print("TensorFlow is using GPU:" if tf.config.list_physical_devices('GPU') else "TensorFlow is using CPU")
+print("PyTorch is using GPU:" if torch.cuda.is_available() else "PyTorch is using CPU")
+
+
 MODEL_PATHS = {
     'vgg': '../models/saved/vgg16-4c-20ep.keras',
     'resnet': '../models/saved/resnet50-4c-10ep-ft.keras',
@@ -31,7 +35,7 @@ YOLO_MODEL_PATHS = {
     'yolo11-augmented': '../models/saved/yolo11-augmented-50ep.pt',
     'yolo11-balanced': '../models/saved/yolo11-balanced2-50ep.pt',
 
-    'yolo8-deepspace': '../models/saved/yolo8-40ep-3c.pt',
+    'yolo8-deepspace': '../models/saved/yolo8-40ep-1c.pt',
     'yolo8-balanced': '../models/saved/yolo8-balanced3-50ep.pt',
     'yolo8-augmented': '../models/saved/yolo8-augmented-50ep.pt'
 }
@@ -163,6 +167,7 @@ def compute_activation_maps(model_name, model, img_array, predicted_class_index)
 
     return activation_maps
 
+
 def predict_with_yolo(image, model_name):
     if model_name not in YOLO_MODEL_PATHS:
         raise ValueError(f"Unknown YOLO model: {model_name}")
@@ -259,7 +264,7 @@ def predict():
                     'in_distribution': False
                 })
 
-        if resnet_similarity < SIMILARITY_THRESHOLD:
+        if resnet_similarity is not None and resnet_similarity < SIMILARITY_THRESHOLD:
             return jsonify({
                 'message': 'Image is not a recognized deep space object (DSO)',
                 'similarityScore': float(resnet_similarity),
