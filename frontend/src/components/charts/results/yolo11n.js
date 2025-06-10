@@ -1,4 +1,4 @@
-export const yolo11nMetrics = [
+export const _yolo11nMetrics = [
   {'epoch': 1, 'train/box_loss': 1.87759, 'train/cls_loss': 3.51769, 'train/dfl_loss': 1.70143, 'val/box_loss': 1.91628, 'val/cls_loss': 3.39239, 'val/dfl_loss': 1.81624, 'metrics/precision(B)': 0.3483, 'metrics/recall(B)': 0.35702, 'metrics/mAP50(B)': 0.2616, 'metrics/mAP50-95(B)': 0.10334},
   {'epoch': 2, 'train/box_loss': 1.8401, 'train/cls_loss': 2.72177, 'train/dfl_loss': 1.69242, 'val/box_loss': 1.8362, 'val/cls_loss': 2.74371, 'val/dfl_loss': 1.78094, 'metrics/precision(B)': 0.49215, 'metrics/recall(B)': 0.31152, 'metrics/mAP50(B)': 0.33583, 'metrics/mAP50-95(B)': 0.1453},
   {'epoch': 3, 'train/box_loss': 1.80603, 'train/cls_loss': 2.34988, 'train/dfl_loss': 1.70546, 'val/box_loss': 1.79363, 'val/cls_loss': 3.14707, 'val/dfl_loss': 1.71745, 'metrics/precision(B)': 0.34716, 'metrics/recall(B)': 0.45523, 'metrics/mAP50(B)': 0.31451, 'metrics/mAP50-95(B)': 0.13859},

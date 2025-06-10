@@ -90,7 +90,7 @@ export function ImageUploaderActivationMap({
     }
   }, [onError, onImageChange]);
 
- const handlePredict = async () => {
+  const handlePredict = async () => {
     if (!selectedImage && !imagePreview) return;
 
     const imageToPredict = selectedImage || imagePreview;
@@ -137,7 +137,6 @@ export function ImageUploaderActivationMap({
         return;
       }
 
-      // Classification mode:
       const mainResult = await predictImage(imageToPredict, selectedModel);
       const predictionData = mainResult.data;
 
@@ -183,7 +182,6 @@ export function ImageUploaderActivationMap({
       setLoadingModels({});
     }
   };
-
 
   const drawBoundingBoxes = () => {
     const detections = predictionsByModel[selectedModel]?.[selectedDatasetKey]?.detections || [];
@@ -248,29 +246,55 @@ export function ImageUploaderActivationMap({
     );
   };
 
-
   const isDetectionModel = mode === "detection";
 
   return (
-    <Tabs value={activeTab} onValueChange={setActiveTab} className="my-6 p-4 w-full max-w-3xl mx-auto border border-[#2A2C3F] rounded-lg">
-      <TabsList className="border border-[#2A2C3F]">
-        {[
-          { value: "upload", label: "Upload", icon: Upload },
-          !isDetectionModel && { value: "results", label: "Activation Map", icon: Map },
-          isDetectionModel && { value: "boxes", label: "Bounding Boxes", icon: Map },
-        ]
-          .filter(Boolean)
-          .map(({ value, label, icon: Icon }) => (
-            <TabsTrigger
-              key={value}
-              value={value}
-              className="cursor-pointer px-4 py-2 mr-2 data-[state=active]:bg-[#24285d] data-[state=active]:text-white hover:bg-white hover:text-black"
-            >
-              <Icon className="h-4 w-4 mr-2" />
-              {label}
-            </TabsTrigger>
-          ))}
-      </TabsList>
+    <Tabs
+      value={activeTab}
+      onValueChange={setActiveTab}
+      className="my-6 p-4 w-full max-w-3xl mx-auto border border-[#2A2C3F] rounded-lg"
+    >
+      <div className="relative mb-4">
+        <TabsList className="border border-[#2A2C3F] px-2 py-1 rounded-md inline-flex">
+          {[{ value: "upload", label: "Upload", icon: Upload },
+            !isDetectionModel && { value: "results", label: "Activation Map", icon: Map },
+            isDetectionModel && { value: "boxes", label: "Bounding Boxes", icon: Map },
+          ]
+            .filter(Boolean)
+            .map(({ value, label, icon: Icon }) => (
+              <TabsTrigger
+                key={value}
+                value={value}
+                className="cursor-pointer px-4 py-2 data-[state=active]:bg-[#24285d] data-[state=active]:text-white hover:bg-white hover:text-black"
+              >
+                <Icon className="h-4 w-4 mr-2" />
+                {label}
+              </TabsTrigger>
+            ))}
+        </TabsList>
+
+        {imagePreview && (
+          <RemoveImageDialog
+            onConfirm={() => {
+              setSimilarityInfo(null);
+              setSelectedImage(null);
+              setImagePreview(null);
+              if (fileInputRef.current) fileInputRef.current.value = "";
+              onRemove?.();
+            }}
+            trigger={
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute top-0 right-0 bg-[#24275b]/50 hover:bg-opacity-100 cursor-pointer hover:bg-white hover:text-black "
+                title="Remove Image"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            }
+          />
+        )}
+      </div>
 
       <TabsContent value="upload">
         <Card className="border-none">
@@ -322,24 +346,6 @@ export function ImageUploaderActivationMap({
                   src={imagePreview}
                   className="object-contain rounded-lg max-h-[400px] w-auto"
                   alt="Uploaded Preview"
-                />
-                <RemoveImageDialog
-                  onConfirm={() => {
-                    setSimilarityInfo(null);
-                    setSelectedImage(null);
-                    setImagePreview(null);
-                    if (fileInputRef.current) fileInputRef.current.value = "";
-                    onRemove?.();
-                  }}
-                  trigger={
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="absolute top-2 right-2 cursor-pointer bg-[#24275b]/50 hover:bg-opacity-100"
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  }
                 />
               </div>
             )}
