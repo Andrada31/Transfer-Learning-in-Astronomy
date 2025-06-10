@@ -4,7 +4,7 @@ import CustomButton from "@/components/custom/CustomButton";
 import SolarSystem from "@/components/custom/SolarSystem";
 import detectIcon from "@/images/eye2.svg";
 import classifyIcon from "@/images/tl3.svg";
-import { useMode } from "@/lib/ModeContext"; // <- import context safely
+import { useMode } from "@/lib/ModeContext";
 
 const Sidenavbar = () => {
   const location = useLocation();
@@ -13,12 +13,10 @@ const Sidenavbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
-  // Use context if available (only safe on Home routes)
   let setMode = null;
   try {
     ({ setMode } = useMode());
   } catch (e) {
-    // If useMode fails outside context, ignore it gracefully
     setMode = null;
   }
 

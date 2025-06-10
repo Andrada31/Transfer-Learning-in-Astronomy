@@ -35,21 +35,61 @@ const Home = ({ mode: initialMode = "classification" }) => {
       ? predictionsByMode[mode][activeTab]?.[selectedDatasetKey] || null
       : predictionsByMode[mode][activeTab] || null;
 
-  const fallbackPrediction = {
+  const staticModelInfo = {
+    resnet: {
+      model_name: "ResNet50",
+      input_size: "224 x 224 pixels",
+      dataset_origin: "ImageNet",
+      modelParameters: "25.6 million",
+      numLayers: 50,
+      flops: "3.8G",
+    },
+    efficientnet: {
+      model_name: "EfficientNet-B0",
+      input_size: "224 x 224 pixels",
+      dataset_origin: "ImageNet",
+      modelParameters: "5.3 million",
+      numLayers: 237,
+      flops: "0.39B",
+    },
+    vgg: {
+      model_name: "VGG16",
+      input_size: "224 x 224 pixels",
+      dataset_origin: "ImageNet",
+      modelParameters: "138 million",
+      numLayers: 16,
+      flops: "15.3B",
+    },
+    yolo11: {
+      model_name: "YOLOv11n",
+      input_size: "640 x 640 pixels",
+      dataset_origin: "MS COCO",
+      modelParameters: "5.2 million",
+      numLayers: 149,
+      flops: "6.1B",
+    },
+    yolo8: {
+      model_name: "YOLOv8-C",
+      input_size: "640 x 640 pixels",
+      dataset_origin: "MS COCO",
+      modelParameters: "11.2 million",
+      numLayers: 139,
+      flops: "28.8B",
+    }
+  };
+
+  const baseInfo = staticModelInfo[activeTab] || {};
+
+  const prediction = {
     activationMapUrl: "",
     class: "",
     probability: 0,
     topPredictions: [],
     inference_time: 0,
-    model_name: "",
-    input_size: "",
-    dataset_origin: "",
-    modelParameters: "",
-    numLayers: 0,
-    flops: "",
+    ...baseInfo,
+    ...currentPrediction,  // This will override defaults if API provides values
   };
 
-  const prediction = currentPrediction || fallbackPrediction;
 
   useEffect(() => {
     getImageData(mode).then((data) => {
@@ -186,12 +226,12 @@ const Home = ({ mode: initialMode = "classification" }) => {
                   confidenceScore={prediction?.probability || 0}
                   topPredictions={prediction.topPredictions || 0}
                   inferenceTime={prediction.inference_time || 0}
-                  modelName={prediction.model_name}
-                  inputSize={prediction.input_size || 0}
-                  datasetOrigin={prediction.dataset_origin || 0}
-                  modelParameters={prediction.modelParameters}
-                  numLayers={prediction.numLayers}
-                  flops={prediction.flops}
+                  modelName={baseInfo.model_name}
+                  inputSize={baseInfo.input_size}
+                  datasetOrigin={baseInfo.dataset_origin}
+                  modelParameters={baseInfo.modelParameters}
+                  numLayers={baseInfo.numLayers}
+                  flops={baseInfo.flops}
                   onRemove={handleRemove}
                 />
               ) : (
@@ -199,11 +239,12 @@ const Home = ({ mode: initialMode = "classification" }) => {
                   inputImageUrl={imagePreviewByMode[mode]}
                   detections={prediction.detections || []}
                   inferenceTime={prediction.inference_time || 0}
-                  modelName={prediction.model_name}
-                  inputSize={prediction.input_size}
-                  modelParameters={prediction.modelParameters}
-                  numLayers={prediction.numLayers}
-                  flops={prediction.flops}
+                  modelName={baseInfo.model_name}
+                  inputSize={baseInfo.input_size}
+                  datasetOrigin={baseInfo.dataset_origin}
+                  modelParameters={baseInfo.modelParameters}
+                  numLayers={baseInfo.numLayers}
+                  flops={baseInfo.flops}
                   onRemove={handleRemove}
                 />
               )

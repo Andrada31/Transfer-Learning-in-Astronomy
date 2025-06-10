@@ -37,7 +37,7 @@ export default function ModelDetails({ defaultModel }) {
   const modelData = models[selectedModel]
 
   return (
-    <Card className="w-full max-w-4xl mx-auto border-none text-white my-15">
+    <Card className="w-full max-w-5xl mx-auto border-none text-white my-15">
       <CardHeader className="px-0">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center gap-2 my-8">

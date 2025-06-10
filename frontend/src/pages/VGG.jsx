@@ -15,7 +15,7 @@ const VGG = () => {
   return (
     <div className="relative w-full flex justify-center">
       {/* Main scrollable content */}
-      <div className="flex flex-col w-full max-w-[90vw] sm:max-w-[80vw] md:max-w-[67vw] lg:w-[46vw] overflow-x-hidden pt-5">
+      <div className="flex flex-col w-full max-w-[90vw] sm:max-w-[80vw] md:max-w-[67vw] lg:w-[65vw] lg:pl-40 overflow-x-hidden pt-5">
         <div id="model" className="fade-in">
           <ModelDetails defaultModel="vgg16" />
         </div>
@@ -28,7 +28,7 @@ const VGG = () => {
       </div>
 
       {/* Floating ProgressBar pinned to the right */}
-      <div className="relative right-[-23vw] z-40">
+      <div className="relative right-[-12vw] z-40">
         <ProgressBar sections={sections} />
         {/* <Tooltip /> */}
       </div>

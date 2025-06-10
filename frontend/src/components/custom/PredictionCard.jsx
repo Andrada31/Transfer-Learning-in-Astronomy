@@ -164,8 +164,8 @@ export function PredictionCard({
 
             <div className="flex items-center gap-2">
               <Database className="h-4 w-4 text-gray-500" />
-              <span className="text-gray-500">Dataset:</span>
-            </div>
+              <span className="text-gray-500">Pre-training:</span>
+            </div>g
             <div className="font-medium text-gray-300">{datasetOrigin || "N/A"}</div>
 
             {numLayers && (

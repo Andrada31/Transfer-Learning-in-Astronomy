@@ -11,6 +11,7 @@ export function DetectionPredictionCard({
   inferenceTime,
   modelName,
   inputSize,
+  datasetOrigin,
   modelParameters,
   numLayers,
   flops,
@@ -88,9 +89,9 @@ export function DetectionPredictionCard({
 
             <div className="flex items-center gap-2">
               <Database className="h-4 w-4 text-gray-500"/>
-              <span className="text-gray-500">Dataset:</span>
+              <span className="text-gray-500">Pre-training:</span>
             </div>
-            <div className="font-medium text-gray-300">{"Negative Sampling" || "N/A"}</div>
+            <div className="font-medium text-gray-300">{datasetOrigin || "N/A"}</div>
 
             {numLayers && (
                 <>

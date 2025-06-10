@@ -351,10 +351,10 @@ export function ClassificationMetrics({ modelName }) {
 
   return (
     <div className="w-full min-h-screen px-0 pb-10">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         <div className="flex items-center gap-2 my-8">
           <ChartLine className="h-8 w-8 text-white"/>
-          <h2 className="text-2xl text-white">Results</h2>
+          <h2 className="text-2xl text-white">Experimental Results</h2>
         </div>
 
         {/* Best Model Performance */}
