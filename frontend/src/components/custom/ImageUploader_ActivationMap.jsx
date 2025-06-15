@@ -279,6 +279,7 @@ export function ImageUploaderActivationMap({
               setSimilarityInfo(null);
               setSelectedImage(null);
               setImagePreview(null);
+              setActiveTab("upload");
               if (fileInputRef.current) fileInputRef.current.value = "";
               onRemove?.();
             }}

@@ -33,7 +33,7 @@ MODEL_PATHS = {
 YOLO_MODEL_PATHS = {
     'yolo11-deepspace': '../models/saved/yolo11-deepspace-50ep.pt',
     'yolo11-augmented': '../models/saved/yolo11-augmented-50ep.pt',
-    'yolo11-balanced': '../models/saved/yolo11-balancedTF2.pt',
+    'yolo11-balanced': '../models/saved/yolo11-balancedTF3-50ep.pt',
 
     'yolo8-deepspace': '../models/saved/yolo8-40ep-1c.pt',
     'yolo8-balanced': '../models/saved/yolo8-balanced3-50ep.pt',

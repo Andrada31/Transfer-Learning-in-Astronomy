@@ -19,13 +19,13 @@ export function ClassificationMetrics({ modelName }) {
         let module
         switch (modelName) {
           case "resnet50":
-            module = await import("@/components/charts/results/resnet50.js")
+            module = await import("@/lib/results/resnet50.js")
             break
           case "efficientnetb0":
-            module = await import("@/components/charts/results/efficientnetb0.js")
+            module = await import("@/lib/results/efficientnetb0.js")
             break
           case "vgg16":
-            module = await import("@/components/charts/results/vgg16.js")
+            module = await import("@/lib/results/vgg16.js")
             break
           default:
             throw new Error("Unknown model name")
@@ -356,8 +356,6 @@ export function ClassificationMetrics({ modelName }) {
           <ChartLine className="h-8 w-8 text-white"/>
           <h2 className="text-2xl text-white">Experimental Results</h2>
         </div>
-
-        {/* Best Model Performance */}
         <div
             className="mb-8 bg-gradient-to-r from-[#2a3158]/50 to-[#1a1f36]/50 p-6 rounded-lg border border-[#6c88da]/20">
           <div className="flex items-center gap-3 mb-4">
@@ -382,7 +380,6 @@ export function ClassificationMetrics({ modelName }) {
           </div>
         </div>
 
-        {/* Training Metrics */}
         <h2 className="text-white text-xl font-semibold mb-6 ">Training Metrics</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 ">
           <MetricChart
@@ -395,57 +392,45 @@ export function ClassificationMetrics({ modelName }) {
           <MetricChart title="Model Loss" dataKeys={["loss", "val_loss"]} colors={["#6c88da", "orange"]}/>
         </div>
 
-        {/* Advanced Visualizations */}
         <div className="mb-8">
           <h3 className="text-white text-xl font-medium mb-4">Class-wise Performance</h3>
           <RadarChartComponent/>
         </div>
-
-
-        {/* Metric Cards */}
         <div className="mb-8">
-
           <MetricCards/>
         </div>
 
-        {/* Summary Stats */}
         <div className="border border-white/20 p-6 rounded-lg bg-gradient-to-r from-[#2a3158]/50 to-[#1a1f36]/50">
           <h2 className="text-white text-xl font-semibold mb-4">Evaluation Summary - {selectedModel}</h2>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-center">
-
             <div>
               <div className="text-gray-400 text-sm">Total Epochs</div>
               <div className="text-white text-2xl font-bold">{currentData.length}</div>
             </div>
-
             <div className="text-center">
               <div className="text-gray-400 text-sm">Test Accuracy</div>
               <div className="text-blue-400 text-2xl font-bold">
                 {(currentModel?.overall_accuracy * 100).toFixed(1)}%
               </div>
             </div>
-
             <div>
               <div className="text-gray-400 text-sm">Initial Val Acc</div>
               <div className="text-white text-2xl font-bold">
                 {(currentData[0]?.val_accuracy * 100).toFixed(1)}%
               </div>
             </div>
-
             <div>
               <div className="text-gray-400 text-sm">Final Val Acc</div>
               <div className="text-white text-2xl font-bold">
                 {(currentData[currentData.length - 1]?.val_accuracy * 100).toFixed(1)}%
               </div>
             </div>
-
             <div>
               <div className="text-gray-400 text-sm">Validation Gain</div>
               <div className="text-green-400 text-2xl font-bold">
                 {((currentData[currentData.length - 1]?.val_accuracy - currentData[0]?.val_accuracy) * 100).toFixed(1)}%
               </div>
             </div>
-
           </div>
         </div>
       </div>

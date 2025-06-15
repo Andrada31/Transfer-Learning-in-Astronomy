@@ -1,5 +1,3 @@
-// lib/modelData.jsx
-
 export const resnetModels = {
   resnet18: {
     modelName: "ResNet18",

@@ -7,8 +7,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Button } from "@/components/ui/button"
 import { LineChartIcon as ChartLine, Expand } from "lucide-react"
 import CustomSelectTrigger from "@/components/custom/CustomSelectTrigger"
-import { yolo11nMetrics } from "@/components/charts/results/yolo11n_v2"
-import { yolov8Metrics } from "@/components/charts/results/yolov8"
+import { yolo11nMetrics } from "@/lib/results/yolo11n_v3"
+import { yolov8Metrics } from "@/lib/results/yolov8"
 
 export default function YoloMetricsDashboard() {
   const [models, setModels] = useState([])

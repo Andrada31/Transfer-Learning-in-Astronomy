@@ -252,8 +252,9 @@ const Home = ({ mode: initialMode = "classification" }) => {
           </>
         )}
 
-        <ModelComparisonCharts predictions={predictionsByMode[mode]} />
+        {/*<ModelComparisonCharts predictions={predictionsByMode[mode]} />*/}
       </div>
+
     </div>
   );
 };

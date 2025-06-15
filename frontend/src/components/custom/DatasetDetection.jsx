@@ -21,120 +21,132 @@ import CustomSelectTrigger from "@/components/custom/CustomSelectTrigger"
 
 const datasets = [
   {
-    "id": "dataset1",
-    "name": "Deep Space Yolo Dataset",
-    "datasetLink": "https://zenodo.org/record/8387071",
-    "description": "Annotated RGB images of deep sky objects (DSOs) captured using smart telescopes from light-polluted locations in Europe, designed for training YOLO object detection models.",
-    "size": "2.3 GB",
-    "format": "JPEG + YOLO TXT",
-    "overview": {
-      "samples": 4696,
-      "features": 608 * 608 * 3,
-      "classes": 1,
-      "splitRatio": "80/10/10"
+    id: "dataset1",
+    name: "Deep Space Yolo Dataset",
+    datasetLink: "https://zenodo.org/record/8387071",
+    description: "Annotated RGB images of deep sky objects (DSOs) captured using smart telescopes from light-polluted locations in Europe, designed for training YOLO object detection models.",
+    size: "2.3 GB",
+    format: "JPEG (608x608)",
+    overview: {
+      samples: 4696,
+      annotationFormat: "YOLO TXT",
+      classes: 1,
+      splitRatio: "80/10/10"
     },
-    "preprocessing": {
-      "steps": [
+    preprocessing: {
+      steps: [
         "Cropping to 608x608 patches",
         "Filtering for visible DSOs",
         "Align and stack exposures",
         "Convert to RGB (JPEG, minimal compression)"
       ],
-      "normalization": "None applied before annotation; dataset is ready-to-use as is",
-      "missingValues": "No missing labels; one YOLO-format label file per image",
-      "outliers": "Faint or ambiguous detections were filtered during annotation"
+      normalization: "None applied before annotation; dataset is ready-to-use as is",
+      missingValues: "No missing labels; one YOLO-format label file per image",
+      outliers: "Faint or ambiguous detections were filtered during annotation"
     },
-    "augmentation": {
-      "techniques": [
+    augmentation: {
+      techniques: [
         "Not explicitly applied in the dataset, but recommended during training",
         "Compatible with YOLO pipeline augmentation"
       ],
-      "multiplier": 1,
-      "enabled": false
+      multiplier: 1,
+      enabled: false
     },
-    "statistics": {
-      "accuracy": "-",
-      "precision": 74.6,
-      "recall": 62.7,
-      "f1Score": 68.1
+    statistics: {
+      accuracy: "-",
+      precision: 74.6,
+      recall: 62.7,
+      f1Score: 68.1
     }
   },
   {
-    "id": "dataset2",
-    "name": "Augmented Deep Space Yolo Dataset",
-    "datasetLink": "https://github.com/Leo-Thomas/Augmented-DeepSpaceYolo",
-    "description": "An augmented version of DeepSpaceYoloDataset, containing annotated astronomical images with nebulae, galaxies, and globular clusters, designed for robust deep sky object detection.",
-    "size": "2.3 GB",
-    "format": "JPEG (608x608) + YOLO TXT annotations",
-    "overview": {
-      "samples": 8421,
-      "features": 608 * 608 * 3,
-      "classes": 1,
-      "splitRatio": "Train: 7486, Validation: 469, Test: 466"
+    id: "dataset2",
+    name: "Augmented Deep Space Yolo Dataset",
+    datasetLink: "https://github.com/Leo-Thomas/Augmented-DeepSpaceYolo",
+    description: "An augmented version of DeepSpaceYoloDataset, containing annotated astronomical images with nebulae, galaxies, and globular clusters, designed for robust deep sky object detection.",
+    size: "2.3 GB",
+    format: "JPEG (608x608) ",
+    overview: {
+      samples: 8421,
+      annotationFormat: "YOLO TXT",
+      classes: 1,
+      splitRatio: "80/10/10"
     },
-    "preprocessing": {
-      "steps": [
+    preprocessing: {
+      steps: [
         "Zoom and cropping (0–20%)",
         "Rotation (−15° to +15°)",
         "Brightness adjustment (−15% to +15%)",
         "Blurring (up to 2.5 pixels)",
         "Noise addition (up to 0.15%)"
       ],
-      "normalization": "None applied pre-release; augmentations simulate natural observational conditions",
-      "missingValues": "None; each image has a corresponding YOLO-format label file",
-      "outliers": "Controlled via augmentation; faint objects maintained, artifacts excluded"
+      normalization: "None applied pre-release; augmentations simulate natural observational conditions",
+      missingValues: "None; each image has a corresponding YOLO-format label file",
+      outliers: "Controlled via augmentation; faint objects maintained, artifacts excluded"
     },
-    "augmentation": {
-      "techniques": [
+    augmentation: {
+      techniques: [
         "Zooming and cropping",
         "Rotation",
         "Brightness adjustment",
         "Blurring",
         "Noise addition"
       ],
-      "multiplier": 1.79,
-      "enabled": true
+      multiplier: 1.79,
+      enabled: true
     },
-    "statistics": {
-      "accuracy": "-",
-      "precision": 81.0,
-      "recall": 57.9,
-      "f1Score": 67.5,
-      "mAP@50": 76.1,
-      "mAP@50:95": 59.4
+    statistics: {
+      accuracy: "-",
+      precision: 81.0,
+      recall: 57.9,
+      f1Score: 67.5,
+     "mAP@50": 76.1,
+    "mAP@50:95": 59.4
     }
   },
   {
     id: "dataset3",
     name: "Balanced Yolo Dataset",
-    description: "Reannotated and balanced DeepSpaceYoloDataset, including nebulae, galaxies, and globular clusters, designed for training YOLO models with improved class balance.",
-    size: "1.1 GB",
-    format: "PNG/JPEG/WEBP/JPG",
+    description: "Balanced DeepSpaceYoloDataset reannotated for multi-class detection with nebulae, galaxies, and star clusters. Includes grayscale telescope-filtered variants and class-specific augmentation for robustness.",
+    size: "1.8 GB",
+    format: "PNG/JPEG/WEBP/JPG ",
     overview: {
-      samples: 250000,
-      features: 15,
+      samples: 8185,
+      annotationFormat: "YOLO TXT",
       classes: 3,
-      splitRatio: "60/20/20",
+      splitRatio: "80/10/10"
     },
     preprocessing: {
-      steps: ["Handle missing values", "Feature scaling", "Lag features", "Moving averages"],
-      normalization: "StandardScaler",
-      missingValues: "Forward fill + interpolation",
-      outliers: "Winsorization at 1st/99th percentile",
+      steps: [
+        "Resize all images to 640x640",
+        "Apply grayscale telescope simulation (brightness, haze, contrast)",
+        "Normalize bounding box coordinates to YOLO format",
+        "Manually relabel DSO bounding boxes using MakeSense"
+      ],
+      normalization: "None during image prep; bbox normalized to YOLO format",
+      missingValues: "None; all images are annotated",
+      outliers: "Faint objects reviewed; incorrect annotations removed"
     },
     augmentation: {
-      techniques: ["Gaussian noise", "Time warping", "Window slicing"],
+      techniques: [
+        "Mild Gaussian & median blur (Albumentations)",
+        "Grayscale conversion with CLAHE",
+        "Brightness & contrast adjustment",
+        "Hue shift & elastic transforms (class-specific)",
+        "Online augmentation via Ultralytics during training"
+      ],
       multiplier: 1.5,
-      enabled: false,
+      enabled: true
     },
     statistics: {
       accuracy: "-",
       precision: 79.7,
       recall: 71.4,
-      f1Score: 75.3,
-    },
-  },
+      f1Score: 75.3
+    }
+  }
 ]
+
 
 export function DatasetDetection() {
   const [selectedDataset, setSelectedDataset] = useState(datasets[0].id)
@@ -204,8 +216,9 @@ export function DatasetDetection() {
                 <div className="text-2xl font-bold text-white">{currentDataset.overview.samples.toLocaleString()}</div>
               </div>
               <div>
-                <Label className="text-white/80">Features</Label>
-                <div className="text-2xl font-bold text-white">{currentDataset.overview.features.toLocaleString()}</div>
+                <Label className="text-white/80">Annotation Format</Label>
+                <div className="text-2xl font-bold text-white">{currentDataset.overview.annotationFormat}</div>
+
               </div>
               <div>
                 <Label className="text-white/80">Classes</Label>
@@ -291,9 +304,6 @@ export function DatasetDetection() {
                 ))}
               </div>
 
-              <div className="bg-[#293158]/10 p-4 mt-4 rounded-lg border border-blue-200/20 text-blue-200 text-sm">
-                <strong>Effect:</strong> Dataset size increased from {currentDataset.overview.samples.toLocaleString()} to {(currentDataset.overview.samples * currentDataset.augmentation.multiplier).toLocaleString()} samples.
-              </div>
             </CardContent>
           </Card>
         </TabsContent>

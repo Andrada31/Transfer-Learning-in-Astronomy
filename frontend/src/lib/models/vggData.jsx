@@ -1,5 +1,3 @@
-// lib/vggData.jsx
-
 export const vggModels = {
   vgg11: {
     modelName: "VGG11",

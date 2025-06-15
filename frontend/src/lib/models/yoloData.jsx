@@ -1,7 +1,4 @@
-// lib/modelData.jsx
-
 export const yoloModels = {
-  // Existing YOLO models...
 
   yolov8c: {
     modelName: "YOLOv8-C",
@@ -12,7 +9,7 @@ export const yoloModels = {
       authors: ["Ultralytics Team"],
       paperLink: "https://docs.ultralytics.com/models/yolov8/",
       datasetLink: "https://www.kaggle.com/datasets/andradaparaczki/deepspaceyolodataset-3c-ns",
-      notebookLink: "https://github.com/ultralytics/ultralytics"
+      notebookLink: "https://www.kaggle.com/code/andradaparaczki/yolov8"
     },
     architectureData: {
       layers: "~139",
@@ -36,6 +33,10 @@ export const yoloModels = {
         "FLOPs": "28.8B",
         "Inference Time": "5.8ms/image"
       },
+      lossFunction: "Composite YOLO Loss (Box + Class + DFL)",
+      optimizer: "AdamW",
+      learningRate: "0.001429",
+      batchSize: "16",
     },
   },
 
@@ -48,7 +49,7 @@ export const yoloModels = {
       authors: ["Rahima Khanam", "Muhammad Hussain"],
       paperLink: "https://arxiv.org/abs/2410.17725",
       datasetLink: "https://www.kaggle.com/datasets/andradaparaczki/deepspaceyolodataset-3c-ns",
-      notebookLink: "https://github.com/ultralytics/yolov11"
+      notebookLink: "https://www.kaggle.com/code/andradaparaczki/yolo11n"
     },
     architectureData: {
       layers: "~ 149",
@@ -65,13 +66,17 @@ export const yoloModels = {
       dataset: "MS COCO",
       accuracy: "mAP50-95: 43.1%",
       trainingTime: "~1 week on 8 GPUs",
-      hardware: "NVIDIA Tesla P100 GPUs",
+      hardware: "NVIDIA Tesla P100 GPU",
       evaluationMetrics: {
         "mAP50-95": "43.1%",
         "Parameters": "5.2M",
         "FLOPs": "6.1B",
         "Inference Time": "3.2ms/image"
       },
+      lossFunction: "Composite YOLO Loss (Box + Class + DFL)",
+      optimizer: "AdamW",
+      learningRate: "0.001429",
+      batchSize: "16"
     },
   },
 
