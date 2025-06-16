@@ -18,9 +18,11 @@ The web interface allows users to:
 
 ## Technologies
 
-**Languages:** Python, JavaScript, HTML/CSS (Tailwind)  
+**Languages:** Python, JavaScript, HTML/CSS  
 **Libraries:** NumPy, Matplotlib, OpenCV, Pandas, Seaborn, Plotly, Scikit-learn  
-**Frameworks:** TensorFlow, Keras, PyTorch, Ultralytics (YOLO), Flask, React, Vite  
+**Frameworks:** TensorFlow, Keras, PyTorch, Ultralytics (YOLO), Flask, React, Vite, TailwindCSS  
+**Frontend UI Components:** Shadcn/UI  
+**Runtime & Tooling:** Node.js, npm, Vite, Flask 
 
 
 ## Training Notebooks
@@ -43,8 +45,8 @@ The web interface allows users to:
 
 ## Project Setup
 
-> **Important:** Due to large file size, the trained models are not included in this repository.  
-> Download them from this Drive folder and place them in `backend/models/saved/`:
+> **Important:** Due to large file size, the trained models are not included in this repo.  
+> To run live inference you must download them from the following Drive link and place them in `backend/models/saved/`:
 
 **[Download Models – Google Drive](https://drive.google.com/drive/folders/1-ej5x-bYREaf6SJZv2JmXCB6z3UgybRO?usp=sharing)**
 
@@ -76,7 +78,8 @@ cd frontend
 npm install
 cd ..
 ```
-### 6. Start the application 
+### 6. Start the application  
+The script was configured to run both Flask backend and React fronend
 ```bash
 npm start
 ```
@@ -84,4 +87,3 @@ npm start
 ```bash
 npm test
 ```
-
