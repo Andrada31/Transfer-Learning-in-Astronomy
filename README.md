@@ -1,6 +1,6 @@
-# Deep Space Objects Classification and Detection Web Tool
+# DSO Classification and Detection Tool
 
-My thesis explores how **Transfer Learning** can help in the training of pretrained CNN models (**VGG16, ResNet50, EfficientNet**) for classification, and YOLO object detection algorithms (**YOLOv8-c and YOLOv11n**) to classify and detect the three categories of DSOs
+My thesis explores how **Transfer Learning** can help in the training of pretrained CNN models (**VGG16, ResNet50, EfficientNet**) for classification, and YOLO object detection algorithms (**YOLOv8-c and YOLOv11n**) to classify and detect the three categories of deep space objects (DSOs)
 - **Classification**: Categorizes DSOs into three types.
 - **Detection**: Detects and classifies multiple DSOs to their specific typology in telescope images.
 
