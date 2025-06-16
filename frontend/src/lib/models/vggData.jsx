@@ -30,7 +30,7 @@ export const vggModels = {
       authors: ["Karen Simonyan", "Andrew Zisserman"],
       paperLink: "https://arxiv.org/abs/1409.1556",
       datasetLink: "https://www.kaggle.com/datasets/andradaparaczki/deepspaceyolodataset-3c-ns",
-      notebookLink: "https://colab.research.google.com/drive/1e3Gn29QpkO8ToQp9ynYA4O4pPCts-7X_?usp=sharing",
+      notebookLink: "https://colab.research.google.com/drive/1JhN31vFhbX7yZKAzIjW6Ll_-CKVLuaJN?usp=sharing",
     },
     architectureData: {
       layers: 16,

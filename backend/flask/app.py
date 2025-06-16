@@ -1,3 +1,4 @@
+# importing the needed libraries for running inference and other backend tasks
 import traceback
 import tensorflow as tf
 import numpy as np
@@ -6,6 +7,7 @@ import os
 import time
 import cv2
 import torch
+import hashlib
 
 from ultralytics import YOLO
 from flask import Flask, request, jsonify, send_from_directory
@@ -16,54 +18,73 @@ from PIL import Image
 from io import BytesIO
 
 
+# setting the Flask configuration
 app = Flask(__name__, static_folder='../frontend/build', static_url_path='/')
 CORS(app)
 Compress(app)
 
+# checking if TensorFlow and PyTorch are using GPU or CPU
 print("TensorFlow is using GPU:" if tf.config.list_physical_devices('GPU') else "TensorFlow is using CPU")
 print("PyTorch is using GPU:" if torch.cuda.is_available() else "PyTorch is using CPU")
 
-
+# paths for the models for both classification and detection task
 MODEL_PATHS = {
-    'vgg': '../models/saved/vgg16-4c-20ep.keras',
-    'resnet': '../models/saved/resnet50-4c-10ep-ft.keras',
-    'efficientnet': '../models/saved/efficientnet-4c-20ep.keras'
+    'vgg': 'backend/models/saved/vgg16-4c.keras',
+    'resnet': 'backend/models/saved/resnet50-4c.keras',
+    'efficientnet': 'backend/models/saved/efficientnet-4c.keras'
 }
 
 YOLO_MODEL_PATHS = {
-    'yolo11-deepspace': '../models/saved/yolo11-deepspace-50ep.pt',
-    'yolo11-augmented': '../models/saved/yolo11-augmented-50ep.pt',
-    'yolo11-balanced': '../models/saved/yolo11-balancedTF3-50ep.pt',
+    'yolo11-deepspace': 'backend/models/saved/yolo11-deepspace-50ep.pt',
+    'yolo11-augmented': 'backend/models/saved/yolo11-augmented-50ep.pt',
+    'yolo11-balanced': 'backend/models/saved/yolo11-balancedTF3-50ep.pt',
 
-    'yolo8-deepspace': '../models/saved/yolo8-40ep-1c.pt',
-    'yolo8-balanced': '../models/saved/yolo8-balanced3-50ep.pt',
-    'yolo8-augmented': '../models/saved/yolo8-augmented-50ep.pt'
+    'yolo8-deepspace': 'backend/models/saved/yolo8-50ep-1c.pt',
+    'yolo8-balanced': 'backend/models/saved/yolo8-balanced3-50ep.pt',
+    'yolo8-augmented': 'backend/models/saved/yolo8-augmented-50ep.pt'
 }
 
+# defining the embedding information for later OOD similarity check
 EMBEDDING_INFO = {
     'resnet': {
         'embedding_layer': 'dense',
-        'path': '../models/embeddings/resnet_embeddings.npz',
+        'path': 'backend/models/embeddings/resnet_embeddings.npz',
         'preprocess': tf.keras.applications.resnet50.preprocess_input,
     },
     'vgg': {
         'embedding_layer': 'dense',
-        'path': '../models/embeddings/vgg_embeddings.npz',
+        'path': 'backend/models/embeddings/vgg_embeddings.npz',
         'preprocess': tf.keras.applications.vgg16.preprocess_input,
     },
     'efficientnet': {
         'embedding_layer': 'dense',
-        'path': '../models/embeddings/efficientnet_embeddings.npz',
+        'path': 'backend/models/embeddings/efficientnet_embeddings.npz',
         'preprocess': tf.keras.applications.efficientnet.preprocess_input,
     }
 }
 
-SIMILARITY_THRESHOLD = 0.80
+# preload only VGG gallery embeddings
+try:
+    gallery_embeddings = {
+        'vgg': np.load(EMBEDDING_INFO['vgg']['path'])['embeddings']
+    }
+    print("[INFO] Loaded gallery embeddings for vgg")
+except Exception as e:
+    print(f"[ERROR] Failed to load VGG embeddings: {e}")
+    gallery_embeddings = {}
 
+
+# setting the similarity threshold for OOD detection to 80%
+SIMILARITY_THRESHOLD = 0.80
+uploaded_similarity_cache = {}
+
+# some dicts for loaded models
 loaded_models = {}
+embedding_models = {}
 yolo_models = {}
 class_names = ['clusters', 'galaxies', 'nebulae', 'other']
 
+# model details for each model
 MODEL_PERFORMANCE = {
     'vgg': {
         'modelParameters': "138M",
@@ -95,10 +116,11 @@ MODEL_PERFORMANCE = {
 
 
 def preprocess_image(image, model_name='vgg'):
-    img = image.convert("RGB")
-    img = img.resize((224, 224))
-    img_array = np.array(img, dtype=np.float32)
+    img = image.convert("RGB") # convert to RGB format
+    img = img.resize((224, 224)) # resize to 224x224 for input of VGG/ResNet/EfficientNet models
+    img_array = np.array(img, dtype=np.float32) # convert to numpy array
 
+    # use the default keras preprocessing function based on the model
     if model_name == 'vgg':
         img_array = tf.keras.applications.vgg16.preprocess_input(img_array)
     elif model_name == 'resnet':
@@ -108,10 +130,19 @@ def preprocess_image(image, model_name='vgg'):
     else:
         raise ValueError(f"Unknown model name '{model_name}' for preprocessing.")
 
-    img_array = np.expand_dims(img_array, axis=0)
+    img_array = np.expand_dims(img_array, axis=0) # add batch dimension since models expect input shape (1, 224, 224, 3)
     return img_array
 
 
+# hashing the image for caching purposes
+def hash_image(image: Image.Image):
+    buffer = BytesIO()
+    image.save(buffer, format='PNG')
+    img_bytes = buffer.getvalue()
+    return hashlib.md5(img_bytes).hexdigest()
+
+
+# getter for model based on its name
 def get_model(model_name):
     if model_name not in MODEL_PATHS:
         raise ValueError(f"Model '{model_name}' is not supported.")
@@ -122,29 +153,40 @@ def get_model(model_name):
         loaded_models[model_name] = tf.keras.models.load_model(MODEL_PATHS[model_name])
     return loaded_models[model_name]
 
+def get_embedding_model(model_name):
+    if model_name not in embedding_models:
+        base_model = get_model(model_name)
+        layer_name = EMBEDDING_INFO[model_name]['embedding_layer']
+        embedding_models[model_name] = tf.keras.models.Model(
+            inputs=base_model.input,
+            outputs=base_model.get_layer(layer_name).output
+        )
+    return embedding_models[model_name]
+
 
 def compute_activation_maps(model_name, model, img_array, predicted_class_index):
+    # defining the layer names to be computed for each model
     layer_names = {
         'vgg': ['block1_conv2', 'block2_conv2', 'block3_conv3', 'block4_conv3', 'block5_conv3'],
         'resnet': ['conv1_relu', 'conv2_block3_out', 'conv3_block4_out', 'conv4_block6_out', 'conv5_block3_out'],
         'efficientnet': ['block2b_add', 'block3b_add', 'block5c_add', 'block6d_add', 'top_conv']
     }
-
     selected_layers = layer_names.get(model_name, [])
     activation_maps = []
-
     for layer_name in selected_layers:
         try:
             conv_layer = model.get_layer(layer_name)
+            # creating a new model that outputs the activations of the specified layer
             grad_model = tf.keras.models.Model(
                 inputs=model.inputs,
                 outputs=[conv_layer.output, model.output]
             )
-
+            # getting the output of the specified layer and the model's predictions
             with tf.GradientTape() as tape:
                 conv_outputs, predictions = grad_model(img_array)
                 loss = predictions[:, predicted_class_index]
 
+            # computing the gradients of the loss with respect to the conv layer outputs
             grads = tape.gradient(loss, conv_outputs)
             pooled_grads = tf.reduce_mean(grads, axis=(0, 1, 2))
             conv_outputs = conv_outputs[0] * pooled_grads
@@ -168,6 +210,22 @@ def compute_activation_maps(model_name, model, img_array, predicted_class_index)
     return activation_maps
 
 
+@app.route('/api/upload', methods=['POST'])
+def upload_image():
+    if 'file' not in request.files or request.files['file'].filename == '':
+        return jsonify({'error': 'No file selected'}), 400
+    uploaded_similarity_cache.clear() # clear the cache for each upload
+    file = request.files['file']
+    img = Image.open(file.stream).convert("RGB")
+    img.thumbnail((1024, 1024), Image.LANCZOS) # resize the image to a maximum of 1024x1024
+    buffer = BytesIO()
+    img.save(buffer, format="PNG") # save the image to a buffer in PNG format
+    buffer.seek(0)
+    img_base64 = base64.b64encode(buffer.read()).decode('utf-8')
+    return jsonify({'image': f'data:image/png;base64,{img_base64}'})
+
+
+# separate prediction for YOLO models
 def predict_with_yolo(image, model_name):
     if model_name not in YOLO_MODEL_PATHS:
         raise ValueError(f"Unknown YOLO model: {model_name}")
@@ -177,17 +235,14 @@ def predict_with_yolo(image, model_name):
 
     yolo_model = yolo_models[model_name]
     image_np = np.array(image.convert("RGB"))
-
     start_time = time.time()
-    results = yolo_model.predict(source=image_np, conf=0.30, save=False, verbose=False)
+    results = yolo_model.predict(source=image_np, conf=0.30, save=False, verbose=False) # ultralytics predict method
     inference_time = (time.time() - start_time) * 1000
 
     detections = []
-    class_idx = 0
-
     if results and len(results) > 0:
         r = results[0]
-        if r.boxes:
+        if r.boxes and len(r.boxes) > 0:
             for box in r.boxes:
                 cls_id = int(box.cls[0])
                 conf = float(box.conf[0])
@@ -202,27 +257,13 @@ def predict_with_yolo(image, model_name):
                         'y2': xyxy[3]
                     }
                 })
-            if len(r.boxes.cls) > 0:
-                class_idx = int(r.boxes.cls[0].item())
+        else:
+            print("[INFO] No detections found, returning original image preview.")
+    else:
+        print("[INFO] No results returned by YOLO model.")
 
-    perf = MODEL_PERFORMANCE.get(model_name, {})
+    perf = MODEL_PERFORMANCE.get(model_name, {}) # get performance metrics for the model
     return detections, inference_time, perf
-
-
-
-@app.route('/api/upload', methods=['POST'])
-def upload_image():
-    if 'file' not in request.files or request.files['file'].filename == '':
-        return jsonify({'error': 'No file selected'}), 400
-
-    file = request.files['file']
-    img = Image.open(file.stream).convert("RGB")
-    img.thumbnail((1024, 1024), Image.LANCZOS)
-    buffer = BytesIO()
-    img.save(buffer, format="PNG")
-    buffer.seek(0)
-    img_base64 = base64.b64encode(buffer.read()).decode('utf-8')
-    return jsonify({'image': f'data:image/png;base64,{img_base64}'})
 
 
 @app.route('/api/predict', methods=['POST'])
@@ -230,52 +271,44 @@ def predict():
     data = request.get_json()
     if not data or 'image' not in data or 'model' not in data:
         return jsonify({'error': 'Missing image or model'}), 400
-
     try:
         model_name = data['model']
         dataset_name = data.get('dataset', 'deepspace')
         image_data = base64.b64decode(data['image'].split(',')[1])
         img = Image.open(BytesIO(image_data)).convert("RGB")
         orig_width, orig_height = img.size
+        img_hash = hash_image(img)
+        vgg_similarity = None
 
-        if model_name.startswith("yolo"):
-            resnet_similarity = None
-        else:
-            resnet_info = EMBEDDING_INFO['resnet']
-            img_resized = img.resize((224, 224))
-            emb_array = np.array(img_resized, dtype=np.float32)
-            emb_array = resnet_info['preprocess'](emb_array)
-            emb_array = np.expand_dims(emb_array, axis=0)
+        if not model_name.startswith("yolo"):
+            if img_hash in uploaded_similarity_cache:
+                vgg_similarity = uploaded_similarity_cache[img_hash]
+                print(f"[INFO] Reusing cached ResNet similarity: {vgg_similarity}")
+            else:
+                print("[INFO] Computing ResNet embedding similarity...")
+                resnet_info = EMBEDDING_INFO['vgg']
+                img_resized = img.resize((224, 224))
+                emb_array = np.array(img_resized, dtype=np.float32)
+                emb_array = resnet_info['preprocess'](emb_array)
+                emb_array = np.expand_dims(emb_array, axis=0)
 
-            resnet_model = get_model('resnet')
-            embedding_model = tf.keras.models.Model(
-                inputs=resnet_model.input,
-                outputs=resnet_model.get_layer(resnet_info['embedding_layer']).output
-            )
-            input_embedding = embedding_model.predict(emb_array)[0].reshape(1, -1)
-            gallery_embeddings = np.load(resnet_info['path'])['embeddings']
-            similarities = cosine_similarity(input_embedding, gallery_embeddings)[0]
-            resnet_similarity = np.max(similarities)
+                # Get the embedding model and compute the embedding SIMILARITY
+                embedding_model = get_embedding_model('vgg')
+                input_embedding = embedding_model.predict(emb_array)[0].reshape(1, -1)
+                similarities = cosine_similarity(input_embedding, gallery_embeddings['vgg'])[0]
+                vgg_similarity = float(np.max(similarities))
+                uploaded_similarity_cache[img_hash] = vgg_similarity
 
-            if resnet_similarity < SIMILARITY_THRESHOLD:
+            if vgg_similarity < SIMILARITY_THRESHOLD:
                 return jsonify({
                     'message': 'Image is not a recognized deep space object (DSO)',
-                    'similarityScore': float(resnet_similarity),
+                    'similarityScore': vgg_similarity,
                     'in_distribution': False
                 })
-
-        if resnet_similarity is not None and resnet_similarity < SIMILARITY_THRESHOLD:
-            return jsonify({
-                'message': 'Image is not a recognized deep space object (DSO)',
-                'similarityScore': float(resnet_similarity),
-                'in_distribution': False
-            })
 
         if model_name.startswith("yolo"):
             composite_key = f"{model_name}-{dataset_name}"
             print(f"[DEBUG] Received YOLO model={model_name}, dataset={dataset_name}")
-            print(f"[DEBUG] Composite key: {composite_key}")
-            print(f"[DEBUG] Available YOLO keys: {list(YOLO_MODEL_PATHS.keys())}")
             if composite_key not in YOLO_MODEL_PATHS:
                 return jsonify({'error': f"Model path for {composite_key} not found."}), 400
 
@@ -292,7 +325,7 @@ def predict():
                 'in_distribution': True
             })
 
-        # Classification model
+        # Classification models
         model = get_model(model_name)
         img_array_pred = preprocess_image(img, model_name=model_name)
         start_time = time.time()
@@ -316,7 +349,7 @@ def predict():
             'numLayers': perf['numLayers'],
             'topPredictions': top_preds,
             'activationMapUrls': activation_maps,
-            'similarityScore': float(resnet_similarity),
+            'similarityScore': float(vgg_similarity),
             'in_distribution': True
         })
 

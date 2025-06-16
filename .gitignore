@@ -1,5 +1,14 @@
-backend/models/data/*
-**/data/
-backend/models/saved/*
 .venv/
 .idea/
+__pycache__/
+*.pyc
+
+**/data/
+backend/models/saved/*
+
+**/node_modules/
+frontend/.next/
+frontend/.turbo/
+frontend/dist/
+frontend/build/
+

@@ -53,10 +53,10 @@ const datasets = [
       enabled: false
     },
     statistics: {
-      accuracy: "-",
-      precision: 74.6,
-      recall: 62.7,
-      f1Score: 68.1
+      "mAP@50": 67,
+      "mAP@50:95": 42,
+      precision: 69,
+      recall: 63
     }
   },
   {
@@ -96,17 +96,16 @@ const datasets = [
       enabled: true
     },
     statistics: {
-      accuracy: "-",
-      precision: 81.0,
-      recall: 57.9,
-      f1Score: 67.5,
-     "mAP@50": 76.1,
-    "mAP@50:95": 59.4
+      "mAP@50": 70,
+      "mAP@50:95": 44,
+      precision: 71,
+      recall: 67
     }
   },
   {
     id: "dataset3",
     name: "Balanced Yolo Dataset",
+    datasetLink: "https://kaggle.com/datasets/46b6bd726580e1ced264c2b6ee9a8605d192d4cbf4984a2e3d9cd6882d28e204",
     description: "Balanced DeepSpaceYoloDataset reannotated for multi-class detection with nebulae, galaxies, and star clusters. Includes grayscale telescope-filtered variants and class-specific augmentation for robustness.",
     size: "1.8 GB",
     format: "PNG/JPEG/WEBP/JPG ",
@@ -139,13 +138,14 @@ const datasets = [
       enabled: true
     },
     statistics: {
-      accuracy: "-",
-      precision: 79.7,
-      recall: 71.4,
-      f1Score: 75.3
+      "mAP@50": 92,
+      "mAP@50:95": 66,
+      precision: 91,
+      recall: 85
     }
   }
 ]
+
 
 
 export function DatasetDetection() {
@@ -316,29 +316,28 @@ export function DatasetDetection() {
             </CardHeader>
             <CardContent className="grid grid-cols-2 gap-4 px-0">
               <div className="p-4 rounded-lg border border-white/10">
-                <Label className="text-white/80 text-sm">Accuracy</Label>
-                <div className="text-3xl font-bold  mt-1">{currentDataset.statistics.accuracy}%</div>
-              </div>
-              <div className="p-4 rounded-lg border border-white/10">
                 <Label className="text-white/80 text-sm">Precision</Label>
-                <div className="text-3xl font-bold  mt-1">{currentDataset.statistics.precision}%</div>
+                <div className="text-3xl font-bold mt-1">{currentDataset.statistics.precision}%</div>
               </div>
               <div className="p-4 rounded-lg border border-white/10">
                 <Label className="text-white/80 text-sm">Recall</Label>
-                <div className="text-3xl font-bold  mt-1">{currentDataset.statistics.recall}%</div>
+                <div className="text-3xl font-bold mt-1">{currentDataset.statistics.recall}%</div>
               </div>
               <div className="p-4 rounded-lg border border-white/10">
-                <Label className="text-white/80 text-sm">F1 Score</Label>
-                <div className="text-3xl font-bold mt-1">{currentDataset.statistics.f1Score}%</div>
+                <Label className="text-white/80 text-sm">mAP@0.5</Label>
+                <div className="text-3xl font-bold mt-1">{currentDataset.statistics["mAP@50"]}%</div>
               </div>
+              <div className="p-4 rounded-lg border border-white/10">
+                <Label className="text-white/80 text-sm">mAP@0.5:0.95</Label>
+                <div className="text-3xl font-bold mt-1">{currentDataset.statistics["mAP@50:95"]}%</div>
+              </div>
+
             </CardContent>
-            {/*<CardFooter className="px-10>*/}
-            {/*  <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white ">Export Performance Report</Button>*/}
-            {/*</CardFooter>*/}
           </Card>
         </TabsContent>
       </Tabs>
     </div>
   )
 }
+
 export default DatasetDetection

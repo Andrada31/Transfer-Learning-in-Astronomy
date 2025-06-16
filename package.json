@@ -1,1 +1,16 @@
-{}
+{
+  "devDependencies": {
+    "@babel/preset-env": "^7.27.2",
+    "axios-mock-adapter": "^2.1.0",
+    "babel-jest": "^30.0.0",
+    "concurrently": "^9.1.2",
+    "jest": "^30.0.0",
+    "jest-environment-jsdom": "^30.0.0"
+  },
+  "scripts": {
+    "start": "concurrently \"npm run backend\" \"npm run frontend\"",
+    "backend": "python backend/flask/app.py",
+    "frontend": "cd frontend && npm run dev",
+    "test": "jest"
+  }
+}

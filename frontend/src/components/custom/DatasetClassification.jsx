@@ -20,7 +20,7 @@ import { Database, BarChart3, Shuffle, Settings, ExternalLink } from "lucide-rea
 const dataset = {
   id: "dataset1",
   name: "DeepSky3-HEN",
-  datasetLink: "https://www.kaggle.com/datasets/andradaparaczki/deepsky3-hen",
+  datasetLink: "https://kaggle.com/datasets/a2cb6615c3d14d29d4b87ff121a52aa7140b7674901aaffd0832cc2d8eb04b34",
   description: "RGB dataset with images of deep space objects (DSOs) collected from ESA/Hubble, NOIRLab, and ESO archives. Can be used for training and evaluating deep learning classification models using transfer learning.",
   size: "18.98 MB",
   format: "JPEG",
@@ -59,7 +59,7 @@ const dataset = {
     enabled: true
   },
   statistics: {
-    accuracy: null,      // To be filled after evaluation
+    accuracy: null,
     precision: null,
     recall: null,
     f1Score: null

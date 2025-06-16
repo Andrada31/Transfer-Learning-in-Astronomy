@@ -7,7 +7,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Separator } from "@/components/ui/separator"
 import {BarChart3, ExternalLink, ChartLine, Layers, BrainCircuit, BrainCog} from "lucide-react"
 import jupyterLogo from "@/images/jupyter.svg"
-import kaggleLogo from "@/images/kaggle2.svg"
 import CustomSelectTrigger from "@/components/custom/CustomSelectTrigger"
 
 import { resnetModels } from "@/lib/models/resnetData"
@@ -98,25 +97,22 @@ export default function ModelDetails({ defaultModel }) {
               <Separator className="mt-6 bg-[#2a3158]"/>
 
               <div className="pt-4">
-                <h3 className="text-md font-medium text-gray-300 mb-3">Training Resources</h3>
                 <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0">
-                  {/*<button*/}
-                  {/*  onClick={() => window.open(modelData.overviewData.datasetLink, "_blank")}*/}
-                  {/*  className="flex items-center justify-center px-4 py-2 border border-gray-600 text-white hover:bg-white hover:text-black cursor-pointer bg-transparent rounded w-full sm:w-auto"*/}
-                  {/*>*/}
-                  {/*  <img src={kaggleLogo} alt="Kaggle" className="mr-2 h-5 w-5" />*/}
-                  {/*  Dataset*/}
-                  {/*  <ExternalLink className="ml-2 h-4 w-4" />*/}
-                  {/*</button>*/}
-
-                  <button
-                    onClick={() => window.open(modelData.overviewData.notebookLink, "_blank")}
-                    className="flex items-center justify-center px-4 py-2 border border-gray-600 text-white hover:bg-white hover:text-black bg-transparent cursor-pointer rounded w-full sm:w-auto"
-                  >
-                    <img src={jupyterLogo} alt="Notebook" className="mr-2 h-5 w-5" />
-                    Notebook
-                    <ExternalLink className="ml-2 h-4 w-4" />
-                  </button>
+                  {modelData.overviewData.notebookLink && (
+                    <div className="pt-4">
+                      <h3 className="text-md font-medium text-gray-300 mb-3">Training Resources</h3>
+                      <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0">
+                        <button
+                          onClick={() => window.open(modelData.overviewData.notebookLink, "_blank")}
+                          className="flex items-center justify-center px-4 py-2 border border-gray-600 text-white hover:bg-white hover:text-black bg-transparent cursor-pointer rounded w-full sm:w-auto"
+                        >
+                          <img src={jupyterLogo} alt="Notebook" className="mr-2 h-5 w-5" />
+                          Notebook
+                          <ExternalLink className="ml-2 h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
