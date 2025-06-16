@@ -20,9 +20,9 @@ The web interface allows users to:
 
 **Languages:** Python, JavaScript, HTML/CSS  
 **Libraries:** NumPy, Matplotlib, OpenCV, Pandas, Seaborn, Plotly, Scikit-learn  
-**Frameworks:** TensorFlow, Keras, PyTorch, Ultralytics (YOLO), Flask, React, Vite, TailwindCSS  
-**Frontend UI Components:** Shadcn/UI  
-**Runtime & Tooling:** Node.js, npm, Vite, Flask 
+**Frameworks:** TensorFlow, Keras, PyTorch, Ultralytics (YOLO), Flask, React, Vite  
+**Frontend UI style:** Shadcn/UI, TailwindCSS  
+**Runtime & Tooling:** Node.js, npm 
 
 
 ## Training Notebooks
