@@ -1,89 +1,87 @@
-# 🌌 Deep Space Objects Classification and Detection Tool  
+# Deep Space Objects Classification and Detection Web Tool
 
-This project provides an automated approach to identify and analyze **Deep Space Objects (DSOs)** through two main functionalities: **classification** and **detection**. It uses state of the art Convolutional Neural Networks (CNN) and YOLO detection models to classify and detect three categories of DSOs: **galaxies, nebulae, and star clusters**.  
+My thesis explores how **Transfer Learning** can help in the training of pretrained CNN models (**VGG16, ResNet50, EfficientNet**) for classification, and YOLO object detection algorithms (**YOLOv8-c and YOLOv11n**) to classify and detect the three categories of DSOs
+- **Classification**: Categorizes DSOs into three types.
+- **Detection**: Detects and classifies multiple DSOs to their specific typology in telescope images.
 
-## Project Overview  
 
-The project explores **deep learning** techniques using **Transfer Learning** on pretrained CNN models (**VGG16, ResNet50, EfficientNet**) for classification, and modern object detection algorithms (**YOLOv9 and YOLOv11n**) to locate and identify DSOs within images.
+## Features
 
-- **Classification**: Classify DSOs into galaxies, nebulae, or star clusters while comparing model performance.
-- **Detection**: Identification and localization of multiple DSOs within an image.
-- Web application for vizualization and model performance demo.
-
-### Web Application  
-
-The project includes a **Flask-based web application** that allows users to:
-- **Upload images** for classification and detection.
-- Receive **classification predictions and detection results**.
-- Vizualize the **actiavtion map** for multiple convolutional layers of the selected model
-- Explore **model performance and visual detection outcomes** through the interface.
-
-## Technologies Used  
-
-### **Programming Languages**  
-- **Python**: For deep learning model training (via Google Colab), detection algorithms, and Flask backend.
-- **JavaScript**: Frontend development with React and Vite.
-- **HTML & CSS with Tailwind**: UI/UX design for the web interface.
-
-### **Libraries**  
-- NumPy  
-- Matplotlib  
-- OpenCV (for image processing and detection visualization)
-
-### **Deep Learning Frameworks**  
-- **TensorFlow**  
-- **Keras**
-  - High-level neural networks API  
-  - Streamlined model development  
-- **Google Colab** (leveraging GPU and TPU resources)
-
-### **Pretrained CNN Models**  
-- **[VGG16](https://arxiv.org/abs/1409.1556)**  
-- **[ResNet50](https://arxiv.org/abs/1512.03385)**  
-- **[EfficientNet](https://arxiv.org/abs/1905.11946)**
-
-### **Object Detection Algorithms**  
-- **YOLOv9 and YOLOv11n**
-- SVM (to be implemented)
+The web interface allows users to:
+- Upload test images and run **live inference**.
+- **Switch between the models** to see the difference in their performance.
+- See the how detection models trained on **different datasets** perform on test images (preferabily telescope-like views).
+- Visualize **activation maps** for classification using Grad-CAM.
+- See model details in individual pages for **comparison**.
+- Access the training notebooks and see the results in a more dynamic way.
   
-### **Image Processing**  
-- Image normalization and **black & white filters** for comparison  
-- Data augmentation techniques  
-  - **Letterboxing** and **cropping**
 
-### **Web Application**  
-- **Flask**: Model deployment and backend API  
-- **React + Vite**: Frontend UI/UX  
-  - Includes a data analysis page  
-  - Object detection visualization  
-  - Comparative model performance insights
-  - Training results and analysis of performance
+## Technologies
 
-## Features  
+**Languages:** Python, JavaScript, HTML/CSS (Tailwind)  
+**Libraries:** NumPy, Matplotlib, OpenCV, Pandas, Seaborn, Plotly, Scikit-learn  
+**Frameworks:** TensorFlow, Keras, PyTorch, Ultralytics (YOLO), Flask, React, Vite  
 
-- **Classification Models**: Easily switch between **VGG16, ResNet50, and EfficientNet**.
-- **Detection Models**: DSO detection using **YOLOv9 and YOLOv11n**.
-- **Interactive Web Interface**: React-based UI facilitating seamless exploration and analysis.
-- **REST API**: Robust Flask backend supporting comprehensive data management.
 
-## Project Setup  
+## Training Notebooks
 
-### **Prerequisites**  
-Ensure you have the following installed:
-```plaintext
-- Python 3.8+
-- TensorFlow  
-- Keras  
-- Flask  
-- NumPy
-- Matplotlib  
-- OpenCV
-- React.js  
-- Vite
+**Classification**  
+- [VGG16](https://colab.research.google.com/drive/1JhN31vFhbX7yZKAzIjW6Ll_-CKVLuaJN?usp=sharing)  
+- [EfficientNet-B0](https://colab.research.google.com/drive/1QPgiamn--HrZYts9vc0mm6dops6s4U2n?usp=sharing)  
+- [ResNet50](https://colab.research.google.com/drive/1kfun5ulki8t3s-sRT4EjR8_XYxEbp5p8?usp=sharing)
+
+**Detection**  
+- [YOLOv11n](https://www.kaggle.com/code/andradaparaczki/yolo11n)  
+- [YOLOv8](https://www.kaggle.com/code/andradaparaczki/yolov8)
+
+
+## Datasets
+
+- [Balanced DSYD (detection)](https://kaggle.com/datasets/46b6bd726580e1ced264c2b6ee9a8605d192d4cbf4984a2e3d9cd6882d28e204)  
+- [DeepSky3-HEN (classification)](https://kaggle.com/datasets/a2cb6615c3d14d29d4b87ff121a52aa7140b7674901aaffd0832cc2d8eb04b34)
+
+
+## Project Setup
+
+> **Important:** Due to large file size, the trained models are not included in this repository.  
+> Download them from this Drive folder and place them in `backend/models/saved/`:
+
+**[Download Models – Google Drive](https://drive.google.com/drive/folders/1-ej5x-bYREaf6SJZv2JmXCB6z3UgybRO?usp=sharing)**
+
+
+### 1. Clone the repository
+
+```bash
+git clone https://gitlab.dev.info.uvt.ro/didactic/2025/licenta/ie/licentaandrada-mihaelaparaczki2025.git
+cd licentaandrada-mihaelaparaczki2025/proiect
 ```
 
-## Future Improvements  
+### 2. Create the python venv
+```bash
+python -m venv .venv
+.venv\Scripts\activate
+```
 
-- **Toggle between different wavelength spectra for image classification**  
-- **Optimize model performance**  
-- **Expand the dataset**  
+### 3. Install python libs
+```bash
+pip install -r requirements.txt
+```
+### 4. Install root dependencies for testing
+```bash
+npm install
+```
+### 5. Install frontend dependencies
+```bash
+cd frontend
+npm install
+cd ..
+```
+### 6. Start the application 
+```bash
+npm start
+```
+### 7. (Optional) Run API tests
+```bash
+npm test
+```
+
