@@ -2,7 +2,7 @@
 
 My thesis explores how **Transfer Learning** can help in the training of pretrained CNN models (**VGG16, ResNet50, EfficientNet**) for classification, and YOLO object detection algorithms (**YOLOv8-c and YOLOv11n**) to classify and detect the three categories of deep space objects (DSOs)
 
-- **Detection**: Detects and classifies multiple DSOs to their specific typology. Models were also trained on hazy telescope imagery.
+- **Detection**: Detects and classifies multiple DSOs in their specific typology. Models were also trained on hazy telescope imagery, on which they also perform well.
 
 ![Web app Interface](s5.png)
 
