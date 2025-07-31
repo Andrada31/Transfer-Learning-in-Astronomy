@@ -1,9 +1,16 @@
 # DSO Detection and Classification Tool
 
 My thesis explores how **Transfer Learning** can help in the training of pretrained CNN models (**VGG16, ResNet50, EfficientNet**) for classification, and YOLO object detection algorithms (**YOLOv8-c and YOLOv11n**) to classify and detect the three categories of deep space objects (DSOs)
-- **Classification**: Categorizes DSOs into three types.
-- **Detection**: Detects and classifies multiple DSOs to their specific typology in telescope images.
 
+- **Detection**: Detects and classifies multiple DSOs to their specific typology. Models were also trained on hazy telescope imagery.
+
+![Web app Interface](s5.png)
+
+---
+
+- **Classification**: Categorizes DSOs into nebulae, galaxies or star clusters.
+
+![Web app Interface](s1.png)
 
 ## Features
 
@@ -54,8 +61,7 @@ The web interface allows users to:
 ### 1. Clone the repository
 
 ```bash
-git clone https://gitlab.dev.info.uvt.ro/didactic/2025/licenta/ie/licentaandrada-mihaelaparaczki2025.git
-cd licentaandrada-mihaelaparaczki2025/proiect
+git clone https://github.com/Andrada31/Transfer-Learning-in-Astronomy.git
 ```
 
 ### 2. Create the python venv
