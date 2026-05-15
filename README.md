@@ -51,10 +51,21 @@ The web interface allows users to:
 
 ## Project Setup
 
-> **Important:** Due to large file size, the trained models are not included in this repo.
+> [!IMPORTANT]
+> Due to large file size, the trained models are not included in this repo.
 > To run live inference you must download them from the following Drive link and place them in `backend/models/saved/`:
 
 **[Download Models – Google Drive](https://drive.google.com/drive/folders/1-ej5x-bYREaf6SJZv2JmXCB6z3UgybRO?usp=sharing)**
+
+### Prerequisites
+**Python Version**: 3.12.x (Tested on 3.12.7)
+
+**Environment**: A virtual environment (venv or conda) is highly recommended.
+
+**Windows users**: This project requires Microsoft C++ Build Tools for certain astronomy dependencies, though the versions below are optimized to use pre-compiled binaries (wheels).
+
+> [!IMPORTANT]
+Do not use Python 3.13. Currently, TensorFlow 2.18.0 does not have stable support for Python 3.13 on Windows, which will lead to build failures.
 
 ### 1. Clone the repository
 
